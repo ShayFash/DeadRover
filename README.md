@@ -14,7 +14,7 @@ CMPT 406 project
 - Branch names: use Jira number and a small description
   - `C4P-1/create-tilemap`
   - `update-readme` (if there is no associated Jira number)
-- Commit messages and pull request titles use [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/#summary)
+- Commit messages use [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/#summary)
   - Format: `type(scope if there is one): what you did`
     - `feat(main menu): create main menu`
     - `chore(pause menu): fix typo`
@@ -23,3 +23,8 @@ CMPT 406 project
   - [Microsoft's C# coding conventions](https://docs.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions)
   - Basically what Visual Studio defaults to if you're using that (since it comes with Unity)
     - Note things like curly braces starting on newlines, otherwise pretty similar to other standards you may be use to
+- Pull Requests
+  - Generally in the form of the `Issue` being solved, and what was done to solve it
+  - Typically use headers `### Issue` and `### Solution` in PRs with the appropriate section underneath the header
+    - As redundant as `Issue: The pause menu had a typo, Solution: fix the typo`
+    - Or something like `Issue: When selecting a unit there's a race condition causing the wrong unit to be selected, Solution: Remove the concurrency for selecting a unit because it's not needed`
