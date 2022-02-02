@@ -41,4 +41,5 @@ CMPT 406 project
   - Adjust tile anchors in Tilemap as necessary to center tiles in grid
   - Set tile to render individual tiles instead of chunks
   - Adjust grid settings as necessary to close/open gaps between tiles
-- Ensure `Edit > Project Settings > Graphics` layers are set up appropriately (0, 1, 0 or some negative number depending on tile size)
+- Ensure `Edit > Project Settings > Graphics` transparency sort axis is set up appropriately (0, 1, 0 or some negative number depending on tile size)
+  - Transparency sort axis should be near the top of the Graphics section. If not, it may be because the render pipeline, change it if necessary
