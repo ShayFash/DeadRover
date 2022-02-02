@@ -28,3 +28,6 @@ CMPT 406 project
   - Typically use headers `### Issue` and `### Solution` in PRs with the appropriate section underneath the header
     - As redundant as `Issue: The pause menu had a typo, Solution: fix the typo`
     - Or something like `Issue: When selecting a unit there's a race condition causing the wrong unit to be selected, Solution: Remove the concurrency for selecting a unit because it's not needed`
+
+
+I'm adding a sentence to test the discord webhook
