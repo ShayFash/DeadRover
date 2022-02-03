@@ -29,5 +29,17 @@ CMPT 406 project
     - As redundant as `Issue: The pause menu had a typo, Solution: fix the typo`
     - Or something like `Issue: When selecting a unit there's a race condition causing the wrong unit to be selected, Solution: Remove the concurrency for selecting a unit because it's not needed`
 
+## Guides
 
-I'm adding a sentence to test the discord webhook
+### Isometric Tilemap
+
+- `Window > 2D > TilePalette` to create/access tile palettes
+  - Save new palettes under `assets/palettes`
+- Drag and drop tile palette textures into palette
+  - If prompted (new palette with no tile textures yet) create a `bitmap` folder where file explorer opens up (this should be the same directory the tile textures are stored in
+- In scene create `2D object > tilemap > isometric Z as Y` tilemap (for isometric squares allowing for 3D height effect)
+  - Adjust tile anchors in Tilemap as necessary to center tiles in grid
+  - Set tile to render individual tiles instead of chunks
+  - Adjust grid settings as necessary to close/open gaps between tiles
+- Ensure `Edit > Project Settings > Graphics` transparency sort axis is set up appropriately (0, 1, 0 or some negative number depending on tile size)
+  - Transparency sort axis should be near the top of the Graphics section. If not, it may be because the render pipeline, change it if necessary
