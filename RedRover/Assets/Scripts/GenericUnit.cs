@@ -9,8 +9,8 @@ public abstract class GenericUnit : MonoBehaviour
     public int damageStrength;
 
     public abstract void Attack(GenericUnit enemy);
-    public abstract bool EnemiesInRange(GenericUnit enemy);
-    public abstract GenericUnit GetEnemiesInRange();
+    public abstract bool EnemiesInRange(List<GenericUnit> enemy);
+    public abstract List<GenericUnit> GetEnemiesInRange(List<GenericUnit> enemyTeam);
     public abstract void GetHurt(int value);
 
 }

@@ -10,39 +10,47 @@ public class TestUnit : GenericUnit
     {
         base.health = 100;
         base.damageStrength = 1;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        base.reach = 2;
     }
 
     public override void Attack(GenericUnit enemy)
     {
         Debug.Log("Aaaaattack!");
-        enemy.GetHurt(this.damageStrength);
+        enemy.GetHurt(this.damageStrength);        
     }
 
-    public override bool EnemiesInRange(GenericUnit enemy)
+    public override bool EnemiesInRange(List<GenericUnit> enemyTeam)
     {
-        //define
-        return true;
+        foreach (GenericUnit unit in enemyTeam)
+        {
+            float dist = (unit.transform.position - this.transform.position).sqrMagnitude;
+            if (dist < Mathf.Pow(this.reach, 2))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
-    public override GenericUnit GetEnemiesInRange()
+    public override List<GenericUnit> GetEnemiesInRange(List<GenericUnit> enemyTeam)
     {
-        return null;
+        List<GenericUnit> nearby = new List<GenericUnit>();
+
+        foreach(GenericUnit unit in enemyTeam)
+        {
+            float dist = (unit.transform.position - this.transform.position).magnitude;
+            if (dist < this.reach)
+            {
+                nearby.Add(unit);
+            }
+        }
+        return nearby;
     }
 
     public override void GetHurt(int value)
     {
         Debug.Log("I'm hurt");
-        this.health -= value;
-        if(this.health < 0)
-        {
-            this.health = 0;
-        }
+        this.health = Mathf.Max(0, this.health - value);
     }
 
 }
