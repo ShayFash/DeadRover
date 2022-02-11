@@ -6,11 +6,45 @@ public abstract class GenericUnit : MonoBehaviour
 {
     public int reach;
     public int health;
-    public int damageStrength;
+    public int attack;
 
-    public abstract void Attack(GenericUnit enemy);
-    public abstract bool EnemiesInRange(List<GenericUnit> enemy);
-    public abstract List<GenericUnit> GetEnemiesInRange(List<GenericUnit> enemyTeam);
-    public abstract void GetHurt(int value);
+    public void Attack(GenericUnit enemy)
+    {
+        Debug.Log("Aaaaattack!");
+        enemy.TakeDamage(this.attack);
+    }
+
+    public bool EnemiesInRange(List<GenericUnit> enemyTeam)
+    {
+        foreach (GenericUnit unit in enemyTeam)
+        {
+            float dist = (unit.transform.position - this.transform.position).sqrMagnitude;
+            if (dist < Mathf.Pow(this.reach, 2))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    public List<GenericUnit> GetEnemiesInRange(List<GenericUnit> enemyTeam)
+    {
+        List<GenericUnit> nearby = new List<GenericUnit>();
+
+        foreach (GenericUnit unit in enemyTeam)
+        {
+            float dist = (unit.transform.position - this.transform.position).magnitude;
+            if (dist < this.reach)
+            {
+                nearby.Add(unit);
+            }
+        }
+        return nearby;
+    }
+
+    public void TakeDamage(int value)
+    {
+        Debug.Log("I'm hurt");
+        this.health = Mathf.Max(0, this.health - value);
+    }
 
 }
