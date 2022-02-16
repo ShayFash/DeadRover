@@ -16,16 +16,9 @@ public abstract class GenericUnit : MonoBehaviour
 
     public bool EnemiesInRange(List<GenericUnit> enemyTeam)
     {
-        foreach (GenericUnit unit in enemyTeam)
-        {
-            float dist = (unit.transform.position - this.transform.position).sqrMagnitude;
-            if (dist < Mathf.Pow(this.reach, 2))
-            {
-                return true;
-            }
-        }
-        return false;
+        return GetEnemiesInRange(enemyTeam).Count != 0;    
     }
+
     public List<GenericUnit> GetEnemiesInRange(List<GenericUnit> enemyTeam)
     {
         List<GenericUnit> nearby = new List<GenericUnit>();

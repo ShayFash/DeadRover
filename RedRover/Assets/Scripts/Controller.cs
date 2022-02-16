@@ -24,7 +24,7 @@ public class Controller : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.S))
         {
             Debug.Log("S key was pressed.");
-            Debug.Log("There are " + team1[0].GetEnemiesInRange(team2).Count + " enemies are in range.");
+            Debug.Log("There are " + team1[0].GetEnemiesInRange(team2).Count + " enemies in range.");
         }
 
     }
