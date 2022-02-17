@@ -40,4 +40,22 @@ public abstract class GenericUnit : MonoBehaviour
         this.health = Mathf.Max(0, this.health - value);
     }
 
+    public void ChangeColor()
+    {
+        SpriteRenderer sp = this.GetComponent<SpriteRenderer>();
+        if (sp.color == Color.red)
+        {
+            sp.color = Color.white;
+        }
+        else
+        {
+            sp.color = Color.red;
+        }
+    }
+
+    void OnMouseDown()
+    {
+        this.ChangeColor();
+    }
+
 }
