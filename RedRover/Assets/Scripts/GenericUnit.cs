@@ -21,7 +21,6 @@ public abstract class GenericUnit : MonoBehaviour
 
         unitMenu = GameObject.FindGameObjectWithTag("UnitMenu").GetComponent<Canvas>();
         TextMeshProUGUI[] unitMenuChildren = unitMenu.GetComponentsInChildren<TextMeshProUGUI>();
-        Debug.Log(unitMenuChildren.Length);
 
         attackText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) { 
             return t.gameObject.CompareTag("AttackStatDisplay"); 
@@ -67,7 +66,7 @@ public abstract class GenericUnit : MonoBehaviour
     private void OnMouseDown()
     {
         unitMenu.enabled = true;
-        attackText.text = attack.ToString() + "Attack";
+        attackText.text = attack.ToString() + " Attack";
         healthText.text = health.ToString() + "/" + maxHealth.ToString() + " HP";
     }
 }
