@@ -8,6 +8,8 @@ public abstract class GenericUnit : MonoBehaviour
     public int health;
     public int attack;
 
+    public GameObject canvas;
+
     public void Attack(GenericUnit enemy)
     {
         Debug.Log("Aaaaattack!");
@@ -40,4 +42,9 @@ public abstract class GenericUnit : MonoBehaviour
         this.health = Mathf.Max(0, this.health - value);
     }
 
+    private void OnMouseDown()
+    {
+        Debug.Log("Unit Clicked!");
+        this.canvas.SetActive(true);
+    }
 }
