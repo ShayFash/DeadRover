@@ -1,19 +1,47 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public abstract class GenericUnit : MonoBehaviour
 {
     public int reach;
-    public int health;
     public int attack;
 
-    public GameObject canvas;
+    public int health;
+    protected int maxHealth;
+
+    private Canvas unitMenu;
+    private TextMeshProUGUI attackText;
+    private TextMeshProUGUI healthText;
+
+    protected void Init()
+    {
+        maxHealth = health;
+
+        unitMenu = GameObject.FindGameObjectWithTag("UnitMenu").GetComponent<Canvas>();
+        TextMeshProUGUI[] unitMenuChildren = unitMenu.GetComponentsInChildren<TextMeshProUGUI>();
+        Debug.Log(unitMenuChildren.Length);
+
+        attackText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) { 
+            return t.gameObject.CompareTag("AttackStatDisplay"); 
+        });
+
+        healthText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) {
+            return t.gameObject.CompareTag("HealthStatDisplay");
+        });
+    }
 
     public void Attack(GenericUnit enemy)
     {
         Debug.Log("Aaaaattack!");
-        enemy.TakeDamage(this.attack);
+        enemy.TakeDamage(attack);
+    }
+
+    public void TakeDamage(int value)
+    {
+        Debug.Log("I'm hurt");
+        health = Mathf.Max(0, health - value);
     }
 
     public bool EnemiesInRange(List<GenericUnit> enemyTeam)
@@ -27,8 +55,8 @@ public abstract class GenericUnit : MonoBehaviour
 
         foreach (GenericUnit unit in enemyTeam)
         {
-            float dist = (unit.transform.position - this.transform.position).magnitude;
-            if (dist < this.reach)
+            float dist = (unit.transform.position - transform.position).magnitude;
+            if (dist < reach)
             {
                 nearby.Add(unit);
             }
@@ -36,15 +64,10 @@ public abstract class GenericUnit : MonoBehaviour
         return nearby;
     }
 
-    public void TakeDamage(int value)
-    {
-        Debug.Log("I'm hurt");
-        this.health = Mathf.Max(0, this.health - value);
-    }
-
     private void OnMouseDown()
     {
-        Debug.Log("Unit Clicked!");
-        this.canvas.SetActive(true);
+        unitMenu.enabled = true;
+        attackText.text = attack.ToString() + "Attack";
+        healthText.text = health.ToString() + "/" + maxHealth.ToString() + " HP";
     }
 }

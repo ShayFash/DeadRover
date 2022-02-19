@@ -373,10 +373,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee21afb7bd5e94a44a80a7999ec19ef3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reach: 0
-  health: 0
-  attack: 0
-  canvas: {fileID: 756590104}
+  reach: 6
+  attack: 5
+  health: 20
 --- !u!212 &314561606
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -483,7 +482,7 @@ GameObject:
   - component: {fileID: 424490931}
   m_Layer: 5
   m_Name: Health
-  m_TagString: Untagged
+  m_TagString: HealthStatDisplay
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -528,7 +527,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Health: 20'
+  m_text: 20/20 HP
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -668,7 +667,7 @@ GameObject:
   - component: {fileID: 653610881}
   m_Layer: 5
   m_Name: Attack
-  m_TagString: Untagged
+  m_TagString: AttackStatDisplay
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -804,11 +803,11 @@ GameObject:
   - component: {fileID: 756590105}
   m_Layer: 5
   m_Name: Canvas
-  m_TagString: Untagged
+  m_TagString: UnitMenu
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &756590105
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12666,7 +12665,7 @@ GameObject:
   - component: {fileID: 1171719238}
   m_Layer: 5
   m_Name: Panel
-  m_TagString: Untagged
+  m_TagString: AttackStatDisplay
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -12765,10 +12764,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee21afb7bd5e94a44a80a7999ec19ef3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reach: 0
-  health: 0
-  attack: 0
-  canvas: {fileID: 756590104}
+  reach: 6
+  attack: 4
+  health: 25
 --- !u!212 &1191285042
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -13095,10 +13093,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee21afb7bd5e94a44a80a7999ec19ef3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reach: 0
-  health: 0
-  attack: 0
-  canvas: {fileID: 756590104}
+  reach: 6
+  attack: 5
+  health: 20
 --- !u!212 &1651122818
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -13223,10 +13220,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee21afb7bd5e94a44a80a7999ec19ef3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reach: 0
-  health: 0
-  attack: 0
-  canvas: {fileID: 756590104}
+  reach: 6
+  attack: 2
+  health: 50
 --- !u!212 &1670091455
 SpriteRenderer:
   m_ObjectHideFlags: 0
