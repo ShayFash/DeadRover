@@ -1,61 +1,51 @@
-using System;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 
 public abstract class GenericUnit : MonoBehaviour
 {
-    public int reach;
-    public int attack;
+    public int Reach;
+    public int Attack;
+    public int Health;
+    [HideInInspector]
+    public int MaxHealth;
 
-    public int health;
-    protected int maxHealth;
-
-    private Canvas unitMenu;
-    private TextMeshProUGUI attackText;
-    private TextMeshProUGUI healthText;
+    protected Controller Controller;
 
     protected void Init()
     {
-        maxHealth = health;
+        MaxHealth = Health;
 
-        unitMenu = GameObject.FindGameObjectWithTag("UnitMenu").GetComponent<Canvas>();
-        TextMeshProUGUI[] unitMenuChildren = unitMenu.GetComponentsInChildren<TextMeshProUGUI>();
-
-        attackText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) { 
-            return t.gameObject.CompareTag("AttackStatDisplay"); 
-        });
-
-        healthText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) {
-            return t.gameObject.CompareTag("HealthStatDisplay");
-        });
+        Controller = GameObject.FindGameObjectWithTag("GameController").GetComponent<Controller>();
     }
 
-    public void Attack(GenericUnit enemy)
+
+    public void AttackUnit(GenericUnit unit)
     {
         Debug.Log("Aaaaattack!");
-        enemy.TakeDamage(attack);
+        unit.TakeDamage(Attack);
     }
 
     public void TakeDamage(int value)
     {
         Debug.Log("I'm hurt");
-        health = Mathf.Max(0, health - value);
+        Health = Mathf.Max(0, Health - value);
     }
 
-    public bool EnemiesInRange(List<GenericUnit> enemyTeam)
+    public bool UnitInRange(GenericUnit unit)
     {
-        return GetEnemiesInRange(enemyTeam).Count != 0;    
+        // TODO: Use tiles
+        return (unit.transform.position - transform.position).magnitude < Reach;
     }
 
-    public List<GenericUnit> GetEnemiesInRange(List<GenericUnit> enemyTeam)
+    public List<GenericUnit> UnitsInRange(List<GenericUnit> units)
     {
         List<GenericUnit> nearby = new List<GenericUnit>();
 
-        foreach (GenericUnit unit in enemyTeam)
+        foreach (GenericUnit unit in units)
         {
+            // TODO: use tiles
             float dist = (unit.transform.position - transform.position).magnitude;
-            if (dist < reach)
+            if (dist < Reach)
             {
                 nearby.Add(unit);
             }
@@ -65,8 +55,6 @@ public abstract class GenericUnit : MonoBehaviour
 
     private void OnMouseDown()
     {
-        unitMenu.enabled = true;
-        attackText.text = attack.ToString() + " Attack";
-        healthText.text = health.ToString() + "/" + maxHealth.ToString() + " HP";
+        Controller.SelectUnit(this);
     }
 }

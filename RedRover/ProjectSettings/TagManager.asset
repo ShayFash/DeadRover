@@ -7,6 +7,8 @@ TagManager:
   - UnitMenu
   - AttackStatDisplay
   - HealthStatDisplay
+  - Living
+  - Dead
   layers:
   - Default
   - TransparentFX

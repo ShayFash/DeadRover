@@ -356,7 +356,7 @@ GameObject:
   - component: {fileID: 314561608}
   m_Layer: 0
   m_Name: Square1.1
-  m_TagString: Untagged
+  m_TagString: Living
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -373,9 +373,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee21afb7bd5e94a44a80a7999ec19ef3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reach: 6
-  attack: 5
-  health: 20
+  Reach: 5
+  Attack: 5
+  Health: 20
+  MaxHealth: 20
 --- !u!212 &314561606
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -616,7 +617,7 @@ GameObject:
   - component: {fileID: 569547442}
   m_Layer: 0
   m_Name: GameController
-  m_TagString: Untagged
+  m_TagString: GameController
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -633,12 +634,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6dfbe4d5e1f91b40aed98403e1559b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  team1:
-  - {fileID: 314561605}
-  - {fileID: 1191285041}
-  team2:
-  - {fileID: 1670091454}
-  - {fileID: 1651122817}
 --- !u!4 &569547443
 Transform:
   m_ObjectHideFlags: 0
@@ -12747,7 +12742,7 @@ GameObject:
   - component: {fileID: 1191285044}
   m_Layer: 0
   m_Name: Square1.2
-  m_TagString: Untagged
+  m_TagString: Living
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -12764,9 +12759,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee21afb7bd5e94a44a80a7999ec19ef3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reach: 6
-  attack: 4
-  health: 25
+  Reach: 5
+  Attack: 4
+  Health: 25
+  MaxHealth: 0
 --- !u!212 &1191285042
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -13076,7 +13072,7 @@ GameObject:
   - component: {fileID: 1651122820}
   m_Layer: 0
   m_Name: Square2.2
-  m_TagString: Untagged
+  m_TagString: Dead
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -13093,9 +13089,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee21afb7bd5e94a44a80a7999ec19ef3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reach: 6
-  attack: 5
-  health: 20
+  Reach: 5
+  Attack: 3
+  Health: 35
+  MaxHealth: 0
 --- !u!212 &1651122818
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -13203,7 +13200,7 @@ GameObject:
   - component: {fileID: 1670091457}
   m_Layer: 0
   m_Name: Square2.1
-  m_TagString: Untagged
+  m_TagString: Dead
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -13220,9 +13217,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee21afb7bd5e94a44a80a7999ec19ef3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reach: 6
-  attack: 2
-  health: 50
+  Reach: 5
+  Attack: 2
+  Health: 50
+  MaxHealth: 0
 --- !u!212 &1670091455
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -13400,13 +13398,13 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 314561604}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: 
+      - m_Target: {fileID: 569547442}
+        m_TargetAssemblyTypeName: Controller, Assembly-CSharp
+        m_MethodName: Attack
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
