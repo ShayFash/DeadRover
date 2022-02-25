@@ -21,6 +21,11 @@ public abstract class GenericUnit : MonoBehaviour
         Controller = GameObject.FindGameObjectWithTag("GameController").GetComponent<Controller>();
 
         Tilemap = FindObjectOfType<Tilemap>();
+
+        Vector3Int myTilePosittion = Tilemap.layoutGrid.WorldToCell(transform.position);
+        Vector3 alignedPosition = Tilemap.layoutGrid.GetCellCenterWorld(myTilePosittion);
+        alignedPosition.y -= 0.1f;
+        transform.position = alignedPosition;
     }
 
 
@@ -38,7 +43,6 @@ public abstract class GenericUnit : MonoBehaviour
 
     public bool UnitInRange(GenericUnit unit)
     {
-        // TODO: Use tiles
         Vector3Int myTilePosittion = Tilemap.layoutGrid.WorldToCell(transform.position);
         Vector3Int theirTilePosition = Tilemap.layoutGrid.WorldToCell(unit.transform.position);
 
@@ -46,7 +50,7 @@ public abstract class GenericUnit : MonoBehaviour
         Debug.Log("Their tile position: " + theirTilePosition.ToString());
 
         int tileDistance = 0;
-        for (int i = 0; i <= 2; i++) {
+        for (int i = 0; i <= 1; i++) {
             tileDistance += Mathf.Abs(myTilePosittion[i] - theirTilePosition[i]);
         }
 
