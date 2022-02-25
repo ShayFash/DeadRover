@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 
@@ -18,6 +19,8 @@ public class Controller : MonoBehaviour
     private Canvas unitMenu;
     private TextMeshProUGUI attackText;
     private TextMeshProUGUI healthText;
+
+    private Coroutine cancelCoroutine;
 
     private void Update()
     {
@@ -62,6 +65,7 @@ public class Controller : MonoBehaviour
                     selectedUnit.AttackUnit(unit);
                     state = State.Normal;
                     unitMenu.enabled = false;
+                    StopCoroutine(cancelCoroutine);
                 }
                 break;
 
@@ -73,6 +77,17 @@ public class Controller : MonoBehaviour
     public void Attack()
     {
         state = State.Attacking;
+        cancelCoroutine = StartCoroutine(CancelAction());
+    }
+
+    IEnumerator CancelAction()
+    {
+        while (!Input.GetKeyDown(KeyCode.Escape))
+        {
+            yield return null;
+        }
+        Debug.Log("Cancelling action");
+        state = State.Normal;
     }
 
 }
