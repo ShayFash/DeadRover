@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -18,7 +19,9 @@ public abstract class GenericUnit : MonoBehaviour
 
 
     protected Controller Controller;
+
     protected Tilemap Tilemap;
+    protected TextMeshProUGUI CountdownText;
 
     protected void Init()
     {
@@ -26,6 +29,8 @@ public abstract class GenericUnit : MonoBehaviour
         NumTurnsToSwitchSides = SwitchSidesCountdown;
 
         Controller = GameObject.FindGameObjectWithTag("GameController").GetComponent<Controller>();
+
+        CountdownText = gameObject.GetComponentInChildren<TextMeshProUGUI>();
 
         Tilemap = FindObjectOfType<Tilemap>();
 
@@ -52,6 +57,9 @@ public abstract class GenericUnit : MonoBehaviour
             SwitchingSides = true;
             SwitchSidesCountdown = NumTurnsToSwitchSides;
             Debug.Log("I'm starting to switch sides!");
+
+            CountdownText.text = SwitchSidesCountdown.ToString();
+            CountdownText.enabled = true;
         }
     }
 
@@ -68,6 +76,8 @@ public abstract class GenericUnit : MonoBehaviour
         }
 
         SwitchSidesCountdown--;
+        CountdownText.text = SwitchSidesCountdown.ToString();
+
         if (SwitchSidesCountdown <= 0)
         {
             // TODO: update visually
@@ -75,14 +85,16 @@ public abstract class GenericUnit : MonoBehaviour
             tag = CompareTag("Living") ? "Dead" : "Living";
 
             MaxHealth = Mathf.RoundToInt(MaxHealth * (1 - (0.25f * NumTimesSwitched)));
+            Health = MaxHealth;
+
+            CountdownText.enabled = false;
+
+            Debug.Log("I've switched sides");
+
             if (MaxHealth == 0)
             {
                 gameObject.SetActive(false);
-                return;
             }
-            Health = MaxHealth;
-
-            Debug.Log("I've switched sides");
         }
     }
 
