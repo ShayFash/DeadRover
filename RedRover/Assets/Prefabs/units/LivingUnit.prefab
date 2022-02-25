@@ -101,7 +101,7 @@ MonoBehaviour:
   Reach: 5
   Attack: 5
   Health: 20
-  MaxHealth: 20
+  SwitchSidesCountdown: 3
 --- !u!61 &4080435231151619936
 BoxCollider2D:
   m_ObjectHideFlags: 0

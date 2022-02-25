@@ -8,8 +8,14 @@ public abstract class GenericUnit : MonoBehaviour
     public int Reach;
     public int Attack;
     public int Health;
-    [HideInInspector]
-    public int MaxHealth;
+    public int MaxHealth { get; protected set; }
+
+    [SerializeField]
+    protected int SwitchSidesCountdown;
+    protected int NumTurnsToSwitchSides;
+    protected int NumTimesSwitched = 0;
+    protected bool SwitchingSides;
+
 
     protected Controller Controller;
     protected Tilemap Tilemap;
@@ -17,6 +23,7 @@ public abstract class GenericUnit : MonoBehaviour
     protected void Init()
     {
         MaxHealth = Health;
+        NumTurnsToSwitchSides = SwitchSidesCountdown;
 
         Controller = GameObject.FindGameObjectWithTag("GameController").GetComponent<Controller>();
 
@@ -39,15 +46,50 @@ public abstract class GenericUnit : MonoBehaviour
     {
         Debug.Log("I'm hurt");
         Health = Mathf.Max(0, Health - value);
+        if (Health == 0)
+        {
+            // TODO: update visually
+            SwitchingSides = true;
+            SwitchSidesCountdown = NumTurnsToSwitchSides;
+            Debug.Log("I'm starting to switch sides!");
+        }
+    }
+
+    public bool CanBeAttacked()
+    {
+        return !SwitchingSides;
+    }
+
+    public void DecrementTurnTimers()
+    {
+        if (!SwitchingSides)
+        {
+            return;
+        }
+
+        SwitchSidesCountdown--;
+        if (SwitchSidesCountdown <= 0)
+        {
+            // TODO: update visually
+            NumTimesSwitched++;
+            tag = CompareTag("Living") ? "Dead" : "Living";
+
+            MaxHealth = Mathf.RoundToInt(MaxHealth * (1 - (0.25f * NumTimesSwitched)));
+            if (MaxHealth == 0)
+            {
+                gameObject.SetActive(false);
+                return;
+            }
+            Health = MaxHealth;
+
+            Debug.Log("I've switched sides");
+        }
     }
 
     public bool UnitInRange(GenericUnit unit)
     {
         Vector3Int myTilePosittion = Tilemap.layoutGrid.WorldToCell(transform.position);
         Vector3Int theirTilePosition = Tilemap.layoutGrid.WorldToCell(unit.transform.position);
-
-        Debug.Log("My tile position: " + myTilePosittion.ToString());
-        Debug.Log("Their tile position: " + theirTilePosition.ToString());
 
         int tileDistance = 0;
         for (int i = 0; i <= 1; i++) {
