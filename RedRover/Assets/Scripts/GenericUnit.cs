@@ -96,7 +96,6 @@ public abstract class GenericUnit : MonoBehaviour
             tag = CompareTag("Living") ? "Dead" : "Living";
             Sprite.color = CompareTag("Living") ? Color.white : Color.black;
 
-            Debug.Log(NumTimesSwitched / (MaxAllowedSwitches + 1f));
             MaxHealth = Mathf.RoundToInt(InitialMaxHealth * (1 - (NumTimesSwitched / (MaxAllowedSwitches + 1f))));
             Health = MaxHealth;
 
