@@ -67,10 +67,10 @@ public class Controller : MonoBehaviour
     public void Attack()
     {
         state = State.Attacking;
-        cancelCoroutine = StartCoroutine(Cancel());
+        cancelCoroutine = StartCoroutine(CancelAction());
     }
 
-    IEnumerator Cancel()
+    IEnumerator CancelAction()
     {
         while (!Input.GetKeyDown(KeyCode.Escape))
         {
