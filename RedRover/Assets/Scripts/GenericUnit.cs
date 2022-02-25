@@ -46,9 +46,6 @@ public abstract class GenericUnit : MonoBehaviour
         Vector3Int myTilePosittion = Tilemap.layoutGrid.WorldToCell(transform.position);
         Vector3Int theirTilePosition = Tilemap.layoutGrid.WorldToCell(unit.transform.position);
 
-        Debug.Log("My tile position: " + myTilePosittion.ToString());
-        Debug.Log("Their tile position: " + theirTilePosition.ToString());
-
         int tileDistance = 0;
         for (int i = 0; i <= 1; i++) {
             tileDistance += Mathf.Abs(myTilePosittion[i] - theirTilePosition[i]);
