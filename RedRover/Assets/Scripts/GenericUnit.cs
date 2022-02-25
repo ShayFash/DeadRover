@@ -66,7 +66,6 @@ public abstract class GenericUnit : MonoBehaviour
             // TODO: update visually
             SwitchingSides = true;
             SwitchSidesCountdown = NumTurnsToSwitchSides;
-            Debug.Log("I'm starting to switch sides!");
 
             CountdownText.text = SwitchSidesCountdown.ToString();
             CountdownText.color = CompareTag("Living") ? Color.black : Color.white;
@@ -100,8 +99,6 @@ public abstract class GenericUnit : MonoBehaviour
             Health = MaxHealth;
 
             CountdownText.enabled = false;
-
-            Debug.Log("I've switched sides");
         }
     }
 
