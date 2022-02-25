@@ -22,6 +22,7 @@ public abstract class GenericUnit : MonoBehaviour
 
     protected Tilemap Tilemap;
     protected TextMeshProUGUI CountdownText;
+    protected SpriteRenderer Sprite;
 
     protected void Init()
     {
@@ -29,10 +30,11 @@ public abstract class GenericUnit : MonoBehaviour
         NumTurnsToSwitchSides = SwitchSidesCountdown;
 
         Controller = GameObject.FindGameObjectWithTag("GameController").GetComponent<Controller>();
+        Tilemap = FindObjectOfType<Tilemap>();
 
         CountdownText = gameObject.GetComponentInChildren<TextMeshProUGUI>();
-
-        Tilemap = FindObjectOfType<Tilemap>();
+        Sprite = gameObject.GetComponent<SpriteRenderer>();
+        Sprite.color = CompareTag("Living") ? Color.white : Color.black;
 
         Vector3Int myTilePosittion = Tilemap.layoutGrid.WorldToCell(transform.position);
         Vector3 alignedPosition = Tilemap.layoutGrid.GetCellCenterWorld(myTilePosittion);
@@ -80,9 +82,9 @@ public abstract class GenericUnit : MonoBehaviour
 
         if (SwitchSidesCountdown <= 0)
         {
-            // TODO: update visually
             NumTimesSwitched++;
             tag = CompareTag("Living") ? "Dead" : "Living";
+            Sprite.color = CompareTag("Living") ? Color.white : Color.black;
 
             MaxHealth = Mathf.RoundToInt(MaxHealth * (1 - (0.25f * NumTimesSwitched)));
             Health = MaxHealth;
