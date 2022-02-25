@@ -27,6 +27,18 @@ PrefabInstance:
       propertyPath: Health
       value: 50
       objectReference: {fileID: 0}
+    - target: {fileID: 4080435231151619950, guid: c7f62097c6984df4abf11a051a4128b5, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4080435231151619950, guid: c7f62097c6984df4abf11a051a4128b5, type: 3}
+      propertyPath: m_Color.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4080435231151619950, guid: c7f62097c6984df4abf11a051a4128b5, type: 3}
+      propertyPath: m_Color.r
+      value: 0.47107124
+      objectReference: {fileID: 0}
     - target: {fileID: 4080435231151619951, guid: c7f62097c6984df4abf11a051a4128b5, type: 3}
       propertyPath: m_RootOrder
       value: 0

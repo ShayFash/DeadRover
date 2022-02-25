@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public abstract class GenericUnit : MonoBehaviour
 {
@@ -10,12 +12,15 @@ public abstract class GenericUnit : MonoBehaviour
     public int MaxHealth;
 
     protected Controller Controller;
+    protected Tilemap Tilemap;
 
     protected void Init()
     {
         MaxHealth = Health;
 
         Controller = GameObject.FindGameObjectWithTag("GameController").GetComponent<Controller>();
+
+        Tilemap = FindObjectOfType<Tilemap>();
     }
 
 
@@ -34,23 +39,25 @@ public abstract class GenericUnit : MonoBehaviour
     public bool UnitInRange(GenericUnit unit)
     {
         // TODO: Use tiles
-        return (unit.transform.position - transform.position).magnitude < Reach;
+        Vector3Int myTilePosittion = Tilemap.layoutGrid.WorldToCell(transform.position);
+        Vector3Int theirTilePosition = Tilemap.layoutGrid.WorldToCell(unit.transform.position);
+
+        Debug.Log("My tile position: " + myTilePosittion.ToString());
+        Debug.Log("Their tile position: " + theirTilePosition.ToString());
+
+        int tileDistance = 0;
+        for (int i = 0; i <= 2; i++) {
+            tileDistance += Mathf.Abs(myTilePosittion[i] - theirTilePosition[i]);
+        }
+
+        return tileDistance <= Reach;
     }
 
-    public List<GenericUnit> UnitsInRange(List<GenericUnit> units)
+    public IEnumerable<GenericUnit> UnitsInRange(IEnumerable<GenericUnit> units)
     {
-        List<GenericUnit> nearby = new List<GenericUnit>();
+        IEnumerable<GenericUnit> inReach = from unit in units where UnitInRange(unit) select unit;
 
-        foreach (GenericUnit unit in units)
-        {
-            // TODO: use tiles
-            float dist = (unit.transform.position - transform.position).magnitude;
-            if (dist < Reach)
-            {
-                nearby.Add(unit);
-            }
-        }
-        return nearby;
+        return  inReach;
     }
 
     private void OnMouseDown()
