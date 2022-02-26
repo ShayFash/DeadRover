@@ -11,7 +11,14 @@ public class Controller : MonoBehaviour
         Attacking
     }
 
+    private enum Player
+    {
+        Living,
+        Dead
+    }
+
     private State state = State.Normal;
+    private Player activePlayer = Player.Living;   // Living starts
     
     private GenericUnit selectedUnit;
 
@@ -21,44 +28,9 @@ public class Controller : MonoBehaviour
 
     private Coroutine cancelCoroutine;
 
-    // Turn-Based System
-    private GenericUnit[] P1SelectableUnits;
-    private GenericUnit[] P2SelectableUnits;
-    private bool P1Action;
-    private bool P2Action;
-    private bool P1Selecting;
-    private bool P2Selecting;
-    
-    private bool Player1;
-    private bool Player2;
-
-    // Turn-System UI messaging
-    private string[] messages = {"Selecting", "Performing action", "Waiting"};
-    public Text P1Text;
-    public Text P2Text;
-
     private void Start()
     {
         GenericUnit[] units = FindObjectsOfType<GenericUnit>();
-
-        //
-        foreach (GenericUnit unit in units) 
-        {
-            if (unit.tag == "Living") 
-            {
-                P1SelectableUnits.Add(unit);
-            } 
-            else if (unit.tag == "Dead") 
-            {
-                P2SelectableUnits.Add(unit);
-            }
-        }
-        P1Action = true;
-        P2Action = false;
-        P1Selecting = true;
-        P2Selecting = false;
-        Player1 = true;
-        Player2 = false;
 
         unitMenu = GameObject.FindGameObjectWithTag("UnitMenu").GetComponent<Canvas>();
         TextMeshProUGUI[] unitMenuChildren = unitMenu.GetComponentsInChildren<TextMeshProUGUI>();
@@ -72,36 +44,15 @@ public class Controller : MonoBehaviour
         });
     }
 
-    // Update is called once per frame
-    void Update() 
-    {
-        if (P1Selecting) 
-        {
-            P1Text.text = "Player 1: " + messages[0];
-            P2Text.text = "Player 2: " + messages[2];
-        }
-        else if (P2Selecting) 
-        {
-            P1Text.text = "Player 1: " + messages[2];
-            P2Text.text = "Player 2: " + messages[0]; 
-        }
-        else if (P1Action)
-        {
-            P1Text.text = "Player 1: " + messages[1];
-            P2Text.text = "Player 2: " + messages[2];
-        }
-        else if (P2Action)
-        {
-            P1Text.text = "Player 1: " + messages[2];
-            P2Text.text = "Player 2: " + messages[1];
-        }
-    }
-
     public void SelectUnit(GenericUnit unit)
     {
         switch (state)
         {
             case State.Normal:
+                if (!unit.CompareTag(activePlayer.ToString())) 
+                {
+                    return;
+                }
                 selectedUnit = unit;
 
                 unitMenu.enabled = true;
@@ -110,6 +61,10 @@ public class Controller : MonoBehaviour
                 break;
 
             case State.Attacking:
+                if (unit.CompareTag(activePlayer.ToString())) 
+                {
+                    return;
+                }
                 if (!selectedUnit.CompareTag(unit.tag) && selectedUnit.UnitInRange(unit))
                 {
                     selectedUnit.AttackUnit(unit);
@@ -140,47 +95,5 @@ public class Controller : MonoBehaviour
         state = State.Normal;
     }
 
-    //One unit from one line can be picked to act
-    //After a unit acts, a unit from the other line can be picked, etc.
-
-    // Making a character switch teams
-    private void SwitchTeams() 
-    {
-        
-    } 
-
-    // Determine selection
-    private void CheckSelection() 
-    {
-        if (Player1) 
-        {
-            //for(int runs = 0; runs < 400; runs++)
-            //{
-                //terms[] = runs;
-            //}
-        }
-        else if (Player2) 
-        {
-            //for(int runs = 0; runs < 400; runs++)
-            //{
-                //terms[] = runs;
-            //}
-        }
-    }
-
-    // Changing the active player
-    private void ChangePlayer() 
-    {
-        if (Player1) 
-        {
-            Player1 = false;
-            Player2 = true;
-        }
-        else if (Player2) 
-        {
-            Player1 = true;
-            Player2 = false;
-        }
-    }
 
 }
