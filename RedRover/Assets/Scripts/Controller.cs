@@ -71,6 +71,14 @@ public class Controller : MonoBehaviour
                     state = State.Normal;
                     unitMenu.enabled = false;
                     StopCoroutine(cancelCoroutine);
+                    if (activePlayer == Player.Living) 
+                    {
+                        activePlayer = Player.Dead;
+                    }
+                    else if (activePlayer == Player.Dead) 
+                    {
+                        activePlayer = Player.Living;
+                    }
                 }
                 break;
 
