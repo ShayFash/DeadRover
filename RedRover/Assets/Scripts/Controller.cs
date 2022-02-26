@@ -71,14 +71,8 @@ public class Controller : MonoBehaviour
                     state = State.Normal;
                     unitMenu.enabled = false;
                     StopCoroutine(cancelCoroutine);
-                    if (activePlayer == Player.Living) 
-                    {
-                        activePlayer = Player.Dead;
-                    }
-                    else if (activePlayer == Player.Dead) 
-                    {
-                        activePlayer = Player.Living;
-                    }
+
+                    ChangeTurns();
                 }
                 break;
 
@@ -101,6 +95,27 @@ public class Controller : MonoBehaviour
         }
         Debug.Log("Cancelling action");
         state = State.Normal;
+    }
+
+    public void EndTurn()
+    {
+        Debug.Log("Turn has ended!");
+        state = State.Normal;
+        unitMenu.enabled = false;
+
+        ChangeTurns();
+    }
+
+    private void ChangeTurns() 
+    {
+        if (activePlayer == Player.Living) 
+        {
+            activePlayer = Player.Dead;
+        }
+        else if (activePlayer == Player.Dead) 
+        {
+            activePlayer = Player.Living;
+        }
     }
 
 
