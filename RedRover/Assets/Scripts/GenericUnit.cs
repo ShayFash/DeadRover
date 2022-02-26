@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
@@ -23,8 +24,11 @@ public abstract class GenericUnit : MonoBehaviour
     protected Controller Controller;
 
     protected Tilemap Tilemap;
-    protected TextMeshProUGUI CountdownText;
+
+    protected TextMeshProUGUI TurnCountdown;
     protected SpriteRenderer Sprite;
+
+    protected TextMeshProUGUI HealthDisplay;
 
     protected void Init()
     {
@@ -35,9 +39,15 @@ public abstract class GenericUnit : MonoBehaviour
         Controller = GameObject.FindGameObjectWithTag("GameController").GetComponent<Controller>();
         Tilemap = FindObjectOfType<Tilemap>();
 
-        CountdownText = gameObject.GetComponentInChildren<TextMeshProUGUI>();
+        TextMeshProUGUI[] childTexts = gameObject.GetComponentsInChildren<TextMeshProUGUI>();
+        TurnCountdown = Array.Find(childTexts, delegate (TextMeshProUGUI t) { return t.CompareTag("TurnCountdown"); });
+        HealthDisplay = Array.Find(childTexts, delegate (TextMeshProUGUI t) { return t.CompareTag("HealthStatDisplay"); });
+
+
         Sprite = gameObject.GetComponent<SpriteRenderer>();
         Sprite.color = CompareTag("Living") ? Color.white : Color.black;
+
+        UpdateHealthDisplay();
 
         Vector3Int myTilePosittion = Tilemap.layoutGrid.WorldToCell(transform.position);
         Vector3 alignedPosition = Tilemap.layoutGrid.GetCellCenterWorld(myTilePosittion);
@@ -56,6 +66,8 @@ public abstract class GenericUnit : MonoBehaviour
     {
         Debug.Log("I'm hurt");
         Health = Mathf.Max(0, Health - value);
+        UpdateHealthDisplay();
+
         if (Health == 0)
         {
             if (NumTimesSwitched == MaxAllowedSwitches)
@@ -63,13 +75,15 @@ public abstract class GenericUnit : MonoBehaviour
                 gameObject.SetActive(false);
                 return;
             }
-            // TODO: update visually
+
             SwitchingSides = true;
             SwitchSidesCountdown = NumTurnsToSwitchSides;
 
-            CountdownText.text = SwitchSidesCountdown.ToString();
-            CountdownText.color = CompareTag("Living") ? Color.black : Color.white;
-            CountdownText.enabled = true;
+            TurnCountdown.text = SwitchSidesCountdown.ToString();
+            TurnCountdown.color = CompareTag("Living") ? Color.black : Color.white;
+            TurnCountdown.enabled = true;
+
+            HealthDisplay.enabled = false;
         }
     }
 
@@ -86,7 +100,7 @@ public abstract class GenericUnit : MonoBehaviour
         }
 
         SwitchSidesCountdown--;
-        CountdownText.text = SwitchSidesCountdown.ToString();
+        TurnCountdown.text = SwitchSidesCountdown.ToString();
 
         if (SwitchSidesCountdown <= 0)
         {
@@ -98,7 +112,10 @@ public abstract class GenericUnit : MonoBehaviour
             MaxHealth = Mathf.RoundToInt(InitialMaxHealth * (1 - (NumTimesSwitched / (MaxAllowedSwitches + 1f))));
             Health = MaxHealth;
 
-            CountdownText.enabled = false;
+            TurnCountdown.enabled = false;
+
+            HealthDisplay.enabled = true;
+            UpdateHealthDisplay();
         }
     }
 
@@ -125,5 +142,10 @@ public abstract class GenericUnit : MonoBehaviour
     private void OnMouseDown()
     {
         Controller.SelectUnit(this);
+    }
+
+    private void UpdateHealthDisplay()
+    {
+        HealthDisplay.text = Health.ToString() + "/" + MaxHealth.ToString() + " HP";
     }
 }
