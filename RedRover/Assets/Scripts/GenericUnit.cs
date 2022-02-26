@@ -25,7 +25,7 @@ public abstract class GenericUnit : MonoBehaviour
 
     protected Tilemap Tilemap;
 
-    protected TextMeshProUGUI TurnCountdown;
+    protected TextMeshProUGUI TurnCountdownDisplay;
     protected SpriteRenderer Sprite;
 
     protected TextMeshProUGUI HealthDisplay;
@@ -40,7 +40,7 @@ public abstract class GenericUnit : MonoBehaviour
         Tilemap = FindObjectOfType<Tilemap>();
 
         TextMeshProUGUI[] childTexts = gameObject.GetComponentsInChildren<TextMeshProUGUI>();
-        TurnCountdown = Array.Find(childTexts, delegate (TextMeshProUGUI t) { return t.CompareTag("TurnCountdown"); });
+        TurnCountdownDisplay = Array.Find(childTexts, delegate (TextMeshProUGUI t) { return t.CompareTag("TurnCountdown"); });
         HealthDisplay = Array.Find(childTexts, delegate (TextMeshProUGUI t) { return t.CompareTag("HealthStatDisplay"); });
 
 
@@ -79,9 +79,9 @@ public abstract class GenericUnit : MonoBehaviour
             SwitchingSides = true;
             SwitchSidesCountdown = NumTurnsToSwitchSides;
 
-            TurnCountdown.text = SwitchSidesCountdown.ToString();
-            TurnCountdown.color = CompareTag("Living") ? Color.black : Color.white;
-            TurnCountdown.enabled = true;
+            TurnCountdownDisplay.text = SwitchSidesCountdown.ToString();
+            TurnCountdownDisplay.color = CompareTag("Living") ? Color.black : Color.white;
+            TurnCountdownDisplay.enabled = true;
 
             HealthDisplay.enabled = false;
         }
@@ -100,7 +100,7 @@ public abstract class GenericUnit : MonoBehaviour
         }
 
         SwitchSidesCountdown--;
-        TurnCountdown.text = SwitchSidesCountdown.ToString();
+        TurnCountdownDisplay.text = SwitchSidesCountdown.ToString();
 
         if (SwitchSidesCountdown <= 0)
         {
@@ -112,7 +112,7 @@ public abstract class GenericUnit : MonoBehaviour
             MaxHealth = Mathf.RoundToInt(InitialMaxHealth * (1 - (NumTimesSwitched / (MaxAllowedSwitches + 1f))));
             Health = MaxHealth;
 
-            TurnCountdown.enabled = false;
+            TurnCountdownDisplay.enabled = false;
 
             HealthDisplay.enabled = true;
             UpdateHealthDisplay();
