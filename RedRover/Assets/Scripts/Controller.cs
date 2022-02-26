@@ -26,8 +26,6 @@ public class Controller : MonoBehaviour
     private TextMeshProUGUI attackText;
     private TextMeshProUGUI healthText;
 
-    private Coroutine cancelCoroutine;
-
     private void Start()
     {
         GenericUnit[] units = FindObjectsOfType<GenericUnit>();
@@ -68,11 +66,8 @@ public class Controller : MonoBehaviour
                 if (!selectedUnit.CompareTag(unit.tag) && selectedUnit.UnitInRange(unit))
                 {
                     selectedUnit.AttackUnit(unit);
-                    state = State.Normal;
-                    unitMenu.enabled = false;
-                    StopCoroutine(cancelCoroutine);
 
-                    ChangeTurns();
+                    EndTurn();
                 }
                 break;
 
@@ -84,17 +79,6 @@ public class Controller : MonoBehaviour
     public void Attack()
     {
         state = State.Attacking;
-        cancelCoroutine = StartCoroutine(CancelAction());
-    }
-
-    IEnumerator CancelAction()
-    {
-        while (!Input.GetKeyDown(KeyCode.Escape))
-        {
-            yield return null;
-        }
-        Debug.Log("Cancelling action");
-        state = State.Normal;
     }
 
     public void EndTurn()
@@ -117,6 +101,4 @@ public class Controller : MonoBehaviour
             activePlayer = Player.Living;
         }
     }
-
-
 }
