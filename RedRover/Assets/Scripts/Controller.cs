@@ -38,39 +38,7 @@ public class Controller : MonoBehaviour
         {
             Vector3Int mousePos = GetClickedGridPosition();
             MoveSelectedUnit(mousePos);
-        }
-
-        // DEBUG MOVEMENT
-        if (Input.GetKey(KeyCode.RightArrow))
-        {
-            if (selectedUnit != null && state == State.Moving)
-            {
-                selectedUnit.transform.position += new Vector3(1, 0, 0);
-            }
-        }
-
-        if (Input.GetKey(KeyCode.LeftArrow) && state == State.Moving)
-        {
-            if (selectedUnit != null)
-            {
-                selectedUnit.transform.position -= new Vector3(1, 0, 0);
-            }
-        }
-
-        if (Input.GetKey(KeyCode.UpArrow) && state == State.Moving)
-        {
-            if (selectedUnit != null)
-            {
-                selectedUnit.transform.position += new Vector3(0, 1, 0);
-            }
-        }
-
-        if (Input.GetKey(KeyCode.DownArrow) && state == State.Moving)
-        {
-            if (selectedUnit != null)
-            {
-                selectedUnit.transform.position -= new Vector3(0, 1, 0);
-            }
+            ClearUnitMenu();
         }
     }
 
@@ -101,15 +69,20 @@ public class Controller : MonoBehaviour
                 if (unit.CanBeAttacked() && !selectedUnit.CompareTag(unit.tag) && selectedUnit.UnitInRange(unit))
                 {
                     selectedUnit.AttackUnit(unit);
-                    state = State.Normal;
-                    unitMenu.enabled = false;
-                    StopCoroutine(cancelCoroutine);
+                    ClearUnitMenu();
                 }
                 break;
 
             default:
                 break;
         }
+    }
+
+    private void ClearUnitMenu()
+    {
+        state = State.Normal;
+        unitMenu.enabled = false;
+        StopCoroutine(cancelCoroutine);
     }
 
     private Vector3Int GetClickedGridPosition()
