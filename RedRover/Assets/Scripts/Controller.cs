@@ -14,6 +14,7 @@ public class Controller : MonoBehaviour
     private State state = State.Normal;
     
     private GenericUnit selectedUnit;
+    private GenericUnit[] units;
 
     private Canvas unitMenu;
     private TextMeshProUGUI attackText;
@@ -21,9 +22,18 @@ public class Controller : MonoBehaviour
 
     private Coroutine cancelCoroutine;
 
+    private void Update()
+    {
+        if (Input.GetKeyDown("space"))
+        {
+            Debug.Log("Decrementing Turn Timers");
+            Array.ForEach(units, delegate (GenericUnit u) { u.DecrementTurnTimers(); });
+        }
+    }
+
     private void Start()
     {
-        GenericUnit[] units = FindObjectsOfType<GenericUnit>();
+        units = FindObjectsOfType<GenericUnit>();
 
         unitMenu = GameObject.FindGameObjectWithTag("UnitMenu").GetComponent<Canvas>();
         TextMeshProUGUI[] unitMenuChildren = unitMenu.GetComponentsInChildren<TextMeshProUGUI>();
@@ -50,7 +60,7 @@ public class Controller : MonoBehaviour
                 break;
 
             case State.Attacking:
-                if (!selectedUnit.CompareTag(unit.tag) && selectedUnit.UnitInRange(unit))
+                if (unit.CanBeAttacked() && !selectedUnit.CompareTag(unit.tag) && selectedUnit.UnitInRange(unit))
                 {
                     selectedUnit.AttackUnit(unit);
                     state = State.Normal;
