@@ -11,24 +11,20 @@ public class Controller : MonoBehaviour
         Attacking
     }
 
+    private enum Player
+    {
+        Living,
+        Dead
+    }
+
     private State state = State.Normal;
+    private Player activePlayer = Player.Living;   // Living starts
     
     private GenericUnit selectedUnit;
     private GenericUnit[] units;
 
     private Canvas unitMenu;
     private TextMeshProUGUI attackText;
-
-    private Coroutine cancelCoroutine;
-
-    private void Update()
-    {
-        if (Input.GetKeyDown("space"))
-        {
-            Debug.Log("Decrementing Turn Timers");
-            Array.ForEach(units, delegate (GenericUnit u) { u.DecrementTurnTimers(); });
-        }
-    }
 
     private void Start()
     {
@@ -47,6 +43,10 @@ public class Controller : MonoBehaviour
         switch (state)
         {
             case State.Normal:
+                if (!unit.CompareTag(activePlayer.ToString()) || !unit.CanBeSelected()) 
+                {
+                    return;
+                }
                 selectedUnit = unit;
 
                 unitMenu.enabled = true;
@@ -54,12 +54,16 @@ public class Controller : MonoBehaviour
                 break;
 
             case State.Attacking:
+                if (unit.CompareTag(activePlayer.ToString())) 
+                {
+                    return;
+                }
                 if (unit.CanBeAttacked() && !selectedUnit.CompareTag(unit.tag) && selectedUnit.UnitInRange(unit))
+
                 {
                     selectedUnit.AttackUnit(unit);
-                    state = State.Normal;
-                    unitMenu.enabled = false;
-                    StopCoroutine(cancelCoroutine);
+
+                    EndTurn();
                 }
                 break;
 
@@ -71,17 +75,27 @@ public class Controller : MonoBehaviour
     public void Attack()
     {
         state = State.Attacking;
-        cancelCoroutine = StartCoroutine(CancelAction());
     }
 
-    IEnumerator CancelAction()
+    public void EndTurn()
     {
-        while (!Input.GetKeyDown(KeyCode.Escape))
-        {
-            yield return null;
-        }
-        Debug.Log("Cancelling action");
+        Debug.Log("Turn has ended!");
         state = State.Normal;
+        unitMenu.enabled = false;
+
+        ChangeTurns();
     }
 
+    private void ChangeTurns() 
+    {
+        if (activePlayer == Player.Living) 
+        {
+            activePlayer = Player.Dead;
+        }
+        else if (activePlayer == Player.Dead) 
+        {
+            activePlayer = Player.Living;
+        }
+        Array.ForEach(units, delegate (GenericUnit u) { u.DecrementTurnTimers(); });
+    }
 }
