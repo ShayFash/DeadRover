@@ -1,32 +1,83 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class Controller : MonoBehaviour
 {
-    // Option: Use tags instead?!
-    public List<GenericUnit> team1 = new List<GenericUnit>();
-    public List<GenericUnit> team2 = new List<GenericUnit>();
-
-    // Update is called once per frame
-    void Update()
+    private enum State
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Debug.Log("Space key was pressed.");
-            List<GenericUnit> enemiesInRange = team1[0].GetEnemiesInRange(team2);
-            foreach (GenericUnit enemy in enemiesInRange)
-            {
-                team1[0].Attack(enemy);
-            }
-        }
+        Normal,
+        Attacking
+    }
 
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            Debug.Log("S key was pressed.");
-            Debug.Log("There are " + team1[0].GetEnemiesInRange(team2).Count + " enemies in range.");
-        }
+    private State state = State.Normal;
+    
+    private GenericUnit selectedUnit;
 
+    private Canvas unitMenu;
+    private TextMeshProUGUI attackText;
+    private TextMeshProUGUI healthText;
+
+    private Coroutine cancelCoroutine;
+
+    private void Start()
+    {
+        GenericUnit[] units = FindObjectsOfType<GenericUnit>();
+
+        unitMenu = GameObject.FindGameObjectWithTag("UnitMenu").GetComponent<Canvas>();
+        TextMeshProUGUI[] unitMenuChildren = unitMenu.GetComponentsInChildren<TextMeshProUGUI>();
+
+        attackText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) {
+            return t.gameObject.CompareTag("AttackStatDisplay");
+        });
+
+        healthText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) {
+            return t.gameObject.CompareTag("HealthStatDisplay");
+        });
+    }
+
+    public void SelectUnit(GenericUnit unit)
+    {
+        switch (state)
+        {
+            case State.Normal:
+                selectedUnit = unit;
+
+                unitMenu.enabled = true;
+                attackText.text = unit.Attack.ToString() + " Attack";
+                healthText.text = unit.Health.ToString() + "/" + unit.MaxHealth.ToString() + " HP";
+                break;
+
+            case State.Attacking:
+                if (!selectedUnit.CompareTag(unit.tag) && selectedUnit.UnitInRange(unit))
+                {
+                    selectedUnit.AttackUnit(unit);
+                    state = State.Normal;
+                    unitMenu.enabled = false;
+                    StopCoroutine(cancelCoroutine);
+                }
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    public void Attack()
+    {
+        state = State.Attacking;
+        cancelCoroutine = StartCoroutine(CancelAction());
+    }
+
+    IEnumerator CancelAction()
+    {
+        while (!Input.GetKeyDown(KeyCode.Escape))
+        {
+            yield return null;
+        }
+        Debug.Log("Cancelling action");
+        state = State.Normal;
     }
 
 }
