@@ -9,7 +9,8 @@ public class Controller : MonoBehaviour
     private enum State
     {
         Normal,
-        Attacking
+        Attacking,
+        Moving
     }
 
     private State state = State.Normal;
@@ -33,49 +34,22 @@ public class Controller : MonoBehaviour
             Array.ForEach(units, delegate (GenericUnit u) { u.DecrementTurnTimers(); });
         }
 
-        //Tilemap interaction
+        if (Input.GetMouseButtonDown(0) && state == State.Moving)
+        {
+            Vector3Int mousePos = GetClickedGridPosition();
+            MoveSelectedUnit(mousePos);
+        }
 
-        //if (Input.GetMouseButtonDown(0))
-        //{
-        //    Vector3Int mousePos = GetGridPosition();
-        //    Debug.Log("Clicked grid cell: " + mousePos);
-
-        //    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        //    RaycastHit2D hit = Physics2D.GetRayIntersection(ray, Mathf.Infinity);
-
-        //    if (hit.collider != null && hit.collider.gameObject.CompareTag("Unit"))
-        //    {
-        //        if (selectedUnit != hit.collider.gameObject)
-        //        {
-        //            selectedUnit = hit.collider.gameObject;
-        //            //not used by now
-        //            Tile clickedTile = tilemap.GetTile<Tile>(mousePos);
-        //        }
-        //        else
-        //        {
-        //            selectedUnit = null;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        if (this.selectedUnit != null)
-        //        {
-        //            MoveSelectedUnit(mousePos);
-        //        }
-
-        //    }
-
-        //}
-
+        // DEBUG MOVEMENT
         if (Input.GetKey(KeyCode.RightArrow))
         {
-            if (selectedUnit != null)
+            if (selectedUnit != null && state == State.Moving)
             {
                 selectedUnit.transform.position += new Vector3(1, 0, 0);
             }
         }
 
-        if (Input.GetKey(KeyCode.LeftArrow))
+        if (Input.GetKey(KeyCode.LeftArrow) && state == State.Moving)
         {
             if (selectedUnit != null)
             {
@@ -83,7 +57,7 @@ public class Controller : MonoBehaviour
             }
         }
 
-        if (Input.GetKey(KeyCode.UpArrow))
+        if (Input.GetKey(KeyCode.UpArrow) && state == State.Moving)
         {
             if (selectedUnit != null)
             {
@@ -91,7 +65,7 @@ public class Controller : MonoBehaviour
             }
         }
 
-        if (Input.GetKey(KeyCode.DownArrow))
+        if (Input.GetKey(KeyCode.DownArrow) && state == State.Moving)
         {
             if (selectedUnit != null)
             {
@@ -138,24 +112,41 @@ public class Controller : MonoBehaviour
         }
     }
 
-    Vector3Int GetGridPosition()
+    private Vector3Int GetClickedGridPosition()
     {
-
         Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         return grid.WorldToCell(mouseWorldPos);
-
     }
 
-    void MoveSelectedUnit(Vector3Int destGridPos)
+    private Vector3Int GetUnitGridPosition(GenericUnit unit)
     {
-        destGridPos = new Vector3Int(destGridPos.x, destGridPos.y, 5);
-        selectedUnit.transform.position = grid.CellToWorld(destGridPos);
-        Debug.Log("move from: " + selectedUnit.transform.position + " to: " + grid.CellToWorld(destGridPos));
+        return grid.WorldToCell(unit.transform.position);
     }
+
+    private void MoveSelectedUnit(Vector3Int destGridPos)
+    {
+        Vector3 worldPos = grid.GetCellCenterWorld(destGridPos);
+        selectedUnit.transform.position = new Vector3(worldPos.x, worldPos.y, 1);
+    }
+
+    private void ShowTilesInRange(GenericUnit unit)
+    {
+        Debug.Log("range: " + unit.Reach);
+        // Vector3 unitGridPos = GetUnitGridPosition(selectedUnit);
+        // TODO: Show nearby tiles differently
+    }
+    
 
     public void Attack()
     {
         state = State.Attacking;
+        cancelCoroutine = StartCoroutine(CancelAction());
+    }
+
+    public void Move()
+    {
+        state = State.Moving;
+        ShowTilesInRange(selectedUnit);
         cancelCoroutine = StartCoroutine(CancelAction());
     }
 
