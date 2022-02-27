@@ -43,7 +43,7 @@ public class Controller : MonoBehaviour
         switch (state)
         {
             case State.Normal:
-                if (!unit.CompareTag(activePlayer.ToString())) 
+                if (!unit.CompareTag(activePlayer.ToString()) || !unit.CanBeSelected()) 
                 {
                     return;
                 }
@@ -96,5 +96,6 @@ public class Controller : MonoBehaviour
         {
             activePlayer = Player.Living;
         }
+        Array.ForEach(units, delegate (GenericUnit u) { u.DecrementTurnTimers(); });
     }
 }

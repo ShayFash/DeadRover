@@ -92,6 +92,11 @@ public abstract class GenericUnit : MonoBehaviour
         return !SwitchingSides;
     }
 
+    public bool CanBeSelected()
+    {
+        return !SwitchingSides;
+    }
+
     public void DecrementTurnTimers()
     {
         if (!SwitchingSides)
