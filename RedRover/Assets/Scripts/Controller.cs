@@ -48,14 +48,21 @@ public class Controller : MonoBehaviour
                 if(selectedUnit != hit.collider.gameObject)
                 {
                     selectedUnit = hit.collider.gameObject;
-                    //Tile clickedTile = tilemap.GetTile<Tile>(mousePos);
-                    //Debug.Log(clickedTile);
-                    //clickedTile.color = Color.blue;
+                    //not used by now
+                    Tile clickedTile = tilemap.GetTile<Tile>(mousePos);
                 }
                 else
                 {
                     selectedUnit = null;
                 }
+            }
+            else
+            {
+                if (this.selectedUnit != null)
+                {
+                    MoveSelectedUnit(mousePos);
+                }
+
             }
 
         }
@@ -101,6 +108,13 @@ public class Controller : MonoBehaviour
         Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         return grid.WorldToCell(mouseWorldPos);
 
+    }
+
+    void MoveSelectedUnit(Vector3Int destGridPos)
+    {
+        destGridPos = new Vector3Int(destGridPos.x, destGridPos.y, 5);
+        selectedUnit.transform.position = grid.CellToWorld(destGridPos);
+        Debug.Log("move from: " + selectedUnit.transform.position + " to: " + grid.CellToWorld(destGridPos));
     }
 
 }
