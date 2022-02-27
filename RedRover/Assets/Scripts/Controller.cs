@@ -21,24 +21,20 @@ public class Controller : MonoBehaviour
     private Player activePlayer = Player.Living;   // Living starts
     
     private GenericUnit selectedUnit;
+    private GenericUnit[] units;
 
     private Canvas unitMenu;
     private TextMeshProUGUI attackText;
-    private TextMeshProUGUI healthText;
 
     private void Start()
     {
-        GenericUnit[] units = FindObjectsOfType<GenericUnit>();
+        units = FindObjectsOfType<GenericUnit>();
 
         unitMenu = GameObject.FindGameObjectWithTag("UnitMenu").GetComponent<Canvas>();
         TextMeshProUGUI[] unitMenuChildren = unitMenu.GetComponentsInChildren<TextMeshProUGUI>();
 
         attackText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) {
             return t.gameObject.CompareTag("AttackStatDisplay");
-        });
-
-        healthText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) {
-            return t.gameObject.CompareTag("HealthStatDisplay");
         });
     }
 
@@ -55,7 +51,6 @@ public class Controller : MonoBehaviour
 
                 unitMenu.enabled = true;
                 attackText.text = unit.Attack.ToString() + " Attack";
-                healthText.text = unit.Health.ToString() + "/" + unit.MaxHealth.ToString() + " HP";
                 break;
 
             case State.Attacking:
@@ -63,7 +58,8 @@ public class Controller : MonoBehaviour
                 {
                     return;
                 }
-                if (!selectedUnit.CompareTag(unit.tag) && selectedUnit.UnitInRange(unit))
+                if (unit.CanBeAttacked() && !selectedUnit.CompareTag(unit.tag) && selectedUnit.UnitInRange(unit))
+
                 {
                     selectedUnit.AttackUnit(unit);
 
