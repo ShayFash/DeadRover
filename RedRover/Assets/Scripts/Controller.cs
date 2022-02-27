@@ -18,7 +18,6 @@ public class Controller : MonoBehaviour
 
     private Canvas unitMenu;
     private TextMeshProUGUI attackText;
-    private TextMeshProUGUI healthText;
 
     private Coroutine cancelCoroutine;
 
@@ -41,10 +40,6 @@ public class Controller : MonoBehaviour
         attackText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) {
             return t.gameObject.CompareTag("AttackStatDisplay");
         });
-
-        healthText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) {
-            return t.gameObject.CompareTag("HealthStatDisplay");
-        });
     }
 
     public void SelectUnit(GenericUnit unit)
@@ -56,7 +51,6 @@ public class Controller : MonoBehaviour
 
                 unitMenu.enabled = true;
                 attackText.text = unit.Attack.ToString() + " Attack";
-                healthText.text = unit.Health.ToString() + "/" + unit.MaxHealth.ToString() + " HP";
                 break;
 
             case State.Attacking:
