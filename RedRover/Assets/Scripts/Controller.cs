@@ -18,7 +18,6 @@ public class Controller : MonoBehaviour
     private GenericUnit selectedUnit;
     private GenericUnit[] units;
 
-    public Grid grid;
     public Tilemap tilemap;
 
     private Canvas unitMenu;
@@ -36,8 +35,8 @@ public class Controller : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0) && state == State.Moving)
         {
-            Vector3Int mousePos = GetClickedGridPosition();
-            MoveSelectedUnit(mousePos);
+            Vector3Int mousePosOnGrid = GetClickedGridPosition();
+            MoveSelectedUnit(mousePosOnGrid);
             ClearUnitMenu();
         }
     }
@@ -88,18 +87,26 @@ public class Controller : MonoBehaviour
     private Vector3Int GetClickedGridPosition()
     {
         Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        return grid.WorldToCell(mouseWorldPos);
+        return tilemap.layoutGrid.WorldToCell(mouseWorldPos);
     }
 
     private Vector3Int GetUnitGridPosition(GenericUnit unit)
     {
-        return grid.WorldToCell(unit.transform.position);
+        return tilemap.layoutGrid.WorldToCell(unit.transform.position);
     }
 
     private void MoveSelectedUnit(Vector3Int destGridPos)
     {
-        Vector3 worldPos = grid.GetCellCenterWorld(destGridPos);
-        selectedUnit.transform.position = new Vector3(worldPos.x, worldPos.y, 1);
+        if (selectedUnit.TileInRange(destGridPos))
+        {
+            Debug.Log("In Range");
+        }
+        else
+        {
+            Debug.Log("Not in range");
+        }
+        Vector3 clickedWorldPos = tilemap.layoutGrid.GetCellCenterWorld(destGridPos);
+        selectedUnit.transform.position = new Vector3(clickedWorldPos.x, clickedWorldPos.y, 1);
     }
 
     private void ShowTilesInRange(GenericUnit unit)

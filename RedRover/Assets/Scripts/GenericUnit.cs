@@ -132,6 +132,23 @@ public abstract class GenericUnit : MonoBehaviour
         return tileDistance <= Reach;
     }
 
+    public bool TileInRange(Vector3Int clickedTilePosition)
+    {
+        Vector3Int myTilePosition = Tilemap.layoutGrid.WorldToCell(transform.position);
+
+        Debug.Log("my: " + myTilePosition + " clicked: " + clickedTilePosition);
+
+        int tileDistance = 0;
+        for (int i = 0; i <= 1; i++)
+        {
+            tileDistance += Mathf.Abs(myTilePosition[i] - clickedTilePosition[i]);
+        }
+
+        Debug.Log("dist: " + tileDistance);
+
+        return tileDistance <= Reach;
+    }
+
     public IEnumerable<GenericUnit> UnitsInRange(IEnumerable<GenericUnit> units)
     {
         IEnumerable<GenericUnit> inReach = from unit in units where UnitInRange(unit) select unit;
