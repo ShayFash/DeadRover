@@ -79,7 +79,11 @@ public class Controller : MonoBehaviour
 
     public void moveUnit(GenericUnit unit)
     {
+        gameState.RemoveUnitAtPosition(unit.GetPosition());
 
+        // TODO: move the unit
+
+        gameState.SetUnitAtPosition(unit.GetPosition(), unit);
     }
 
     public void Attack()
