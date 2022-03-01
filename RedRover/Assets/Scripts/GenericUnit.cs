@@ -11,14 +11,16 @@ public abstract class GenericUnit : MonoBehaviour
     public int Attack;
     public int Health;
     public int MaxHealth { get; protected set; }
-    protected int InitialMaxHealth;
+    public int InitialMaxHealth { get; protected set; }
+
 
     [SerializeField]
-    protected int SwitchSidesCountdown;
-    protected int NumTurnsToSwitchSides;
-    protected int NumTimesSwitched = 0;
+    protected int NumTurnsToSwitchSides = 4;
+    [SerializeField]
     protected int MaxAllowedSwitches = 3;
-    protected bool SwitchingSides;
+    public int SwitchSidesCountdown { get; protected set; }
+    public int NumTimesSwitched { get; protected set; }
+    public bool SwitchingSides { get; protected set; }
 
 
     protected Controller Controller;
@@ -34,7 +36,8 @@ public abstract class GenericUnit : MonoBehaviour
     {
         MaxHealth = Health;
         InitialMaxHealth = MaxHealth;
-        NumTurnsToSwitchSides = SwitchSidesCountdown;
+
+        NumTimesSwitched = 0;
 
         Controller = GameObject.FindGameObjectWithTag("GameController").GetComponent<Controller>();
         Tilemap = FindObjectOfType<Tilemap>();
@@ -142,6 +145,11 @@ public abstract class GenericUnit : MonoBehaviour
         IEnumerable<GenericUnit> inReach = from unit in units where UnitInRange(unit) select unit;
 
         return  inReach;
+    }
+
+    public Vector2Int GetPosition()
+    {
+        return (Vector2Int)Tilemap.layoutGrid.WorldToCell(transform.position);
     }
 
     private void OnMouseDown()
