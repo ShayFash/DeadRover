@@ -199,6 +199,7 @@ public abstract class GenericUnit : MonoBehaviour
                 if (gameObject.CompareTag("Living"))
                 {
                     Controller.SelectUnit(this);
+                    justswitched = false;
                 }
 
             }
