@@ -10,18 +10,18 @@ public abstract class GenericUnit : MonoBehaviour
     public int Reach;
     public int Attack;
     public int Health;
+    public int Movement;
     public int MaxHealth { get; protected set; }
-    protected int InitialMaxHealth;
-    protected bool justswitched = true;
-    public bool IsLivingturn = true;
+    public int InitialMaxHealth { get; protected set; }
+
 
     [SerializeField]
-    protected int SwitchSidesCountdown;
-    protected int NumTurnsToSwitchSides;
-    protected int NumTimesSwitched = 0;
+    protected int NumTurnsToSwitchSides = 4;
+    [SerializeField]
     protected int MaxAllowedSwitches = 3;
-    protected bool SwitchingSides;
-    
+    public int SwitchSidesCountdown { get; protected set; }
+    public int NumTimesSwitched { get; protected set; }
+    public bool SwitchingSides { get; protected set; }
 
 
     protected Controller Controller;
@@ -37,7 +37,8 @@ public abstract class GenericUnit : MonoBehaviour
     {
         MaxHealth = Health;
         InitialMaxHealth = MaxHealth;
-        NumTurnsToSwitchSides = SwitchSidesCountdown;
+
+        NumTimesSwitched = 0;
 
         Controller = GameObject.FindGameObjectWithTag("GameController").GetComponent<Controller>();
         Tilemap = FindObjectOfType<Tilemap>();
@@ -52,10 +53,7 @@ public abstract class GenericUnit : MonoBehaviour
 
         UpdateHealthDisplay();
 
-        Vector3Int myTilePosittion = Tilemap.layoutGrid.WorldToCell(transform.position);
-        Vector3 alignedPosition = Tilemap.layoutGrid.GetCellCenterWorld(myTilePosittion);
-        alignedPosition.y -= 0.1f;
-        transform.position = alignedPosition;
+        Move(GetPosition());
     }
 
 
@@ -63,6 +61,13 @@ public abstract class GenericUnit : MonoBehaviour
     {
         Debug.Log("Aaaaattack!");
         unit.TakeDamage(Attack);
+    }
+
+    public void Move(Vector3Int cellPosition)
+    {
+        Vector3 alignedPosition = Tilemap.layoutGrid.GetCellCenterWorld(cellPosition);
+        alignedPosition.y -= 0.1f;
+        transform.position = alignedPosition;
     }
 
     public void TakeDamage(int value)
@@ -95,6 +100,11 @@ public abstract class GenericUnit : MonoBehaviour
         return !SwitchingSides;
     }
 
+    public bool CanBeSelected()
+    {
+        return !SwitchingSides;
+    }
+
     public void DecrementTurnTimers()
     {
         if (!SwitchingSides)
@@ -108,7 +118,6 @@ public abstract class GenericUnit : MonoBehaviour
         if (SwitchSidesCountdown <= 0)
         {
             SwitchingSides = false;
-            justswitched = true;
             NumTimesSwitched++;
             tag = CompareTag("Living") ? "Dead" : "Living";
             Sprite.color = CompareTag("Living") ? Color.white : Color.black;
@@ -120,16 +129,6 @@ public abstract class GenericUnit : MonoBehaviour
 
             HealthDisplay.enabled = true;
             UpdateHealthDisplay();
-
-            if(IsLivingturn == true)
-            {
-                IsLivingturn = false;
-            }
-
-            else
-            {
-                IsLivingturn = true;
-            }
         }
     }
 
@@ -146,6 +145,13 @@ public abstract class GenericUnit : MonoBehaviour
         return tileDistance <= Reach;
     }
 
+    public IEnumerable<GenericUnit> UnitsInRange(IEnumerable<GenericUnit> units)
+    {
+        IEnumerable<GenericUnit> inReach = from unit in units where UnitInRange(unit) select unit;
+
+        return  inReach;
+    }
+
     public bool TileInRange(Vector3Int clickedTilePosition)
     {
         Vector3Int myTilePosition = Tilemap.layoutGrid.WorldToCell(transform.position);
@@ -156,16 +162,8 @@ public abstract class GenericUnit : MonoBehaviour
             tileDistance += Mathf.Abs(myTilePosition[i] - clickedTilePosition[i]);
         }
 
-        return tileDistance <= Reach;
+        return tileDistance <= Movement;
     }
-
-    public IEnumerable<GenericUnit> UnitsInRange(IEnumerable<GenericUnit> units)
-    {
-        IEnumerable<GenericUnit> inReach = from unit in units where UnitInRange(unit) select unit;
-
-        return  inReach;
-    }
-
     public IEnumerable<Vector3Int> TilesInRange(Tilemap tilemap)
     {
         foreach (Vector3Int position in tilemap.cellBounds.allPositionsWithin)
@@ -178,35 +176,14 @@ public abstract class GenericUnit : MonoBehaviour
         }
     }
 
-    // if just switched sides
-    // and player = living and object = dead
-    //player chooses for other play/A.I
-    //else
-    //player chooses their own units
-    //make player and justswitched
+    public Vector3Int GetPosition()
+    {
+        return Tilemap.layoutGrid.WorldToCell(transform.position);
+    }
+
     private void OnMouseDown()
     {
-        if(justswitched == true)
-        { 
-            if(IsLivingturn == true && gameObject.CompareTag("Dead"))
-            {     
-                Controller.SelectUnit(this);
-                justswitched = false;                  
-            }
-            // player tag == dead
-            else
-            {
-                if (gameObject.CompareTag("Living"))
-                {
-                    Controller.SelectUnit(this);
-                    justswitched = false;
-                }
-
-            }
-        
-        
-        
-        }
+        Controller.SelectUnit(this);
         
     }
 

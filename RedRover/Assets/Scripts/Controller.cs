@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -13,38 +12,40 @@ public class Controller : MonoBehaviour
         Moving
     }
 
+    private enum Player
+    {
+        Living,
+        Dead
+    }
+
     private State state = State.Normal;
+    private Player activePlayer = Player.Living;   // Living starts
     
     private GenericUnit selectedUnit;
     private GenericUnit[] units;
 
-    public Tilemap tilemap;
+    private Tilemap tilemap;
+    private GameState gameState;
 
     private Canvas unitMenu;
     private TextMeshProUGUI attackText;
 
-    private Coroutine cancelCoroutine;
-
     private void Update()
     {
-        if (Input.GetKeyDown("space"))
-        {
-            Debug.Log("Decrementing Turn Timers");
-            Array.ForEach(units, delegate (GenericUnit u) { u.DecrementTurnTimers(); });
-        }
-
         if (Input.GetMouseButtonDown(0) && state == State.Moving)
         {
             Vector3Int mousePosOnGrid = GetClickedGridPosition();
-            if (MoveSelectedUnit(mousePosOnGrid))
+            if (moveSelectedUnit(mousePosOnGrid))
             {
-                ClearUnitMenu();
+                // TODO: prevent them from moving again
+                state = State.Normal;
             }
         }
     }
 
     private void Start()
     {
+        tilemap = FindObjectOfType<Tilemap>();
         units = FindObjectsOfType<GenericUnit>();
 
         unitMenu = GameObject.FindGameObjectWithTag("UnitMenu").GetComponent<Canvas>();
@@ -53,6 +54,10 @@ public class Controller : MonoBehaviour
         attackText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) {
             return t.gameObject.CompareTag("AttackStatDisplay");
         });
+
+        gameState = new GameState();
+
+        Array.ForEach(units, delegate (GenericUnit u) { gameState.SetUnitAtPosition((Vector2Int)u.GetPosition(), u); });
     }
 
     public void SelectUnit(GenericUnit unit)
@@ -60,6 +65,10 @@ public class Controller : MonoBehaviour
         switch (state)
         {
             case State.Normal:
+                if (!unit.CompareTag(activePlayer.ToString()) || !unit.CanBeSelected()) 
+                {
+                    return;
+                }
                 selectedUnit = unit;
 
                 unitMenu.enabled = true;
@@ -67,23 +76,25 @@ public class Controller : MonoBehaviour
                 break;
 
             case State.Attacking:
+                if (unit.CompareTag(activePlayer.ToString())) 
+                {
+                    return;
+                }
                 if (unit.CanBeAttacked() && !selectedUnit.CompareTag(unit.tag) && selectedUnit.UnitInRange(unit))
+
                 {
                     selectedUnit.AttackUnit(unit);
-                    ClearUnitMenu();
+
+                    state = State.Normal;
+                    unitMenu.enabled = false;
+
+                    EndTurn();
                 }
                 break;
 
             default:
                 break;
         }
-    }
-
-    private void ClearUnitMenu()
-    {
-        state = State.Normal;
-        unitMenu.enabled = false;
-        StopCoroutine(cancelCoroutine);
     }
 
     private Vector3Int GetClickedGridPosition()
@@ -94,30 +105,8 @@ public class Controller : MonoBehaviour
         return tilemap.layoutGrid.WorldToCell(mouseWorldPos);
     }
 
-    private Vector3Int GetUnitGridPosition(GenericUnit unit)
-    {
-        return tilemap.layoutGrid.WorldToCell(unit.transform.position);
-    }
-
-    private bool MoveSelectedUnit(Vector3Int destGridPos)
-    {
-
-        if (selectedUnit.TileInRange(destGridPos))
-        {
-            RemoveColorFromTilesInRange(selectedUnit);
-
-            Vector3 clickedWorldPos = tilemap.layoutGrid.GetCellCenterWorld(destGridPos);
-            selectedUnit.transform.position = clickedWorldPos;
-            return true;
-        }
-
-        return false;
-    }
-
     private void ShowTilesInRange(GenericUnit unit)
     {
-        Vector3Int gridPos = GetUnitGridPosition(unit);
-
         foreach(Vector3Int tilePos in unit.TilesInRange(tilemap))
         {
             tilemap.SetTileFlags(tilePos, TileFlags.None);
@@ -126,7 +115,6 @@ public class Controller : MonoBehaviour
 
         tilemap.SetTileFlags(new Vector3Int(0, 0, 1), TileFlags.None);
         tilemap.SetColor(new Vector3Int(0,0,0), Color.yellow);
-
     }
 
     private void RemoveColorFromTilesInRange(GenericUnit unit)
@@ -138,27 +126,54 @@ public class Controller : MonoBehaviour
     }
 
 
+    private bool moveSelectedUnit(Vector3Int cellPosition)
+    {
+        gameState.RemoveUnitAtPosition((Vector2Int)selectedUnit.GetPosition());
+
+        if (selectedUnit.TileInRange(cellPosition))
+        {
+            RemoveColorFromTilesInRange(selectedUnit);
+
+            selectedUnit.Move(cellPosition);
+
+            gameState.SetUnitAtPosition((Vector2Int)selectedUnit.GetPosition(), selectedUnit);
+
+            return true;
+        }
+
+        return false;
+    }
+
     public void Attack()
     {
         state = State.Attacking;
-        cancelCoroutine = StartCoroutine(CancelAction());
     }
 
     public void Move()
     {
         state = State.Moving;
         ShowTilesInRange(selectedUnit);
-        cancelCoroutine = StartCoroutine(CancelAction());
     }
 
-    IEnumerator CancelAction()
+    public void EndTurn()
     {
-        while (!Input.GetKeyDown(KeyCode.Escape))
-        {
-            yield return null;
-        }
-        Debug.Log("Cancelling action");
+        Debug.Log("Turn has ended!");
         state = State.Normal;
+        unitMenu.enabled = false;
+
+        ChangeTurns();
     }
 
+    private void ChangeTurns() 
+    {
+        if (activePlayer == Player.Living) 
+        {
+            activePlayer = Player.Dead;
+        }
+        else if (activePlayer == Player.Dead) 
+        {
+            activePlayer = Player.Living;
+        }
+        Array.ForEach(units, delegate (GenericUnit u) { u.DecrementTurnTimers(); });
+    }
 }
