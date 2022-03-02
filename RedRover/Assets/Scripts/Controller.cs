@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using TMPro;
 using UnityEngine;
 
@@ -23,6 +22,8 @@ public class Controller : MonoBehaviour
     private GenericUnit selectedUnit;
     private GenericUnit[] units;
 
+    private GameState gameState;
+
     private Canvas unitMenu;
     private TextMeshProUGUI attackText;
 
@@ -36,6 +37,10 @@ public class Controller : MonoBehaviour
         attackText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) {
             return t.gameObject.CompareTag("AttackStatDisplay");
         });
+
+        gameState = new GameState();
+
+        Array.ForEach(units, delegate (GenericUnit u) { gameState.SetUnitAtPosition(u.GetPosition(), u); });
     }
 
     public void SelectUnit(GenericUnit unit)
@@ -70,6 +75,15 @@ public class Controller : MonoBehaviour
             default:
                 break;
         }
+    }
+
+    public void moveUnit(GenericUnit unit)
+    {
+        gameState.RemoveUnitAtPosition(unit.GetPosition());
+
+        // TODO: move the unit
+
+        gameState.SetUnitAtPosition(unit.GetPosition(), unit);
     }
 
     public void Attack()
