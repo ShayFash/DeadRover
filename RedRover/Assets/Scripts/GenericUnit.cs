@@ -66,7 +66,6 @@ public abstract class GenericUnit : MonoBehaviour
     public void Move(Vector3Int cellPosition)
     {
         Vector3 alignedPosition = Tilemap.layoutGrid.GetCellCenterWorld(cellPosition);
-        alignedPosition.y -= 0.1f;
         transform.position = alignedPosition;
     }
 
@@ -152,14 +151,14 @@ public abstract class GenericUnit : MonoBehaviour
         return  inReach;
     }
 
-    public bool TileInRange(Vector3Int clickedTilePosition)
+    public bool TileInRange(Vector3Int tilePosition)
     {
         Vector3Int myTilePosition = Tilemap.layoutGrid.WorldToCell(transform.position);
 
         int tileDistance = 0;
         for (int i = 0; i <= 1; i++)
         {
-            tileDistance += Mathf.Abs(myTilePosition[i] - clickedTilePosition[i]);
+            tileDistance += Mathf.Abs(myTilePosition[i] - tilePosition[i]);
         }
 
         return tileDistance <= Movement;
@@ -172,7 +171,6 @@ public abstract class GenericUnit : MonoBehaviour
             {
                 yield return position;
             }
-
         }
     }
 
