@@ -12,6 +12,8 @@ public abstract class GenericUnit : MonoBehaviour
     public int Health;
     public int MaxHealth { get; protected set; }
     protected int InitialMaxHealth;
+    protected bool justswitched = true;
+    public bool IsLivingturn = true;
 
     [SerializeField]
     protected int SwitchSidesCountdown;
@@ -19,6 +21,7 @@ public abstract class GenericUnit : MonoBehaviour
     protected int NumTimesSwitched = 0;
     protected int MaxAllowedSwitches = 3;
     protected bool SwitchingSides;
+    
 
 
     protected Controller Controller;
@@ -105,6 +108,7 @@ public abstract class GenericUnit : MonoBehaviour
         if (SwitchSidesCountdown <= 0)
         {
             SwitchingSides = false;
+            justswitched = true;
             NumTimesSwitched++;
             tag = CompareTag("Living") ? "Dead" : "Living";
             Sprite.color = CompareTag("Living") ? Color.white : Color.black;
@@ -116,6 +120,16 @@ public abstract class GenericUnit : MonoBehaviour
 
             HealthDisplay.enabled = true;
             UpdateHealthDisplay();
+
+            if(IsLivingturn == true)
+            {
+                IsLivingturn = false;
+            }
+
+            else
+            {
+                IsLivingturn = true;
+            }
         }
     }
 
@@ -164,9 +178,35 @@ public abstract class GenericUnit : MonoBehaviour
         }
     }
 
+    // if just switched sides
+    // and player = living and object = dead
+    //player chooses for other play/A.I
+    //else
+    //player chooses their own units
+    //make player and justswitched
     private void OnMouseDown()
     {
-        Controller.SelectUnit(this);
+        if(justswitched == true)
+        { 
+            if(IsLivingturn == true && gameObject.CompareTag("Dead"))
+            {     
+                Controller.SelectUnit(this);
+                justswitched = false;                  
+            }
+            // player tag == dead
+            else
+            {
+                if (gameObject.CompareTag("Living"))
+                {
+                    Controller.SelectUnit(this);
+                }
+
+            }
+        
+        
+        
+        }
+        
     }
 
     private void UpdateHealthDisplay()
