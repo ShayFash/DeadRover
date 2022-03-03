@@ -1,13 +1,15 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class Controller : MonoBehaviour
 {
     private enum State
     {
         Normal,
-        Attacking
+        Attacking,
+        Moving
     }
 
     private enum Player
@@ -22,13 +24,27 @@ public class Controller : MonoBehaviour
     private GenericUnit selectedUnit;
     private GenericUnit[] units;
 
-    private GameState gameState;
+    private Tilemap tilemap;
 
     private Canvas unitMenu;
     private TextMeshProUGUI attackText;
 
-    private void Start()
+    private void Update()
     {
+        if (Input.GetMouseButtonDown(0) && state == State.Moving)
+        {
+            Vector3Int mousePosOnGrid = GetClickedGridPosition();
+            if (moveSelectedUnit(mousePosOnGrid))
+            {
+                // TODO: prevent them from moving again
+                state = State.Normal;
+            }
+        }
+    }
+
+    private void Awake()
+    {
+        tilemap = FindObjectOfType<Tilemap>();
         units = FindObjectsOfType<GenericUnit>();
 
         unitMenu = GameObject.FindGameObjectWithTag("UnitMenu").GetComponent<Canvas>();
@@ -37,10 +53,6 @@ public class Controller : MonoBehaviour
         attackText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) {
             return t.gameObject.CompareTag("AttackStatDisplay");
         });
-
-        gameState = new GameState();
-
-        Array.ForEach(units, delegate (GenericUnit u) { gameState.SetUnitAtPosition(u.GetPosition(), u); });
     }
 
     public void SelectUnit(GenericUnit unit)
@@ -68,6 +80,9 @@ public class Controller : MonoBehaviour
                 {
                     selectedUnit.AttackUnit(unit);
 
+                    state = State.Normal;
+                    unitMenu.enabled = false;
+
                     EndTurn();
                 }
                 break;
@@ -77,13 +92,70 @@ public class Controller : MonoBehaviour
         }
     }
 
-    public void moveUnit(GenericUnit unit)
+    public Vector3Int FindClosestTile(Vector3 position)
     {
-        gameState.RemoveUnitAtPosition(unit.GetPosition());
+        int maxZ = tilemap.cellBounds.zMax;
+        position.z = maxZ + 1;
+        Vector3 positionCopy = position;
 
-        // TODO: move the unit
+        Vector3 closestTile = Vector3.positiveInfinity;
+        for (int z = 0; z < maxZ; z++)
+        {
+            positionCopy.z = z;
+            Vector3Int cellPosition = tilemap.layoutGrid.WorldToCell(positionCopy);
 
-        gameState.SetUnitAtPosition(unit.GetPosition(), unit);
+            if (tilemap.HasTile(cellPosition))
+            {
+                Vector3 cellMid = tilemap.layoutGrid.GetCellCenterWorld(cellPosition);
+                if (Vector3.Distance(position, cellMid) < Vector3.Distance(position, closestTile))
+                {
+                    closestTile = cellMid;
+                }
+            }
+        }
+        return tilemap.layoutGrid.WorldToCell(closestTile);
+    }
+
+    private Vector3Int GetClickedGridPosition()
+    {
+        Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+        return FindClosestTile(mouseWorldPos);
+    }
+
+    private void ShowTilesInRange(GenericUnit unit)
+    {
+        foreach(Vector3Int tilePos in unit.TilesInRange(tilemap))
+        {
+            tilemap.SetTileFlags(tilePos, TileFlags.None);
+            tilemap.SetColor(tilePos, Color.red);
+        }
+
+        tilemap.SetTileFlags(new Vector3Int(0, 0, 1), TileFlags.None);
+        tilemap.SetColor(new Vector3Int(0,0,0), Color.yellow);
+    }
+
+    private void RemoveColorFromTilesInRange(GenericUnit unit)
+    {
+        foreach(Vector3Int tileInRange in unit.TilesInRange(tilemap)){
+            tilemap.SetColor(tileInRange, new Color(1.0f, 1.0f, 1.0f, 1.0f));
+            tilemap.SetTileFlags(tileInRange, TileFlags.LockColor);
+        }
+    }
+
+
+    private bool moveSelectedUnit(Vector3Int cellPosition)
+    {
+        if (selectedUnit.TileInRange(cellPosition))
+        {
+            RemoveColorFromTilesInRange(selectedUnit);
+
+            selectedUnit.Move(cellPosition);
+
+            return true;
+        }
+
+        return false;
     }
 
     public void Attack()
@@ -105,11 +177,19 @@ public class Controller : MonoBehaviour
         });
     }
 
+    public void Move()
+    {
+        state = State.Moving;
+        ShowTilesInRange(selectedUnit);
+    }
+
     public void EndTurn()
     {
         Debug.Log("Turn has ended!");
         state = State.Normal;
         unitMenu.enabled = false;
+
+
 
         ChangeTurns();
     }

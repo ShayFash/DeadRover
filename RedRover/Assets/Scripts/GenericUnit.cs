@@ -11,6 +11,7 @@ public abstract class GenericUnit : MonoBehaviour
     public int Reach;
     public int Attack;
     public int Health;
+    public int Movement;
     public int MaxHealth { get; protected set; }
     public int InitialMaxHealth { get; protected set; }
 
@@ -53,10 +54,7 @@ public abstract class GenericUnit : MonoBehaviour
 
         UpdateHealthDisplay();
 
-        Vector3Int myTilePosittion = Tilemap.layoutGrid.WorldToCell(transform.position);
-        Vector3 alignedPosition = Tilemap.layoutGrid.GetCellCenterWorld(myTilePosittion);
-        alignedPosition.y -= 0.1f;
-        transform.position = alignedPosition;
+        Move(Controller.FindClosestTile(transform.position));
     }
 
 
@@ -64,6 +62,13 @@ public abstract class GenericUnit : MonoBehaviour
     {
         Debug.Log("Aaaaattack!");
         unit.TakeDamage(Attack);
+    }
+
+    public void Move(Vector3Int cellPosition)
+    {
+        Vector3 alignedPosition = Tilemap.layoutGrid.GetCellCenterWorld(cellPosition);
+        alignedPosition.z += 1;
+        transform.position = alignedPosition;
     }
 
     public void TakeDamage(int value)
@@ -174,14 +179,38 @@ public abstract class GenericUnit : MonoBehaviour
         Renderer.material = oldMaterial;
     }
 
-    public Vector2Int GetPosition()
+    public bool TileInRange(Vector3Int tilePosition)
     {
-        return (Vector2Int)Tilemap.layoutGrid.WorldToCell(transform.position);
+        Vector3Int myTilePosition = Tilemap.layoutGrid.WorldToCell(transform.position);
+
+        int tileDistance = 0;
+        for (int i = 0; i <= 1; i++)
+        {
+            tileDistance += Mathf.Abs(myTilePosition[i] - tilePosition[i]);
+        }
+
+        return tileDistance <= Movement;
+    }
+    public IEnumerable<Vector3Int> TilesInRange(Tilemap tilemap)
+    {
+        foreach (Vector3Int position in tilemap.cellBounds.allPositionsWithin)
+        {
+            if (TileInRange(position))
+            {
+                yield return position;
+            }
+        }
+    }
+
+    public Vector3Int GetTilePosition()
+    {
+        return Tilemap.layoutGrid.WorldToCell(transform.position);
     }
 
     private void OnMouseDown()
     {
         Controller.SelectUnit(this);
+        
     }
 
     private void UpdateHealthDisplay()
