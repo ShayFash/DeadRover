@@ -2,12 +2,13 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.UI;
 
 public class Controller : MonoBehaviour
 {
     private enum State
     {
-        Normal,
+        SelectingUnit,
         Attacking,
         Moving
     }
@@ -18,7 +19,7 @@ public class Controller : MonoBehaviour
         Dead
     }
 
-    private State state = State.Normal;
+    private State state = State.SelectingUnit;
     private Player activePlayer = Player.Living;   // Living starts
     
     private GenericUnit selectedUnit;
@@ -28,6 +29,9 @@ public class Controller : MonoBehaviour
 
     private Canvas unitMenu;
     private TextMeshProUGUI attackText;
+    private Button[] actionButtons;
+
+    private AI ai;
 
     private void Update()
     {
@@ -37,7 +41,7 @@ public class Controller : MonoBehaviour
             if (moveSelectedUnit(mousePosOnGrid))
             {
                 // TODO: prevent them from moving again
-                state = State.Normal;
+                state = State.SelectingUnit;
             }
         }
     }
@@ -53,13 +57,31 @@ public class Controller : MonoBehaviour
         attackText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) {
             return t.gameObject.CompareTag("AttackStatDisplay");
         });
+
+        actionButtons = unitMenu.GetComponentsInChildren<Button>();
+    }
+
+    private void Start()
+    {
+        ai = new AI(this);
+
+        aiPickUnit();
+    }
+
+    public void UnitClicked(GenericUnit Unit)
+    {
+        if (activePlayer == Player.Living && state != State.Attacking)
+        {
+            return;
+        }
+        SelectUnit(Unit);
     }
 
     public void SelectUnit(GenericUnit unit)
     {
         switch (state)
         {
-            case State.Normal:
+            case State.SelectingUnit:
                 if (!unit.CompareTag(activePlayer.ToString()) || !unit.CanBeSelected()) 
                 {
                     return;
@@ -80,7 +102,7 @@ public class Controller : MonoBehaviour
                 {
                     selectedUnit.AttackUnit(unit);
 
-                    state = State.Normal;
+                    state = State.SelectingUnit;
                     unitMenu.enabled = false;
 
                     EndTurn();
@@ -90,6 +112,40 @@ public class Controller : MonoBehaviour
             default:
                 break;
         }
+    }
+
+    public void Attack()
+    {
+        if (state == State.Attacking)
+        {
+            return;
+        }
+        state = State.Attacking;
+
+        GenericUnit[] enemyUnitsInRange = Array.FindAll(units, delegate (GenericUnit target)
+        {
+            return !selectedUnit.CompareTag(target.tag) && target.CanBeAttacked() && selectedUnit.UnitInRange(target);
+        });
+
+        Array.ForEach(enemyUnitsInRange, delegate (GenericUnit enemy)
+        {
+            StartCoroutine(enemy.ApplyAttackShader(delegate () { return state == State.Attacking; }));
+        });
+    }
+
+    public void Move()
+    {
+        state = State.Moving;
+        ShowTilesInRange(selectedUnit);
+    }
+
+    public void EndTurn()
+    {
+        Debug.Log("Turn has ended!");
+        state = State.SelectingUnit;
+        unitMenu.enabled = false;
+
+        ChangeTurns();
     }
 
     public Vector3Int FindClosestTile(Vector3 position)
@@ -158,52 +214,32 @@ public class Controller : MonoBehaviour
         return false;
     }
 
-    public void Attack()
-    {
-        if (state == State.Attacking)
-        {
-            return;
-        }
-        state = State.Attacking;
-
-        GenericUnit[] enemyUnitsInRange = Array.FindAll(units, delegate (GenericUnit target)
-        {
-            return !selectedUnit.CompareTag(target.tag) && target.CanBeAttacked() && selectedUnit.UnitInRange(target);
-        });
-
-        Array.ForEach(enemyUnitsInRange, delegate (GenericUnit enemy)
-        {
-            StartCoroutine(enemy.applyAttackShader(delegate () { return state == State.Attacking; }));
-        });
-    }
-
-    public void Move()
-    {
-        state = State.Moving;
-        ShowTilesInRange(selectedUnit);
-    }
-
-    public void EndTurn()
-    {
-        Debug.Log("Turn has ended!");
-        state = State.Normal;
-        unitMenu.enabled = false;
-
-
-
-        ChangeTurns();
-    }
-
     private void ChangeTurns() 
     {
         if (activePlayer == Player.Living) 
         {
             activePlayer = Player.Dead;
+            // TODO: Uncomment to turn off buttons for player once AI can play
+            // Array.ForEach(actionButtons, delegate (Button b) { b.interactable = false; });
         }
         else if (activePlayer == Player.Dead) 
         {
             activePlayer = Player.Living;
+
+            // Array.ForEach(actionButtons, delegate (Button b) { b.interactable = true; });
         }
         Array.ForEach(units, delegate (GenericUnit u) { u.DecrementTurnTimers(); });
+
+        // TODO: win condition
+
+        aiPickUnit();
+    }
+
+    private void aiPickUnit()
+    {
+        GenericUnit[] livingUnits = Array.FindAll(units, delegate (GenericUnit u) {
+            return u.CompareTag("Living") && u.CanBeSelected();
+        });
+        ai.PickUnit(livingUnits);
     }
 }
