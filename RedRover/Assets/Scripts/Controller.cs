@@ -38,7 +38,7 @@ public class Controller : MonoBehaviour
         if (Input.GetMouseButtonDown(0) && state == State.Moving)
         {
             Vector3Int mousePosOnGrid = GetClickedGridPosition();
-            if (moveSelectedUnit(mousePosOnGrid))
+            if (MoveSelectedUnit(mousePosOnGrid))
             {
                 // TODO: prevent them from moving again
                 state = State.SelectingUnit;
@@ -90,6 +90,12 @@ public class Controller : MonoBehaviour
 
                 unitMenu.enabled = true;
                 attackText.text = unit.Attack.ToString() + " Attack";
+
+                if (activePlayer == Player.Dead)
+                {
+                    ai.DecideActions(selectedUnit, units);
+                }
+
                 break;
 
             case State.Attacking:
@@ -172,35 +178,7 @@ public class Controller : MonoBehaviour
         return tilemap.layoutGrid.WorldToCell(closestTile);
     }
 
-    private Vector3Int GetClickedGridPosition()
-    {
-        Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-        return FindClosestTile(mouseWorldPos);
-    }
-
-    private void ShowTilesInRange(GenericUnit unit)
-    {
-        foreach(Vector3Int tilePos in unit.TilesInRange(tilemap))
-        {
-            tilemap.SetTileFlags(tilePos, TileFlags.None);
-            tilemap.SetColor(tilePos, Color.red);
-        }
-
-        tilemap.SetTileFlags(new Vector3Int(0, 0, 1), TileFlags.None);
-        tilemap.SetColor(new Vector3Int(0,0,0), Color.yellow);
-    }
-
-    private void RemoveColorFromTilesInRange(GenericUnit unit)
-    {
-        foreach(Vector3Int tileInRange in unit.TilesInRange(tilemap)){
-            tilemap.SetColor(tileInRange, new Color(1.0f, 1.0f, 1.0f, 1.0f));
-            tilemap.SetTileFlags(tileInRange, TileFlags.LockColor);
-        }
-    }
-
-
-    private bool moveSelectedUnit(Vector3Int cellPosition)
+    public bool MoveSelectedUnit(Vector3Int cellPosition)
     {
         if (selectedUnit.TileInRange(cellPosition))
         {
@@ -212,6 +190,38 @@ public class Controller : MonoBehaviour
         }
 
         return false;
+    }
+
+    public bool HasTileAtPosition(Vector3Int position)
+    {
+        return tilemap.HasTile(position);
+    }
+
+    private Vector3Int GetClickedGridPosition()
+    {
+        Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+        return FindClosestTile(mouseWorldPos);
+    }
+
+    private void ShowTilesInRange(GenericUnit unit)
+    {
+        foreach(Vector3Int tilePos in unit.TilesInRange())
+        {
+            tilemap.SetTileFlags(tilePos, TileFlags.None);
+            tilemap.SetColor(tilePos, Color.red);
+        }
+
+        tilemap.SetTileFlags(new Vector3Int(0, 0, 1), TileFlags.None);
+        tilemap.SetColor(new Vector3Int(0,0,0), Color.yellow);
+    }
+
+    private void RemoveColorFromTilesInRange(GenericUnit unit)
+    {
+        foreach(Vector3Int tileInRange in unit.TilesInRange()){
+            tilemap.SetColor(tileInRange, new Color(1.0f, 1.0f, 1.0f, 1.0f));
+            tilemap.SetTileFlags(tileInRange, TileFlags.LockColor);
+        }
     }
 
     private void ChangeTurns() 
@@ -232,7 +242,10 @@ public class Controller : MonoBehaviour
 
         checkLoseCondition();
 
-        aiPickUnit();
+        if (activePlayer == Player.Living)
+        {
+            aiPickUnit();
+        }
     }
 
     private void checkLoseCondition()
