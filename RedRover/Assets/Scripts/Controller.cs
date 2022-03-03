@@ -230,9 +230,22 @@ public class Controller : MonoBehaviour
         }
         Array.ForEach(units, delegate (GenericUnit u) { u.DecrementTurnTimers(); });
 
-        // TODO: win condition
+        checkLoseCondition();
 
         aiPickUnit();
+    }
+
+    private void checkLoseCondition()
+    {
+        bool unitsLeft = Array.Exists(units, delegate (GenericUnit u)
+        {
+            return u.CompareTag(activePlayer.ToString()) && u.CanBeSelected();
+        });
+
+        if (!unitsLeft)
+        {
+            Debug.Log(activePlayer.ToString() + " lose");
+        }
     }
 
     private void aiPickUnit()
