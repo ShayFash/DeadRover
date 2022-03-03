@@ -214,6 +214,14 @@ public class Controller : MonoBehaviour
         return tilemap.HasTile(position);
     }
 
+    public void unitEliminated()
+    {
+        units = Array.FindAll(units, delegate (GenericUnit u)
+        {
+            return !u.gameObject.activeInHierarchy;
+        });
+    }
+
     private Vector3Int GetClickedGridPosition()
     {
         Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);

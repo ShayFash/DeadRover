@@ -96,6 +96,7 @@ public abstract class GenericUnit : MonoBehaviour
             if (NumTimesSwitched == MaxAllowedSwitches)
             {
                 gameObject.SetActive(false);
+                Controller.unitEliminated();
                 return;
             }
 
