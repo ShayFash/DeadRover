@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -65,8 +66,15 @@ public class Controller : MonoBehaviour
     {
         ai = new AI(this);
 
-        aiPickUnit();
+        StartCoroutine(lateStart());
     }
+
+    private IEnumerator lateStart()
+    {
+        yield return new WaitForFixedUpdate();
+
+        aiPickUnit();
+    } 
 
     public void UnitClicked(GenericUnit Unit)
     {
@@ -90,6 +98,13 @@ public class Controller : MonoBehaviour
 
                 unitMenu.enabled = true;
                 attackText.text = unit.Attack.ToString() + " Attack";
+
+                if (activePlayer == Player.Living)
+                {
+                    StartCoroutine(selectedUnit.ApplySelectedShader(delegate () {
+                        return state == State.SelectingUnit && activePlayer == Player.Living;
+                    }));
+                }
 
                 if (activePlayer == Player.Dead)
                 {
@@ -135,7 +150,9 @@ public class Controller : MonoBehaviour
 
         Array.ForEach(enemyUnitsInRange, delegate (GenericUnit enemy)
         {
-            StartCoroutine(enemy.ApplyAttackShader(delegate () { return state == State.Attacking; }));
+            StartCoroutine(enemy.ApplyAttackShader(delegate () { 
+                return state == State.Attacking && activePlayer == Player.Living;
+            }));
         });
     }
 
