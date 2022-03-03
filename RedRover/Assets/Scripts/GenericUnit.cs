@@ -22,6 +22,8 @@ public abstract class GenericUnit : MonoBehaviour
     public int SwitchSidesCountdown { get; protected set; }
     public int NumTimesSwitched { get; protected set; }
     public bool SwitchingSides { get; protected set; }
+    public bool justswitched = true;
+    public bool IsLivingturn = true;
 
 
     protected Controller Controller;
@@ -118,6 +120,7 @@ public abstract class GenericUnit : MonoBehaviour
         if (SwitchSidesCountdown <= 0)
         {
             SwitchingSides = false;
+            justswitched = true;
             NumTimesSwitched++;
             tag = CompareTag("Living") ? "Dead" : "Living";
             Sprite.color = CompareTag("Living") ? Color.white : Color.black;
@@ -129,6 +132,16 @@ public abstract class GenericUnit : MonoBehaviour
 
             HealthDisplay.enabled = true;
             UpdateHealthDisplay();
+
+            if (IsLivingturn == true)
+            {
+                IsLivingturn = false;
+            }
+
+            else
+            {
+                IsLivingturn = true;
+            }
         }
     }
 
@@ -182,8 +195,27 @@ public abstract class GenericUnit : MonoBehaviour
 
     private void OnMouseDown()
     {
-        Controller.SelectUnit(this);
-        
+        if (justswitched == true)
+        {
+            if (IsLivingturn == true && gameObject.CompareTag("Dead"))
+            {
+                Controller.SelectUnit(this);
+                justswitched = false;
+            }
+            // player tag == dead
+            else
+            {
+                if (gameObject.CompareTag("Living"))
+                {
+                    Controller.SelectUnit(this);
+                    justswitched = false;
+                }
+
+            }
+
+
+
+        }
     }
 
     private void UpdateHealthDisplay()
