@@ -88,7 +88,21 @@ public class Controller : MonoBehaviour
 
     public void Attack()
     {
+        if (state == State.Attacking)
+        {
+            return;
+        }
         state = State.Attacking;
+
+        GenericUnit[] enemyUnitsInRange = Array.FindAll(units, delegate (GenericUnit target)
+        {
+            return !selectedUnit.CompareTag(target.tag) && target.CanBeAttacked() && selectedUnit.UnitInRange(target);
+        });
+
+        Array.ForEach(enemyUnitsInRange, delegate (GenericUnit enemy)
+        {
+            StartCoroutine(enemy.applyAttackShader(delegate () { return state == State.Attacking; }));
+        });
     }
 
     public void EndTurn()
