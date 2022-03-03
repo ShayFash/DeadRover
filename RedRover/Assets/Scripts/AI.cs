@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 public class AI
 {
@@ -29,10 +30,10 @@ public class AI
 
     private class Attack : IState
     {
-        private GenericUnit actingUnit;
+        private readonly GenericUnit actingUnit;
         private GenericUnit targetUnit;
 
-        private Attack(GenericUnit actingUnit, GenericUnit targetUnit)
+        public Attack(GenericUnit actingUnit, GenericUnit targetUnit)
         {
             this.actingUnit = actingUnit;
             this.targetUnit = targetUnit;
@@ -44,6 +45,43 @@ public class AI
         }
 
         IState IState.Transition(GenericUnit actingUnit, GenericUnit[] units)
+        {
+            return StateMachine.Transition(actingUnit, units);
+        }
+    }
+
+    private class Move : IState
+    {
+        private readonly GenericUnit actingUnit;
+        private Vector3Int tilePosition;
+
+        public Move(GenericUnit actingUnit, Vector3Int tilePosition)
+        {
+            this.actingUnit = actingUnit;
+            this.tilePosition = tilePosition;
+        }
+        void IState.DoActions(Controller controller)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        IState IState.Transition(GenericUnit actingUnit, GenericUnit[] units)
+        {
+            return StateMachine.Transition(actingUnit, units);
+        }
+    }
+
+    private class StateMachine
+    {
+        IState state;
+        Controller controller;
+
+        private StateMachine(Controller controller)
+        {
+            this.controller = controller;
+        }
+
+        public static IState Transition(GenericUnit actingUnit, GenericUnit[] units)
         {
             GenericUnit[] enemies = Array.FindAll(units, delegate (GenericUnit u)
             {
@@ -73,17 +111,38 @@ public class AI
 
             if (enemiesNearby.Length - alliesNearby.Length > 2)
             {
-                return new Move();
+                // Move away from enemy units
+                int minEnemiesNearby = 1000;
+                Vector3Int goodTilePosition = new Vector3Int(1000, 1000);
+                foreach (Vector3Int tilePos in actingUnit.TilesInRange())
+                {
+                    if (goodTilePosition.Equals(new Vector3Int(1000, 1000)))
+                    {
+                        goodTilePosition = tilePos;
+                    }
+                    GenericUnit[] enemiesThatCanReach = Array.FindAll(enemies, delegate (GenericUnit enemy)
+                    {
+                        return enemy.TileInRange(tilePos);
+                    });
+                    if (enemiesThatCanReach.Length < minEnemiesNearby)
+                    {
+                        minEnemiesNearby = enemiesThatCanReach.Length;
+                        goodTilePosition = tilePos;
+                    }
+                }
+                return new Move(actingUnit, goodTilePosition);
             }
 
             Array.Sort(enemies, delegate (GenericUnit unit1, GenericUnit unit2) {
                 if (unit1.Health == unit2.Health)
                 {
                     return 0;
-                } else if (unit1.Health > unit2.Health)
+                }
+                else if (unit1.Health > unit2.Health)
                 {
                     return 1;
-                } else
+                }
+                else
                 {
                     return 0;
                 }
@@ -96,34 +155,53 @@ public class AI
 
             if (index == -1)
             {
-                return new Move();
+                // Move towards enemy unit
+                Vector3Int myTilePostion = actingUnit.GetTilePosition();
+
+                int minTileDistance = 100000;
+                GenericUnit closestEnemy = enemies[0]; // If this crashes at some point, fix it
+                for (int i = 0; i < enemies.Length; i++)
+                {
+                    Vector3Int theirTilePosition = enemies[i].GetTilePosition();
+
+                    int tileDistance = 0;
+                    for (int d = 0; d <= 1; d++)
+                    {
+                        tileDistance += Math.Abs(myTilePostion[d] - theirTilePosition[d]);
+
+                        if (tileDistance < minTileDistance)
+                        {
+                            minTileDistance = tileDistance;
+                            closestEnemy = enemies[i];
+                        }
+                    }
+                }
+
+                Vector3Int goodTilePosition = new Vector3Int(1000, 1000);
+                foreach (Vector3Int tilePos in actingUnit.TilesInRange())
+                {
+                    if (goodTilePosition.Equals(new Vector3Int(1000, 1000)))
+                    {
+                        goodTilePosition = tilePos;
+                    }
+
+                    int tileDistance = 0;
+                    for (int d = 0; d <= 1; d++)
+                    {
+                        tileDistance += Math.Abs(tilePos[d] - closestEnemy.GetTilePosition()[d]);
+
+                        if (tileDistance < minTileDistance)
+                        {
+                            minTileDistance = tileDistance;
+                            goodTilePosition = tilePos;
+                        }
+                    }
+                }
+
+                return new Move(actingUnit, goodTilePosition);
             }
 
             return new Attack(actingUnit, enemies[index]);
-        }
-    }
-
-    private class Move : IState
-    {
-        void IState.DoActions(Controller controller)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        IState IState.Transition(GenericUnit actingUnit, GenericUnit[] units)
-        {
-            throw new System.NotImplementedException();
-        }
-    }
-
-    private class StateMachine
-    {
-        IState state;
-        Controller controller;
-
-        private StateMachine(Controller c)
-        {
-            controller = c;
         }
     }
 } 

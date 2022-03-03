@@ -169,7 +169,7 @@ public abstract class GenericUnit : MonoBehaviour
 
         return tileDistance <= Movement;
     }
-    public IEnumerable<Vector3Int> TilesInRange(Tilemap tilemap)
+    public IEnumerable<Vector3Int> TilesInRange()
     {
         foreach (Vector3Int position in tilemap.cellBounds.allPositionsWithin)
         {

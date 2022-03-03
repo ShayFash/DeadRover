@@ -181,7 +181,7 @@ public class Controller : MonoBehaviour
 
     private void ShowTilesInRange(GenericUnit unit)
     {
-        foreach(Vector3Int tilePos in unit.TilesInRange(tilemap))
+        foreach(Vector3Int tilePos in unit.TilesInRange())
         {
             tilemap.SetTileFlags(tilePos, TileFlags.None);
             tilemap.SetColor(tilePos, Color.red);
