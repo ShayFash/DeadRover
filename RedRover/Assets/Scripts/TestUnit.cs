@@ -2,7 +2,7 @@
 public class TestUnit : GenericUnit
 {
 
-    private void Awake()
+    private void Start()
     {
         Init();
     }

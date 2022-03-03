@@ -25,7 +25,6 @@ public class Controller : MonoBehaviour
     private GenericUnit[] units;
 
     private Tilemap tilemap;
-    private GameState gameState;
 
     private Canvas unitMenu;
     private TextMeshProUGUI attackText;
@@ -43,7 +42,7 @@ public class Controller : MonoBehaviour
         }
     }
 
-    private void Start()
+    private void Awake()
     {
         tilemap = FindObjectOfType<Tilemap>();
         units = FindObjectsOfType<GenericUnit>();
@@ -54,10 +53,6 @@ public class Controller : MonoBehaviour
         attackText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) {
             return t.gameObject.CompareTag("AttackStatDisplay");
         });
-
-        gameState = new GameState();
-
-        Array.ForEach(units, delegate (GenericUnit u) { gameState.SetUnitAtPosition((Vector2Int)u.GetPosition(), u); });
     }
 
     public void SelectUnit(GenericUnit unit)
@@ -97,13 +92,36 @@ public class Controller : MonoBehaviour
         }
     }
 
+    public Vector3Int FindClosestTile(Vector3 position)
+    {
+        int maxZ = tilemap.cellBounds.zMax;
+        position.z = maxZ + 1;
+        Vector3 positionCopy = position;
+
+        Vector3 closestTile = Vector3.positiveInfinity;
+        for (int z = 0; z < maxZ; z++)
+        {
+            positionCopy.z = z;
+            Vector3Int cellPosition = tilemap.layoutGrid.WorldToCell(positionCopy);
+
+            if (tilemap.HasTile(cellPosition))
+            {
+                Vector3 cellMid = tilemap.layoutGrid.GetCellCenterWorld(cellPosition);
+                if (Vector3.Distance(position, cellMid) < Vector3.Distance(position, closestTile))
+                {
+                    closestTile = cellMid;
+                }
+            }
+        }
+        return tilemap.layoutGrid.WorldToCell(closestTile);
+    }
+
     private Vector3Int GetClickedGridPosition()
     {
         // TODO: check to see if this is messed up as well
         Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mouseWorldPos.z = 0;
 
-        return tilemap.layoutGrid.WorldToCell(mouseWorldPos);
+        return FindClosestTile(mouseWorldPos);
     }
 
     private void ShowTilesInRange(GenericUnit unit)
@@ -129,15 +147,11 @@ public class Controller : MonoBehaviour
 
     private bool moveSelectedUnit(Vector3Int cellPosition)
     {
-        gameState.RemoveUnitAtPosition((Vector2Int)selectedUnit.GetPosition());
-
         if (selectedUnit.TileInRange(cellPosition))
         {
             RemoveColorFromTilesInRange(selectedUnit);
 
             selectedUnit.Move(cellPosition);
-
-            gameState.SetUnitAtPosition((Vector2Int)selectedUnit.GetPosition(), selectedUnit);
 
             return true;
         }
@@ -161,6 +175,8 @@ public class Controller : MonoBehaviour
         Debug.Log("Turn has ended!");
         state = State.Normal;
         unitMenu.enabled = false;
+
+
 
         ChangeTurns();
     }

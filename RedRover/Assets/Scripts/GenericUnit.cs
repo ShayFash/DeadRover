@@ -53,7 +53,7 @@ public abstract class GenericUnit : MonoBehaviour
 
         UpdateHealthDisplay();
 
-        Move(GetPosition());
+        Move(Controller.FindClosestTile(transform.position));
     }
 
 
@@ -66,6 +66,7 @@ public abstract class GenericUnit : MonoBehaviour
     public void Move(Vector3Int cellPosition)
     {
         Vector3 alignedPosition = Tilemap.layoutGrid.GetCellCenterWorld(cellPosition);
+        alignedPosition.z += 1;
         transform.position = alignedPosition;
     }
 
@@ -176,7 +177,7 @@ public abstract class GenericUnit : MonoBehaviour
         }
     }
 
-    public Vector3Int GetPosition()
+    public Vector3Int GetTilePosition()
     {
         return Tilemap.layoutGrid.WorldToCell(transform.position);
     }
