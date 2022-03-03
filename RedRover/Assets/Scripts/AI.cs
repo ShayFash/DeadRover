@@ -27,7 +27,6 @@ public class AI
 
     private interface IState
     {
-        public IState Transition(GenericUnit actingUnit, GenericUnit[] units);
         public void DoActions(Controller controller);
     }
 
@@ -45,11 +44,6 @@ public class AI
             controller.Attack();
             controller.SelectUnit(targetUnit);
         }
-
-        IState IState.Transition(GenericUnit actingUnit, GenericUnit[] units)
-        {
-            return StateMachine.Transition(actingUnit, units);
-        }
     }
 
     private class Move : IState
@@ -65,11 +59,6 @@ public class AI
             Debug.Log("Moved unit");
             controller.Move();
             controller.MoveSelectedUnit(tilePosition);
-        }
-
-        IState IState.Transition(GenericUnit actingUnit, GenericUnit[] units)
-        {
-            return StateMachine.Transition(actingUnit, units);
         }
     }
 
@@ -101,7 +90,7 @@ public class AI
             }
         }
 
-        public static IState Transition(GenericUnit actingUnit, GenericUnit[] units)
+        private IState Transition(GenericUnit actingUnit, GenericUnit[] units)
         {
             GenericUnit[] enemies = Array.FindAll(units, delegate (GenericUnit u)
             {
@@ -129,13 +118,17 @@ public class AI
                 return nearbyEnemyInRange || nearToActingUnit;
             });
 
-            if (enemiesNearby.Length - alliesNearby.Length > 2)
+            if (enemiesNearby.Length - alliesNearby.Length >= 2)
             {
                 // Move away from enemy units
                 int minEnemiesNearby = 1000;
                 Vector3Int goodTilePosition = new Vector3Int(1000, 1000);
                 foreach (Vector3Int tilePos in actingUnit.TilesInRange())
                 {
+                    if (!controller.HasTileAtPosition(tilePos))
+                    {
+                        continue;
+                    }
                     if (goodTilePosition.Equals(new Vector3Int(1000, 1000)))
                     {
                         goodTilePosition = tilePos;
@@ -144,7 +137,7 @@ public class AI
                     {
                         return enemy.TileInRange(tilePos);
                     });
-                    if (enemiesThatCanReach.Length < minEnemiesNearby)
+                    if (enemiesThatCanReach.Length <= minEnemiesNearby)
                     {
                         minEnemiesNearby = enemiesThatCanReach.Length;
                         goodTilePosition = tilePos;
@@ -200,6 +193,10 @@ public class AI
                 Vector3Int goodTilePosition = new Vector3Int(1000, 1000);
                 foreach (Vector3Int tilePos in actingUnit.TilesInRange())
                 {
+                    if (!controller.HasTileAtPosition(tilePos))
+                    {
+                        continue;
+                    }
                     if (goodTilePosition.Equals(new Vector3Int(1000, 1000)))
                     {
                         goodTilePosition = tilePos;
@@ -210,7 +207,7 @@ public class AI
                     {
                         tileDistance += Math.Abs(tilePos[d] - closestEnemy.GetTilePosition()[d]);
 
-                        if (tileDistance < minTileDistance)
+                        if (tileDistance <= minTileDistance)
                         {
                             minTileDistance = tileDistance;
                             goodTilePosition = tilePos;

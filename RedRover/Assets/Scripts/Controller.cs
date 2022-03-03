@@ -192,6 +192,11 @@ public class Controller : MonoBehaviour
         return false;
     }
 
+    public bool HasTileAtPosition(Vector3Int position)
+    {
+        return tilemap.HasTile(position);
+    }
+
     private Vector3Int GetClickedGridPosition()
     {
         Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
