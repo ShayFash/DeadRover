@@ -57,6 +57,20 @@ public abstract class GenericUnit : MonoBehaviour
         Move(Controller.FindClosestTile(transform.position));
     }
 
+    public bool CanBeAttacked()
+    {
+        return !SwitchingSides;
+    }
+
+    public bool CanBeSelected()
+    {
+        return !SwitchingSides;
+    }
+
+    public Vector3Int GetTilePosition()
+    {
+        return Tilemap.layoutGrid.WorldToCell(transform.position);
+    }
 
     public void AttackUnit(GenericUnit unit)
     {
@@ -94,16 +108,6 @@ public abstract class GenericUnit : MonoBehaviour
 
             HealthDisplay.enabled = false;
         }
-    }
-
-    public bool CanBeAttacked()
-    {
-        return !SwitchingSides;
-    }
-
-    public bool CanBeSelected()
-    {
-        return !SwitchingSides;
     }
 
     public void DecrementTurnTimers()
@@ -153,7 +157,30 @@ public abstract class GenericUnit : MonoBehaviour
         return inReach;
     }
 
-    public IEnumerator applyAttackShader(Func<bool> continueWhile)
+    public bool TileInRange(Vector3Int tilePosition)
+    {
+        Vector3Int myTilePosition = Tilemap.layoutGrid.WorldToCell(transform.position);
+
+        int tileDistance = 0;
+        for (int i = 0; i <= 1; i++)
+        {
+            tileDistance += Mathf.Abs(myTilePosition[i] - tilePosition[i]);
+        }
+
+        return tileDistance <= Movement;
+    }
+    public IEnumerable<Vector3Int> TilesInRange(Tilemap tilemap)
+    {
+        foreach (Vector3Int position in tilemap.cellBounds.allPositionsWithin)
+        {
+            if (TileInRange(position))
+            {
+                yield return position;
+            }
+        }
+    }
+
+    public IEnumerator ApplyAttackShader(Func<bool> continueWhile)
     {
         Material oldMaterial = Renderer.material;
 
@@ -179,37 +206,9 @@ public abstract class GenericUnit : MonoBehaviour
         Renderer.material = oldMaterial;
     }
 
-    public bool TileInRange(Vector3Int tilePosition)
-    {
-        Vector3Int myTilePosition = Tilemap.layoutGrid.WorldToCell(transform.position);
-
-        int tileDistance = 0;
-        for (int i = 0; i <= 1; i++)
-        {
-            tileDistance += Mathf.Abs(myTilePosition[i] - tilePosition[i]);
-        }
-
-        return tileDistance <= Movement;
-    }
-    public IEnumerable<Vector3Int> TilesInRange(Tilemap tilemap)
-    {
-        foreach (Vector3Int position in tilemap.cellBounds.allPositionsWithin)
-        {
-            if (TileInRange(position))
-            {
-                yield return position;
-            }
-        }
-    }
-
-    public Vector3Int GetTilePosition()
-    {
-        return Tilemap.layoutGrid.WorldToCell(transform.position);
-    }
-
     private void OnMouseDown()
     {
-        Controller.SelectUnit(this);
+        Controller.UnitClicked(this);
         
     }
 
