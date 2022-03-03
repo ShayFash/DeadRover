@@ -212,6 +212,21 @@ public abstract class GenericUnit : MonoBehaviour
         // Renderer.material = oldMaterial;
     }
 
+    public IEnumerator ApplySelectedShader(Func<bool> continueWhile)
+    {
+        Color oldColor = Renderer.color;
+
+        Renderer.color = Color.blue;
+
+        while (continueWhile())
+        {
+
+            yield return new WaitForEndOfFrame();
+        }
+
+        Renderer.color = oldColor;
+    }
+
     private void OnMouseDown()
     {
         Controller.UnitClicked(this);

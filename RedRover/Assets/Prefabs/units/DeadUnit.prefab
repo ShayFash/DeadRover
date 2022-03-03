@@ -21,11 +21,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4080435231151619949, guid: c7f62097c6984df4abf11a051a4128b5, type: 3}
       propertyPath: Attack
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4080435231151619949, guid: c7f62097c6984df4abf11a051a4128b5, type: 3}
       propertyPath: Health
-      value: 50
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 4080435231151619950, guid: c7f62097c6984df4abf11a051a4128b5, type: 3}
       propertyPath: m_Color.b
