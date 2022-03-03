@@ -134,7 +134,6 @@ public abstract class GenericUnit : MonoBehaviour
 
     public bool UnitInRange(GenericUnit unit)
     {
-        // TODO: make sure this isn't messed up
         Vector3Int myTilePosittion = Tilemap.layoutGrid.WorldToCell(transform.position);
         Vector3Int theirTilePosition = Tilemap.layoutGrid.WorldToCell(unit.transform.position);
 
@@ -155,7 +154,6 @@ public abstract class GenericUnit : MonoBehaviour
 
     public bool TileInRange(Vector3Int tilePosition)
     {
-        // TODO: fix unit z position messing with which x, y we get
         Vector3Int myTilePosition = Tilemap.layoutGrid.WorldToCell(transform.position);
 
         int tileDistance = 0;

@@ -118,7 +118,6 @@ public class Controller : MonoBehaviour
 
     private Vector3Int GetClickedGridPosition()
     {
-        // TODO: check to see if this is messed up as well
         Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
         return FindClosestTile(mouseWorldPos);
