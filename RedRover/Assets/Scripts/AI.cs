@@ -4,10 +4,12 @@ using UnityEngine;
 public class AI
 {
     private readonly Controller controller;
+    private readonly StateMachine stateMachine;
 
     public AI(Controller controller)
     {
         this.controller = controller;
+        stateMachine = new StateMachine(controller);
     }
     public void PickUnit(GenericUnit[] units)
     {
@@ -15,11 +17,12 @@ public class AI
         GenericUnit unit = units[index];
 
         controller.SelectUnit(unit);
+        Debug.Log("Picked unit");
     }
 
     public void DecideActions(GenericUnit actingUnit, GenericUnit[] units)
     {
-
+        stateMachine.DecideActions(actingUnit, units);
     }
 
     private interface IState
@@ -30,16 +33,15 @@ public class AI
 
     private class Attack : IState
     {
-        private readonly GenericUnit actingUnit;
         private GenericUnit targetUnit;
 
-        public Attack(GenericUnit actingUnit, GenericUnit targetUnit)
+        public Attack(GenericUnit targetUnit)
         {
-            this.actingUnit = actingUnit;
             this.targetUnit = targetUnit;
         }
         void IState.DoActions(Controller controller)
         {
+            Debug.Log("Attacked unit");
             controller.Attack();
             controller.SelectUnit(targetUnit);
         }
@@ -52,17 +54,17 @@ public class AI
 
     private class Move : IState
     {
-        private readonly GenericUnit actingUnit;
         private Vector3Int tilePosition;
 
-        public Move(GenericUnit actingUnit, Vector3Int tilePosition)
+        public Move(Vector3Int tilePosition)
         {
-            this.actingUnit = actingUnit;
             this.tilePosition = tilePosition;
         }
         void IState.DoActions(Controller controller)
         {
-            throw new System.NotImplementedException();
+            Debug.Log("Moved unit");
+            controller.Move();
+            controller.MoveSelectedUnit(tilePosition);
         }
 
         IState IState.Transition(GenericUnit actingUnit, GenericUnit[] units)
@@ -76,9 +78,27 @@ public class AI
         IState state;
         Controller controller;
 
-        private StateMachine(Controller controller)
+        public StateMachine(Controller controller)
         {
             this.controller = controller;
+        }
+
+        public void DecideActions(GenericUnit actingUnit, GenericUnit[] units)
+        {
+            state = Transition(actingUnit, units);
+            state.DoActions(controller);
+
+            if (state.GetType().Equals(typeof(Move)))
+            {
+                state = Transition(actingUnit, units);
+                if (state.GetType().Equals(typeof(Attack)))
+                {
+                    state.DoActions(controller);
+                } else
+                {
+                    controller.EndTurn();
+                }
+            }
         }
 
         public static IState Transition(GenericUnit actingUnit, GenericUnit[] units)
@@ -130,7 +150,7 @@ public class AI
                         goodTilePosition = tilePos;
                     }
                 }
-                return new Move(actingUnit, goodTilePosition);
+                return new Move(goodTilePosition);
             }
 
             Array.Sort(enemies, delegate (GenericUnit unit1, GenericUnit unit2) {
@@ -198,10 +218,10 @@ public class AI
                     }
                 }
 
-                return new Move(actingUnit, goodTilePosition);
+                return new Move(goodTilePosition);
             }
 
-            return new Attack(actingUnit, enemies[index]);
+            return new Attack(enemies[index]);
         }
     }
 } 

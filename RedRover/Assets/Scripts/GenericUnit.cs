@@ -171,7 +171,7 @@ public abstract class GenericUnit : MonoBehaviour
     }
     public IEnumerable<Vector3Int> TilesInRange()
     {
-        foreach (Vector3Int position in tilemap.cellBounds.allPositionsWithin)
+        foreach (Vector3Int position in Tilemap.cellBounds.allPositionsWithin)
         {
             if (TileInRange(position))
             {
@@ -182,28 +182,34 @@ public abstract class GenericUnit : MonoBehaviour
 
     public IEnumerator ApplyAttackShader(Func<bool> continueWhile)
     {
-        Material oldMaterial = Renderer.material;
+        // Material oldMaterial = Renderer.material;
 
-        Material material = new Material(Shader.Find("Shader Graphs/PulseHighlight"));
-        material.color = Color.red;
-        material.SetFloat("_Intensity", 0.5f);
-        material.SetFloat("_Speed", 3);
-        material.SetFloat("_TimeElapsed", 0);
+        // Material material = new Material(Shader.Find("Shader Graphs/PulseHighlight"));
+        // material.color = Color.red;
+        // material.SetFloat("_Intensity", 0.5f);
+        // material.SetFloat("_Speed", 3);
+        // material.SetFloat("_TimeElapsed", 0);
 
-        Renderer.material = material;
+        // Renderer.material = material;
 
-        float timeElasped = 0;
+        // float timeElasped = 0;
+
+        Color oldColor = Renderer.color;
+
+        Renderer.color = Color.red;
 
         while (continueWhile())
         {
-            timeElasped += Time.deltaTime;
+            // timeElasped += Time.deltaTime;
             // This is inefficient for a lot of materials, but it won't matter for this game
-            Renderer.material.SetFloat("_TimeElapsed", timeElasped);
+            // Renderer.material.SetFloat("_TimeElapsed", timeElasped);
 
             yield return new WaitForEndOfFrame();
         }
 
-        Renderer.material = oldMaterial;
+        Renderer.color = oldColor;
+
+        // Renderer.material = oldMaterial;
     }
 
     private void OnMouseDown()

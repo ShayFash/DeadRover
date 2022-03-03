@@ -38,7 +38,7 @@ public class Controller : MonoBehaviour
         if (Input.GetMouseButtonDown(0) && state == State.Moving)
         {
             Vector3Int mousePosOnGrid = GetClickedGridPosition();
-            if (moveSelectedUnit(mousePosOnGrid))
+            if (MoveSelectedUnit(mousePosOnGrid))
             {
                 // TODO: prevent them from moving again
                 state = State.SelectingUnit;
@@ -90,6 +90,12 @@ public class Controller : MonoBehaviour
 
                 unitMenu.enabled = true;
                 attackText.text = unit.Attack.ToString() + " Attack";
+
+                if (activePlayer == Player.Dead)
+                {
+                    ai.DecideActions(selectedUnit, units);
+                }
+
                 break;
 
             case State.Attacking:
@@ -172,6 +178,20 @@ public class Controller : MonoBehaviour
         return tilemap.layoutGrid.WorldToCell(closestTile);
     }
 
+    public bool MoveSelectedUnit(Vector3Int cellPosition)
+    {
+        if (selectedUnit.TileInRange(cellPosition))
+        {
+            RemoveColorFromTilesInRange(selectedUnit);
+
+            selectedUnit.Move(cellPosition);
+
+            return true;
+        }
+
+        return false;
+    }
+
     private Vector3Int GetClickedGridPosition()
     {
         Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -193,25 +213,10 @@ public class Controller : MonoBehaviour
 
     private void RemoveColorFromTilesInRange(GenericUnit unit)
     {
-        foreach(Vector3Int tileInRange in unit.TilesInRange(tilemap)){
+        foreach(Vector3Int tileInRange in unit.TilesInRange()){
             tilemap.SetColor(tileInRange, new Color(1.0f, 1.0f, 1.0f, 1.0f));
             tilemap.SetTileFlags(tileInRange, TileFlags.LockColor);
         }
-    }
-
-
-    private bool moveSelectedUnit(Vector3Int cellPosition)
-    {
-        if (selectedUnit.TileInRange(cellPosition))
-        {
-            RemoveColorFromTilesInRange(selectedUnit);
-
-            selectedUnit.Move(cellPosition);
-
-            return true;
-        }
-
-        return false;
     }
 
     private void ChangeTurns() 
@@ -232,7 +237,10 @@ public class Controller : MonoBehaviour
 
         checkLoseCondition();
 
-        aiPickUnit();
+        if (activePlayer == Player.Living)
+        {
+            aiPickUnit();
+        }
     }
 
     private void checkLoseCondition()
