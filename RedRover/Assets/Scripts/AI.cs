@@ -16,6 +16,8 @@ public class AI
         int index = UnityEngine.Random.Range(0, units.Length);
         GenericUnit unit = units[index];
 
+        
+
         controller.SelectUnit(unit);
         Debug.Log("Picked unit");
     }

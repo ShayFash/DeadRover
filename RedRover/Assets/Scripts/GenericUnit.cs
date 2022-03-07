@@ -20,6 +20,7 @@ public abstract class GenericUnit : MonoBehaviour
     protected int NumTurnsToSwitchSides = 4;
     [SerializeField]
     protected int MaxAllowedSwitches = 3;
+    public int TurnTimer = 0;
     public int SwitchSidesCountdown { get; protected set; }
     public int NumTimesSwitched { get; protected set; }
     public bool SwitchingSides { get; protected set; }
@@ -96,7 +97,7 @@ public abstract class GenericUnit : MonoBehaviour
             if (NumTimesSwitched == MaxAllowedSwitches)
             {
                 gameObject.SetActive(false);
-                Controller.unitEliminated();
+                Controller.UnitEliminated();
                 return;
             }
 

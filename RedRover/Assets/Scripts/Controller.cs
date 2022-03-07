@@ -73,7 +73,7 @@ public class Controller : MonoBehaviour
     {
         yield return new WaitForFixedUpdate();
 
-        aiPickUnit();
+        AiPickUnit();
     } 
 
     public void UnitClicked(GenericUnit Unit)
@@ -214,7 +214,7 @@ public class Controller : MonoBehaviour
         return tilemap.HasTile(position);
     }
 
-    public void unitEliminated()
+    public void UnitEliminated()
     {
         units = Array.FindAll(units, delegate (GenericUnit u)
         {
@@ -265,15 +265,15 @@ public class Controller : MonoBehaviour
         }
         Array.ForEach(units, delegate (GenericUnit u) { u.DecrementTurnTimers(); });
 
-        checkLoseCondition();
+        CheckLoseCondition();
 
         if (activePlayer == Player.Living)
         {
-            aiPickUnit();
+            AiPickUnit();
         }
     }
 
-    private void checkLoseCondition()
+    private void CheckLoseCondition()
     {
         bool unitsLeft = Array.Exists(units, delegate (GenericUnit u)
         {
@@ -286,7 +286,7 @@ public class Controller : MonoBehaviour
         }
     }
 
-    private void aiPickUnit()
+    private void AiPickUnit()
     {
         GenericUnit[] livingUnits = Array.FindAll(units, delegate (GenericUnit u) {
             return u.CompareTag("Living") && u.CanBeSelected();
