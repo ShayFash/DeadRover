@@ -104,6 +104,8 @@ public abstract class GenericUnit : MonoBehaviour
             SwitchingSides = true;
             SwitchSidesCountdown = NumTurnsToSwitchSides;
 
+            TurnTimer = 0;
+
             TurnCountdownDisplay.text = SwitchSidesCountdown.ToString();
             TurnCountdownDisplay.color = CompareTag("Living") ? Color.black : Color.white;
             TurnCountdownDisplay.enabled = true;

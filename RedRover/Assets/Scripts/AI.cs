@@ -13,10 +13,40 @@ public class AI
     }
     public void PickUnit(GenericUnit[] units)
     {
-        int index = UnityEngine.Random.Range(0, units.Length);
-        GenericUnit unit = units[index];
+        GenericUnit unit;
+        int index;
 
-        
+        if (units.Length > 2)
+        {
+            do
+            {
+                index = UnityEngine.Random.Range(0, units.Length);
+                unit = units[index];
+            } while (unit.TurnTimer != 0);
+
+            unit.TurnTimer = 3;
+        }
+        else if(units.Length == 2)
+        {
+            unit = units[0].TurnTimer < units[1].TurnTimer ? units[0] : units[1];
+            //Reset al turn timers
+            foreach(GenericUnit u in units)
+            {
+                u.TurnTimer = 0;
+            }
+            unit.TurnTimer = 2;
+        }
+        else
+        {
+            unit = units[0];
+            unit.TurnTimer = 0;
+        }
+
+        //Lower all TurnTimers
+        foreach(GenericUnit u in units)
+        {
+            u.TurnTimer = Mathf.Max(0, u.TurnTimer - 1);
+        }
 
         controller.SelectUnit(unit);
         Debug.Log("Picked unit");
