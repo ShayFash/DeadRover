@@ -23,7 +23,7 @@ public abstract class GenericUnit : MonoBehaviour
     public int SwitchSidesCountdown { get; protected set; }
     public int NumTimesSwitched { get; protected set; }
     public bool SwitchingSides { get; protected set; }
-
+    public bool IsEliminated { get; protected set; }
 
     protected Controller Controller;
 
@@ -40,6 +40,7 @@ public abstract class GenericUnit : MonoBehaviour
         InitialMaxHealth = MaxHealth;
 
         NumTimesSwitched = 0;
+        IsEliminated = false;
 
         Controller = GameObject.FindGameObjectWithTag("GameController").GetComponent<Controller>();
         Tilemap = FindObjectOfType<Tilemap>();
@@ -59,12 +60,12 @@ public abstract class GenericUnit : MonoBehaviour
 
     public bool CanBeAttacked()
     {
-        return !SwitchingSides;
+        return !SwitchingSides && !IsEliminated;
     }
 
     public bool CanBeSelected()
     {
-        return !SwitchingSides;
+        return !SwitchingSides && !IsEliminated;
     }
 
     public Vector3Int GetTilePosition()
@@ -96,7 +97,7 @@ public abstract class GenericUnit : MonoBehaviour
             if (NumTimesSwitched == MaxAllowedSwitches)
             {
                 gameObject.SetActive(false);
-                Controller.unitEliminated();
+                IsEliminated = true;
                 return;
             }
 

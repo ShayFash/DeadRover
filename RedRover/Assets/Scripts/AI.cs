@@ -27,7 +27,7 @@ public class AI
 
     private interface IState
     {
-        public void DoActions(Controller controller);
+        void DoActions(Controller controller);
     }
 
     private class Attack : IState
