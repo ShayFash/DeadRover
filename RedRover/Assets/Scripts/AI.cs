@@ -36,10 +36,15 @@ public class AI
             }
             unit.TurnTimer = 2;
         }
-        else
+        else if(units.Length == 1)
         {
             unit = units[0];
             unit.TurnTimer = 0;
+        }
+        else
+        {
+            Debug.Log("No unit left to pick");
+            return;
         }
 
         //Lower all TurnTimers
