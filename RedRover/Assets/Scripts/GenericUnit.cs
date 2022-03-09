@@ -20,7 +20,7 @@ public abstract class GenericUnit : MonoBehaviour
     protected int NumTurnsToSwitchSides = 4;
     [SerializeField]
     protected int MaxAllowedSwitches = 3;
-    public int TurnTimer = 0;
+    public int SelectionTimer = 0;
     public int SwitchSidesCountdown { get; protected set; }
     public int NumTimesSwitched { get; protected set; }
     public bool SwitchingSides { get; protected set; }
@@ -65,7 +65,17 @@ public abstract class GenericUnit : MonoBehaviour
 
     public bool CanBeSelected()
     {
-        return !SwitchingSides;
+        return !SwitchingSides && SelectionTimer == 0;
+    }
+
+    public void StartSelectionTimer(int value)
+    {
+        SelectionTimer = 3;
+    }
+
+    public void ResetSelectionTimer()
+    {
+        SelectionTimer = 0;
     }
 
     public Vector3Int GetTilePosition()
@@ -104,8 +114,6 @@ public abstract class GenericUnit : MonoBehaviour
             SwitchingSides = true;
             SwitchSidesCountdown = NumTurnsToSwitchSides;
 
-            TurnTimer = 0;
-
             TurnCountdownDisplay.text = SwitchSidesCountdown.ToString();
             TurnCountdownDisplay.color = CompareTag("Living") ? Color.black : Color.white;
             TurnCountdownDisplay.enabled = true;
@@ -118,10 +126,12 @@ public abstract class GenericUnit : MonoBehaviour
     {
         if (!SwitchingSides)
         {
+            SelectionTimer = Mathf.Max(0, SelectionTimer - 1);
             return;
         }
 
         SwitchSidesCountdown--;
+        ResetSelectionTimer();
         TurnCountdownDisplay.text = SwitchSidesCountdown.ToString();
 
         if (SwitchSidesCountdown <= 0)

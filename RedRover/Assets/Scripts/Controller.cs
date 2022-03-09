@@ -34,6 +34,8 @@ public class Controller : MonoBehaviour
 
     private AI ai;
 
+    private readonly int SELECTIONTIMERMAX = 3;
+
     private void Update()
     {
         if (Input.GetMouseButtonDown(0) && state == State.Moving)
@@ -96,6 +98,14 @@ public class Controller : MonoBehaviour
                 }
                 selectedUnit = unit;
 
+                int selectionTimer = GetSelectionTimerValue();
+                Debug.Log("seleciton timer: " + selectionTimer);
+                if (selectionTimer < SELECTIONTIMERMAX)
+                {
+                    ResetTeamSelectionTimers();
+                }
+                unit.StartSelectionTimer(selectionTimer);
+
                 unitMenu.enabled = true;
                 attackText.text = unit.Attack.ToString() + " Attack";
 
@@ -122,6 +132,12 @@ public class Controller : MonoBehaviour
 
                 {
                     selectedUnit.AttackUnit(unit);
+
+                    //Debug.Log("switching: " + unit.SwitchingSides);
+                    //if (unit.SwitchingSides)
+                    //{
+                    //    DecrementTeamTurnTimers(unit.tag);
+                    //}
 
                     state = State.SelectingUnit;
                     unitMenu.enabled = false;
@@ -256,14 +272,20 @@ public class Controller : MonoBehaviour
             activePlayer = Player.Dead;
             // TODO: Uncomment to turn off buttons for player once AI can play
             // Array.ForEach(actionButtons, delegate (Button b) { b.interactable = false; });
+
+            //Array.ForEach(units, delegate (GenericUnit u) { if (u.CompareTag("Living")) { u.DecrementTurnTimers(); } });
+            DecrementTeamTurnTimers("Living");
         }
         else if (activePlayer == Player.Dead) 
         {
             activePlayer = Player.Living;
 
             // Array.ForEach(actionButtons, delegate (Button b) { b.interactable = true; });
+
+            //Array.ForEach(units, delegate (GenericUnit u) { if (u.CompareTag("Dead")) { u.DecrementTurnTimers(); } })
+            DecrementTeamTurnTimers("Dead");
         }
-        Array.ForEach(units, delegate (GenericUnit u) { u.DecrementTurnTimers(); });
+        //Array.ForEach(units, delegate (GenericUnit u) { u.DecrementTurnTimers(); });
 
         CheckLoseCondition();
 
@@ -271,6 +293,40 @@ public class Controller : MonoBehaviour
         {
             AiPickUnit();
         }
+    }
+
+    private void DecrementTeamTurnTimers(string teamTag)
+    {
+        Array.ForEach(units, delegate (GenericUnit u) { if (u.CompareTag(teamTag)) { u.DecrementTurnTimers(); } });
+        Debug.Log("-1 for every " + teamTag);
+    }
+
+    private void ResetTeamSelectionTimers()
+    {
+        GenericUnit[] activeUnits = Array.FindAll(units, delegate (GenericUnit u) {
+            return u.CompareTag(activePlayer.ToString());
+        });
+
+        if(activeUnits.Length == 1)
+        {
+            activeUnits[0].SelectionTimer = 0;
+            return;
+        }
+
+        Debug.Log("reset");
+        Debug.Log("active team members: " + activeUnits.Length);
+
+        if(activeUnits[0].SelectionTimer > activeUnits[1].SelectionTimer)
+        {
+            activeUnits[0].SelectionTimer = 1;
+            activeUnits[1].SelectionTimer = 0;
+        }
+        else
+        {
+            activeUnits[0].SelectionTimer = 0;
+            activeUnits[1].SelectionTimer = 1;
+        }
+
     }
 
     private void CheckLoseCondition()
@@ -286,11 +342,47 @@ public class Controller : MonoBehaviour
         }
     }
 
+    private int GetSelectionTimerValue()
+    {
+        GenericUnit[] activeUnits = Array.FindAll(units, delegate (GenericUnit u) {
+            return u.CompareTag(activePlayer.ToString()) && !u.SwitchingSides;
+        });
+
+        //if (livingUnits.Length == 0)
+        //{
+        //    return -1;
+        //}
+
+        //if (livingUnits.Length < 2)
+        //{
+        //    livingUnits[0].ResetSelectionTimer();
+        //    return 1;
+        //}
+        //else if (livingUnits.Length < 3)
+        //{
+        //    foreach(GenericUnit u in livingUnits)
+        //    {
+        //        u.ResetSelectionTimer();
+        //    }
+        //    return 2;
+        //}
+
+        //return 3;
+
+        return Mathf.Min(activeUnits.Length, SELECTIONTIMERMAX);
+    }
+
     private void AiPickUnit()
     {
         GenericUnit[] livingUnits = Array.FindAll(units, delegate (GenericUnit u) {
             return u.CompareTag("Living") && u.CanBeSelected();
         });
+
+        if(livingUnits.Length == 0)
+        {
+            return;
+        }
+
         ai.PickUnit(livingUnits);
     }
 }
