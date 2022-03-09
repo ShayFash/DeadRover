@@ -70,7 +70,7 @@ public abstract class GenericUnit : MonoBehaviour
 
     public void StartSelectionTimer(int value)
     {
-        SelectionTimer = 3;
+        SelectionTimer = value;
     }
 
     public void ResetSelectionTimer()

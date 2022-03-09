@@ -272,8 +272,7 @@ public class Controller : MonoBehaviour
             activePlayer = Player.Dead;
             // TODO: Uncomment to turn off buttons for player once AI can play
             // Array.ForEach(actionButtons, delegate (Button b) { b.interactable = false; });
-
-            //Array.ForEach(units, delegate (GenericUnit u) { if (u.CompareTag("Living")) { u.DecrementTurnTimers(); } });
+            
             DecrementTeamTurnTimers("Living");
         }
         else if (activePlayer == Player.Dead) 
@@ -281,11 +280,9 @@ public class Controller : MonoBehaviour
             activePlayer = Player.Living;
 
             // Array.ForEach(actionButtons, delegate (Button b) { b.interactable = true; });
-
-            //Array.ForEach(units, delegate (GenericUnit u) { if (u.CompareTag("Dead")) { u.DecrementTurnTimers(); } })
+            
             DecrementTeamTurnTimers("Dead");
         }
-        //Array.ForEach(units, delegate (GenericUnit u) { u.DecrementTurnTimers(); });
 
         CheckLoseCondition();
 
@@ -298,14 +295,16 @@ public class Controller : MonoBehaviour
     private void DecrementTeamTurnTimers(string teamTag)
     {
         Array.ForEach(units, delegate (GenericUnit u) { if (u.CompareTag(teamTag)) { u.DecrementTurnTimers(); } });
-        Debug.Log("-1 for every " + teamTag);
     }
 
     private void ResetTeamSelectionTimers()
     {
         GenericUnit[] activeUnits = Array.FindAll(units, delegate (GenericUnit u) {
-            return u.CompareTag(activePlayer.ToString());
+            return u.CompareTag(activePlayer.ToString()) && !u.SwitchingSides;
         });
+
+        Debug.Log("reset selection timers");
+
 
         if(activeUnits.Length == 1)
         {
@@ -313,10 +312,8 @@ public class Controller : MonoBehaviour
             return;
         }
 
-        Debug.Log("reset");
-        Debug.Log("active team members: " + activeUnits.Length);
-
-        if(activeUnits[0].SelectionTimer > activeUnits[1].SelectionTimer)
+        //only works for max of 3 right now
+        if (activeUnits[0].SelectionTimer > activeUnits[1].SelectionTimer)
         {
             activeUnits[0].SelectionTimer = 1;
             activeUnits[1].SelectionTimer = 0;
@@ -326,7 +323,6 @@ public class Controller : MonoBehaviour
             activeUnits[0].SelectionTimer = 0;
             activeUnits[1].SelectionTimer = 1;
         }
-
     }
 
     private void CheckLoseCondition()
@@ -347,28 +343,8 @@ public class Controller : MonoBehaviour
         GenericUnit[] activeUnits = Array.FindAll(units, delegate (GenericUnit u) {
             return u.CompareTag(activePlayer.ToString()) && !u.SwitchingSides;
         });
-
-        //if (livingUnits.Length == 0)
-        //{
-        //    return -1;
-        //}
-
-        //if (livingUnits.Length < 2)
-        //{
-        //    livingUnits[0].ResetSelectionTimer();
-        //    return 1;
-        //}
-        //else if (livingUnits.Length < 3)
-        //{
-        //    foreach(GenericUnit u in livingUnits)
-        //    {
-        //        u.ResetSelectionTimer();
-        //    }
-        //    return 2;
-        //}
-
-        //return 3;
-
+        
+        //the selection timer is based on how many units are left
         return Mathf.Min(activeUnits.Length, SELECTIONTIMERMAX);
     }
 
