@@ -55,9 +55,12 @@ public class Controller : MonoBehaviour
         unitMenu = GameObject.FindGameObjectWithTag("UnitMenu").GetComponent<Canvas>();
         TextMeshProUGUI[] unitMenuChildren = unitMenu.GetComponentsInChildren<TextMeshProUGUI>();
 
+
         attackText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) {
             return t.gameObject.CompareTag("AttackStatDisplay");
         });
+
+        
 
         actionButtons = unitMenu.GetComponentsInChildren<Button>();
     }
@@ -97,7 +100,9 @@ public class Controller : MonoBehaviour
                 selectedUnit = unit;
 
                 unitMenu.enabled = true;
-                attackText.text = unit.Attack.ToString() + " Attack";
+                //rangedText.text = unit.Reach.ToString() + " Range";
+                attackText.text = " Attack:" + unit.Attack.ToString();
+                
 
                 if (activePlayer == Player.Living)
                 {
@@ -124,7 +129,7 @@ public class Controller : MonoBehaviour
                     selectedUnit.AttackUnit(unit);
 
                     state = State.SelectingUnit;
-                    unitMenu.enabled = false;
+                    
 
                     EndTurn();
                 }
@@ -166,7 +171,7 @@ public class Controller : MonoBehaviour
     {
         Debug.Log("Turn has ended!");
         state = State.SelectingUnit;
-        unitMenu.enabled = false;
+        
 
         ChangeTurns();
     }
