@@ -216,7 +216,7 @@ public class Controller : MonoBehaviour
         return tilemap.HasTile(position);
     }
 
-    public void UnitEliminated()
+    public void unitEliminated()
     {
         units = Array.FindAll(units, delegate (GenericUnit u)
         {
@@ -282,7 +282,7 @@ public class Controller : MonoBehaviour
 
         GenericUnit[] activePlayerUnits = Array.FindAll(units, delegate (GenericUnit u)
         {
-            return u.CompareTag(activePlayer.ToString()) && !u.SwitchingSides;
+            return u.CompareTag(activePlayer.ToString()) && u.IsActive();
         });
 
         GenericUnit nextSelectableUnit = null;

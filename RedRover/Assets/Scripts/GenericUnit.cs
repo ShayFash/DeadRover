@@ -15,6 +15,8 @@ public abstract class GenericUnit : MonoBehaviour
     public int MaxHealth { get; protected set; }
     public int InitialMaxHealth { get; protected set; }
 
+    public bool IsEliminated { get; protected set; }
+
 
     [SerializeField]
     protected int NumTurnsToSwitchSides = 4;
@@ -45,6 +47,7 @@ public abstract class GenericUnit : MonoBehaviour
         InitialMaxHealth = MaxHealth;
 
         NumTimesSwitched = 0;
+        IsEliminated = false;
 
         SelectionTimer = 0;
 
@@ -66,12 +69,17 @@ public abstract class GenericUnit : MonoBehaviour
 
     public bool CanBeAttacked()
     {
-        return !SwitchingSides;
+        return !SwitchingSides && !IsEliminated;
     }
 
     public bool CanBeSelected()
     {
-        return !SwitchingSides && SelectionTimer <= 0;
+        return !SwitchingSides && SelectionTimer <= 0 && !IsEliminated;
+    }
+
+    public bool IsActive()
+    {
+        return !SwitchingSides && !IsEliminated;
     }
 
     public void WasSelected()
@@ -113,7 +121,7 @@ public abstract class GenericUnit : MonoBehaviour
             if (NumTimesSwitched == MaxAllowedSwitches)
             {
                 gameObject.SetActive(false);
-                Controller.UnitEliminated();
+                IsEliminated = true;
                 return;
             }
 
