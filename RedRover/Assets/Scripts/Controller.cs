@@ -34,8 +34,6 @@ public class Controller : MonoBehaviour
 
     private AI ai;
 
-    private readonly int SELECTIONTIMERMAX = 3;
-
     private void Update()
     {
         if (Input.GetMouseButtonDown(0) && state == State.Moving)
@@ -98,13 +96,7 @@ public class Controller : MonoBehaviour
                 }
                 selectedUnit = unit;
 
-                int selectionTimer = GetSelectionTimerValue();
-                Debug.Log("seleciton timer: " + selectionTimer);
-                if (selectionTimer < SELECTIONTIMERMAX)
-                {
-                    ResetTeamSelectionTimers();
-                }
-                unit.StartSelectionTimer(selectionTimer);
+                selectedUnit.WasSelected();
 
                 unitMenu.enabled = true;
                 attackText.text = unit.Attack.ToString() + " Attack";
@@ -132,12 +124,6 @@ public class Controller : MonoBehaviour
 
                 {
                     selectedUnit.AttackUnit(unit);
-
-                    //Debug.Log("switching: " + unit.SwitchingSides);
-                    //if (unit.SwitchingSides)
-                    //{
-                    //    DecrementTeamTurnTimers(unit.tag);
-                    //}
 
                     state = State.SelectingUnit;
                     unitMenu.enabled = false;
@@ -272,17 +258,15 @@ public class Controller : MonoBehaviour
             activePlayer = Player.Dead;
             // TODO: Uncomment to turn off buttons for player once AI can play
             // Array.ForEach(actionButtons, delegate (Button b) { b.interactable = false; });
-            
-            DecrementTeamTurnTimers("Living");
         }
         else if (activePlayer == Player.Dead) 
         {
             activePlayer = Player.Living;
 
             // Array.ForEach(actionButtons, delegate (Button b) { b.interactable = true; });
-            
-            DecrementTeamTurnTimers("Dead");
         }
+
+        DecrementTurnTimers();
 
         CheckLoseCondition();
 
@@ -292,37 +276,32 @@ public class Controller : MonoBehaviour
         }
     }
 
-    private void DecrementTeamTurnTimers(string teamTag)
+    private void DecrementTurnTimers()
     {
-        Array.ForEach(units, delegate (GenericUnit u) { if (u.CompareTag(teamTag)) { u.DecrementTurnTimers(); } });
-    }
+        Array.ForEach(units, delegate (GenericUnit u) { u.DecrementTurnTimers(); });
 
-    private void ResetTeamSelectionTimers()
-    {
-        GenericUnit[] activeUnits = Array.FindAll(units, delegate (GenericUnit u) {
+        GenericUnit[] activePlayerUnits = Array.FindAll(units, delegate (GenericUnit u)
+        {
             return u.CompareTag(activePlayer.ToString()) && !u.SwitchingSides;
         });
 
-        Debug.Log("reset selection timers");
+        GenericUnit nextSelectableUnit = null;
+        int lowestSelectionTimer = 100000;
 
-
-        if(activeUnits.Length == 1)
+        // If no unit is selectable due to turn timers, just set the lowest turn timer to 0
+        for (int i=0; i < activePlayerUnits.Length; i++)
         {
-            activeUnits[0].SelectionTimer = 0;
-            return;
+            GenericUnit unit = activePlayerUnits[i];
+            if (unit.CanBeSelected())
+            {
+                return;
+            } else if (!unit.SwitchingSides && unit.SelectionTimer < lowestSelectionTimer)
+            {
+                lowestSelectionTimer = unit.SelectionTimer;
+                nextSelectableUnit = unit;
+            }
         }
-
-        //only works for max of 3 right now
-        if (activeUnits[0].SelectionTimer > activeUnits[1].SelectionTimer)
-        {
-            activeUnits[0].SelectionTimer = 1;
-            activeUnits[1].SelectionTimer = 0;
-        }
-        else
-        {
-            activeUnits[0].SelectionTimer = 0;
-            activeUnits[1].SelectionTimer = 1;
-        }
+        nextSelectableUnit.ResetSelectionTimer();
     }
 
     private void CheckLoseCondition()
@@ -336,16 +315,6 @@ public class Controller : MonoBehaviour
         {
             Debug.Log(activePlayer.ToString() + " lose");
         }
-    }
-
-    private int GetSelectionTimerValue()
-    {
-        GenericUnit[] activeUnits = Array.FindAll(units, delegate (GenericUnit u) {
-            return u.CompareTag(activePlayer.ToString()) && !u.SwitchingSides;
-        });
-        
-        //the selection timer is based on how many units are left
-        return Mathf.Min(activeUnits.Length, SELECTIONTIMERMAX);
     }
 
     private void AiPickUnit()

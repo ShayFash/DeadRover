@@ -13,11 +13,8 @@ public class AI
     }
     public void PickUnit(GenericUnit[] units)
     {
-        GenericUnit unit;
-        int index;
-
-        index = UnityEngine.Random.Range(0, units.Length);
-        unit = units[index];
+        int index = UnityEngine.Random.Range(0, units.Length);
+        GenericUnit unit = units[index];
 
         controller.SelectUnit(unit);
         Debug.Log("Picked unit");
