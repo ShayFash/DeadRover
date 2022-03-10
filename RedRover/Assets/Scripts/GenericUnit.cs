@@ -14,6 +14,8 @@ public abstract class GenericUnit : MonoBehaviour
     public int Movement;
     public int MaxHealth { get; protected set; }
     public int InitialMaxHealth { get; protected set; }
+    public HealthBar healthBar;
+    public MovementBar movementBar;
 
 
     [SerializeField]
@@ -37,6 +39,8 @@ public abstract class GenericUnit : MonoBehaviour
     protected void Init()
     {
         MaxHealth = Health;
+        healthBar.SetMaxHealth(MaxHealth);
+        movementBar.SetMaxMovement(Movement);
         InitialMaxHealth = MaxHealth;
 
         NumTimesSwitched = 0;
@@ -90,6 +94,7 @@ public abstract class GenericUnit : MonoBehaviour
     {
         Debug.Log("I'm hurt");
         Health = Mathf.Max(0, Health - value);
+        healthBar.SetHealth(Health);
         UpdateHealthDisplay();
 
         if (Health == 0)
