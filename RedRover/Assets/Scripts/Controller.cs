@@ -29,6 +29,7 @@ public class Controller : MonoBehaviour
     private Tilemap tilemap;
 
     private Canvas unitMenu;
+    private TextMeshProUGUI rangeText;
     private TextMeshProUGUI attackText;
     private Button[] actionButtons;
 
@@ -55,12 +56,12 @@ public class Controller : MonoBehaviour
         unitMenu = GameObject.FindGameObjectWithTag("UnitMenu").GetComponent<Canvas>();
         TextMeshProUGUI[] unitMenuChildren = unitMenu.GetComponentsInChildren<TextMeshProUGUI>();
 
-
+        rangeText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) {
+            return t.gameObject.CompareTag("RangeStatDisplay");
+        });
         attackText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) {
             return t.gameObject.CompareTag("AttackStatDisplay");
         });
-
-        
 
         actionButtons = unitMenu.GetComponentsInChildren<Button>();
     }
@@ -100,8 +101,8 @@ public class Controller : MonoBehaviour
                 selectedUnit = unit;
 
                 unitMenu.enabled = true;
-                //rangedText.text = unit.Reach.ToString() + " Range";
-                attackText.text = " Attack:" + unit.Attack.ToString();
+                rangeText.text = "Range: " + unit.Reach.ToString();
+                attackText.text = "Attack: " + unit.Attack.ToString();
                 
 
                 if (activePlayer == Player.Living)
