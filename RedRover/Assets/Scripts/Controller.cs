@@ -62,7 +62,11 @@ public class Controller : MonoBehaviour
 
         
 
-        actionButtons = unitMenu.GetComponentsInChildren<Button>();
+        Button[] buttons = unitMenu.GetComponentsInChildren<Button>();
+        actionButtons = Array.FindAll(buttons, delegate (Button b)
+        {
+            return b.CompareTag("ActionButton");
+        });
     }
 
     private void Start()
@@ -102,14 +106,12 @@ public class Controller : MonoBehaviour
                 unitMenu.enabled = true;
                 //rangedText.text = unit.Reach.ToString() + " Range";
                 attackText.text = " Attack:" + unit.Attack.ToString();
-                
 
-                if (activePlayer == Player.Living)
-                {
-                    StartCoroutine(selectedUnit.ApplySelectedShader(delegate () {
-                        return state == State.SelectingUnit && activePlayer == Player.Living;
-                    }));
-                }
+                Player currentPlayer = activePlayer;
+
+                StartCoroutine(selectedUnit.ApplySelectedShader(delegate () {
+                    return state == State.SelectingUnit && activePlayer == currentPlayer;
+                }));
 
                 if (activePlayer == Player.Dead)
                 {
@@ -128,10 +130,9 @@ public class Controller : MonoBehaviour
                 {
                     selectedUnit.AttackUnit(unit);
 
-                    state = State.SelectingUnit;
-                    
-
                     EndTurn();
+
+                    state = State.SelectingUnit;
                 }
                 break;
 
@@ -153,10 +154,12 @@ public class Controller : MonoBehaviour
             return !selectedUnit.CompareTag(target.tag) && target.CanBeAttacked() && selectedUnit.UnitInRange(target);
         });
 
+        Player currentPlayer = activePlayer;
+
         Array.ForEach(enemyUnitsInRange, delegate (GenericUnit enemy)
         {
             StartCoroutine(enemy.ApplyAttackShader(delegate () { 
-                return state == State.Attacking && activePlayer == Player.Living;
+                return state == State.Attacking && activePlayer == currentPlayer;
             }));
         });
     }
@@ -251,14 +254,12 @@ public class Controller : MonoBehaviour
         if (activePlayer == Player.Living) 
         {
             activePlayer = Player.Dead;
-            // TODO: Uncomment to turn off buttons for player once AI can play
-            // Array.ForEach(actionButtons, delegate (Button b) { b.interactable = false; });
+            Array.ForEach(actionButtons, delegate (Button b) { b.interactable = false; });
         }
         else if (activePlayer == Player.Dead) 
         {
             activePlayer = Player.Living;
-
-            // Array.ForEach(actionButtons, delegate (Button b) { b.interactable = true; });
+            Array.ForEach(actionButtons, delegate (Button b) { b.interactable = true; });
         }
         Array.ForEach(units, delegate (GenericUnit u) { u.DecrementTurnTimers(); });
 
