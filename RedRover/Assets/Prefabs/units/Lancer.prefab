@@ -110,9 +110,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee21afb7bd5e94a44a80a7999ec19ef3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Reach: 2
-  Attack: 4
-  Health: 8
-  Movement: 2
+  Reach: 1
+  Attack: 8
+  Health: 16
+  Movement: 3
   NumTurnsToSwitchSides: 4
   MaxAllowedSwitches: 3

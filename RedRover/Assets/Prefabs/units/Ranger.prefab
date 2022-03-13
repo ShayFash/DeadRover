@@ -111,8 +111,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Reach: 2
-  Attack: 8
-  Health: 8
-  Movement: 2
+  Attack: 16
+  Health: 16
+  Movement: 3
   NumTurnsToSwitchSides: 4
   MaxAllowedSwitches: 3
