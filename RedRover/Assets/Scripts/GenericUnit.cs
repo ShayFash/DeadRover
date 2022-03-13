@@ -243,4 +243,5 @@ public abstract class GenericUnit : MonoBehaviour
     {
         HealthDisplay.text = Health.ToString() + "/" + MaxHealth.ToString() + " HP";
     }
+
 }

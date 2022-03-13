@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -26,6 +27,10 @@ public class Controller : MonoBehaviour
     private GenericUnit selectedUnit;
     private GenericUnit[] units;
 
+    private List<GenericUnit> livingLinks;
+    private List<GenericUnit> deadLinks;
+    private List<GenericUnit> linksWaitList;
+
     private Tilemap tilemap;
 
     private Canvas unitMenu;
@@ -46,12 +51,23 @@ public class Controller : MonoBehaviour
                 state = State.SelectingUnit;
             }
         }
+
+        UpdateUnitLinks();
     }
 
     private void Awake()
     {
         tilemap = FindObjectOfType<Tilemap>();
         units = FindObjectsOfType<GenericUnit>();
+
+        livingLinks = new List<GenericUnit>();
+        deadLinks = new List<GenericUnit>();
+        linksWaitList = new List<GenericUnit>();
+        for (int i = 0; i < units.Length; i++) 
+        {
+            if (units[i].tag == "Living") livingLinks.Add(units[i]);
+            else if (units[i].tag == "Dead") deadLinks.Add(units[i]);
+        }
 
         unitMenu = GameObject.FindGameObjectWithTag("UnitMenu").GetComponent<Canvas>();
         TextMeshProUGUI[] unitMenuChildren = unitMenu.GetComponentsInChildren<TextMeshProUGUI>();
@@ -293,4 +309,73 @@ public class Controller : MonoBehaviour
         });
         ai.PickUnit(livingUnits);
     }
+
+
+    //----Beginning-of-the-code-for-the-links--------------------------------------------
+
+    private void UpdateUnitLinks() 
+    {
+        CheckLinks(livingLinks);
+        CheckLinks(deadLinks);
+
+        CheckWaitList();
+
+        DesignateLinks(livingLinks);
+        DesignateLinks(deadLinks);
+    }
+
+    private void DesignateLinks(List<GenericUnit> unitList) 
+    {
+        for(int i = 0; i < unitList.Count; i++) 
+        {
+            UnitLink link = unitList[i].GetComponent<UnitLink>();
+            if (i == unitList.Count-1) link.SetLink(null);
+            else link.SetLink(unitList[i+1]);
+        }
+    }
+
+    private void CheckLinks(List<GenericUnit> unitList) 
+    {
+        for(int i = 0; i < unitList.Count; i++) 
+        {
+            UnitLink link = unitList[i].GetComponent<UnitLink>();
+            if (unitList[i].IsEliminated) RemoveLink(unitList, unitList[i]);
+            else if (unitList[i].SwitchingSides) 
+            {
+                AddLink(linksWaitList, unitList[i]);
+                RemoveLink(unitList, unitList[i]);
+            }
+        }
+    }
+
+    private void CheckWaitList() 
+    {
+        for(int i = 0; i < linksWaitList.Count; i++) 
+        {
+            UnitLink link = linksWaitList[i].GetComponent<UnitLink>();
+            if (!linksWaitList[i].CheckIfSwitchingSides() && linksWaitList[i].tag == "Living") 
+            {
+                AddLink(livingLinks, linksWaitList[i]);
+                RemoveLink(linksWaitList, linksWaitList[i]);
+            } 
+            else if (!linksWaitList[i].CheckIfSwitchingSides() && linksWaitList[i].tag == "Dead") 
+            {
+                AddLink(deadLinks, linksWaitList[i]);
+                RemoveLink(linksWaitList, linksWaitList[i]);
+            }
+        }
+    }
+
+    private void AddLink(List<GenericUnit> unitList, GenericUnit unit) 
+    {
+        unitList.Add(unit);
+    }
+
+    private void RemoveLink(List<GenericUnit> unitList, GenericUnit unit) 
+    {
+        int index = unitList.IndexOf(unit);
+        unitList.RemoveAt(index);
+    }
+
+    //----End-of-the-code-for-the-links-------------------------------------------------
 }
