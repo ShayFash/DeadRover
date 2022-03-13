@@ -188,49 +188,43 @@ public abstract class GenericUnit : MonoBehaviour
 
     public IEnumerator ApplyAttackShader(Func<bool> continueWhile)
     {
-        // Material oldMaterial = Renderer.material;
+        Material oldMaterial = Renderer.material;
 
-        // Material material = new Material(Shader.Find("Shader Graphs/PulseHighlight"));
-        // material.color = Color.red;
-        // material.SetFloat("_Intensity", 0.5f);
-        // material.SetFloat("_Speed", 3);
-        // material.SetFloat("_TimeElapsed", 0);
+        Material material = new Material(Shader.Find("Shader Graphs/PulseHighlight"));
+        material.color = Color.red;
+        material.SetFloat("_Intensity", 0.5f);
+        material.SetFloat("_Speed", 3);
+        material.SetFloat("_TimeElapsed", 0);
 
-        // Renderer.material = material;
+        Renderer.material = material;
 
-        // float timeElasped = 0;
-
-        Color oldColor = Renderer.color;
-
-        Renderer.color = Color.red;
+        float timeElasped = 0;
 
         while (continueWhile())
         {
-            // timeElasped += Time.deltaTime;
+            timeElasped += Time.deltaTime;
             // This is inefficient for a lot of materials, but it won't matter for this game
-            // Renderer.material.SetFloat("_TimeElapsed", timeElasped);
+            Renderer.material.SetFloat("_TimeElapsed", timeElasped);
 
             yield return new WaitForEndOfFrame();
         }
 
-        Renderer.color = oldColor;
-
-        // Renderer.material = oldMaterial;
+        Renderer.material = oldMaterial;
     }
 
     public IEnumerator ApplySelectedShader(Func<bool> continueWhile)
     {
-        Color oldColor = Renderer.color;
+        Material oldMaterial = Renderer.material;
 
-        Renderer.color = Color.blue;
+        Material material = new Material(Shader.Find("Shader Graphs/Highlight"));
+        material.color = Color.yellow;
+        material.SetFloat("_Intensity", 0.5f);
 
-        while (continueWhile())
-        {
+        Renderer.material = material;
 
-            yield return new WaitForEndOfFrame();
-        }
+        yield return new WaitWhile(() => continueWhile());
 
-        Renderer.color = oldColor;
+        Renderer.material = oldMaterial;
     }
 
     private void OnMouseDown()
