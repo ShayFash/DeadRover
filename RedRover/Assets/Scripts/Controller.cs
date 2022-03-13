@@ -38,7 +38,7 @@ public class Controller : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0) && state == State.Moving)
+        if (activePlayer == Player.Living && Input.GetMouseButtonDown(0) && state == State.Moving)
         {
             Vector3Int mousePosOnGrid = GetClickedGridPosition();
             if (MoveSelectedUnit(mousePosOnGrid))
@@ -236,8 +236,9 @@ public class Controller : MonoBehaviour
 
             if (unit.CompareTag(activePlayer.ToString()) && unit.CanBeSelected())
             {
+                Player currentPlayer = activePlayer;
                 StartCoroutine(unit.ApplyCanBeSelectedShader(delegate () {
-                    return state == State.SelectingUnit;
+                    return state == State.SelectingUnit && activePlayer == currentPlayer;
                 }));
             }
         }
