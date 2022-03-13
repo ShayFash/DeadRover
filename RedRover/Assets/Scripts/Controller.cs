@@ -146,7 +146,7 @@ public class Controller : MonoBehaviour
 
     public void Attack()
     {
-        if (state == State.Attacking)
+        if (state == State.Attacking || selectedUnit == null)
         {
             return;
         }
@@ -169,6 +169,10 @@ public class Controller : MonoBehaviour
 
     public void Move()
     {
+        if (selectedUnit == null)
+        {
+            return;
+        }
         state = State.Moving;
         ShowTilesInRange(selectedUnit);
     }
@@ -223,6 +227,7 @@ public class Controller : MonoBehaviour
 
     private void ChangeStateToSelecting()
     {
+        selectedUnit = null;
         state = State.SelectingUnit;
 
         for (int i=0; i < units.Length; i++)
