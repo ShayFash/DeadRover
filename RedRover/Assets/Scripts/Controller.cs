@@ -301,7 +301,13 @@ public class Controller : MonoBehaviour
                 nextSelectableUnit = unit;
             }
         }
-        nextSelectableUnit.ResetSelectionTimer();
+
+        // If it was still null, there are no selectable units and no units that aren't switching sides
+        // So the active player should lose
+        if (nextSelectableUnit != null)
+        {
+            nextSelectableUnit.ResetSelectionTimer();
+        }
     }
 
     private void CheckLoseCondition()

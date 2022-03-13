@@ -26,6 +26,7 @@ public abstract class GenericUnit : MonoBehaviour
     public int NumTimesSwitched { get; protected set; }
     public bool SwitchingSides { get; protected set; }
 
+    // This will be decremented every turn, including the one the unit is picked on and enemy turns
     [SerializeField]
     protected int NumTurnsBetweenSelection = 6;
 
