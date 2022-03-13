@@ -112,7 +112,7 @@ public class Controller : MonoBehaviour
 
                 Player currentPlayer = activePlayer;
                 StartCoroutine(selectedUnit.ApplySelectedShader(delegate () {
-                    return state == State.SelectingUnit && activePlayer == currentPlayer;
+                    return activePlayer == currentPlayer;
                 }));
 
                 if (activePlayer == Player.Dead)
