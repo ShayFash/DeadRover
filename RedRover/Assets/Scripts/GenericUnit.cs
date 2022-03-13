@@ -37,7 +37,7 @@ public abstract class GenericUnit : MonoBehaviour
     protected TextMeshProUGUI HealthDisplay;
 
     protected bool ShaderActive = false;
-    protected bool mouseOver = false;
+    protected bool MouseOver = false;
 
     protected void Init()
     {
@@ -259,10 +259,10 @@ public abstract class GenericUnit : MonoBehaviour
             // This is inefficient for a lot of materials, but it won't matter for this game
             Renderer.material.SetFloat("_TimeElapsed", timeElasped);
 
-            if (mouseOver && Renderer.material.color == Color.yellow)
+            if (MouseOver && Renderer.material.color == Color.yellow)
             {
                 Renderer.material.color = Color.green;
-            } else if (!mouseOver && Renderer.material.color == Color.green)
+            } else if (!MouseOver && Renderer.material.color == Color.green)
             {
                 Renderer.material.color = Color.yellow;
             }
@@ -276,12 +276,12 @@ public abstract class GenericUnit : MonoBehaviour
 
     private void OnMouseEnter()
     {
-        mouseOver = true;
+        MouseOver = true;
     }
 
     private void OnMouseExit()
     {
-        mouseOver = false;
+        MouseOver = false;
     }
 
     private void OnMouseDown()
