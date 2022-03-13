@@ -109,8 +109,8 @@ public class Controller : MonoBehaviour
                 unitMenu.enabled = true;
                 rangeText.text = "Range: " + unit.Reach.ToString();
                 attackText.text = "Attack: " + unit.Attack.ToString();
-                
 
+                Player currentPlayer = activePlayer;
                 StartCoroutine(selectedUnit.ApplySelectedShader(delegate () {
                     return state == State.SelectingUnit && activePlayer == currentPlayer;
                 }));
