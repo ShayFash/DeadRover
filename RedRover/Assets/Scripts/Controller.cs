@@ -353,12 +353,12 @@ public class Controller : MonoBehaviour
         for(int i = 0; i < linksWaitList.Count; i++) 
         {
             UnitLink link = linksWaitList[i].GetComponent<UnitLink>();
-            if (!linksWaitList[i].CheckIfSwitchingSides() && linksWaitList[i].tag == "Living") 
+            if (!linksWaitList[i].SwitchingSides && linksWaitList[i].tag == "Living") 
             {
                 AddLink(livingLinks, linksWaitList[i]);
                 RemoveLink(linksWaitList, linksWaitList[i]);
             } 
-            else if (!linksWaitList[i].CheckIfSwitchingSides() && linksWaitList[i].tag == "Dead") 
+            else if (!linksWaitList[i].SwitchingSides && linksWaitList[i].tag == "Dead") 
             {
                 AddLink(deadLinks, linksWaitList[i]);
                 RemoveLink(linksWaitList, linksWaitList[i]);
