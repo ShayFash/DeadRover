@@ -36,6 +36,8 @@ public abstract class GenericUnit : MonoBehaviour
 
     protected TextMeshProUGUI HealthDisplay;
 
+    protected bool ShaderActive = false;
+
     protected void Init()
     {
         MaxHealth = Health;
@@ -188,6 +190,8 @@ public abstract class GenericUnit : MonoBehaviour
 
     public IEnumerator ApplyAttackShader(Func<bool> continueWhile)
     {
+        yield return new WaitUntil(() => !ShaderActive);
+        ShaderActive = true;
         Material oldMaterial = Renderer.material;
 
         Material material = new Material(Shader.Find("Shader Graphs/PulseHighlight"));
@@ -210,10 +214,14 @@ public abstract class GenericUnit : MonoBehaviour
         }
 
         Renderer.material = oldMaterial;
+
+        ShaderActive = false;
     }
 
     public IEnumerator ApplySelectedShader(Func<bool> continueWhile)
     {
+        yield return new WaitUntil(() => !ShaderActive);
+        ShaderActive = true;
         Material oldMaterial = Renderer.material;
 
         Material material = new Material(Shader.Find("Shader Graphs/Highlight"));
@@ -225,6 +233,36 @@ public abstract class GenericUnit : MonoBehaviour
         yield return new WaitWhile(() => continueWhile());
 
         Renderer.material = oldMaterial;
+        ShaderActive = false;
+    }
+
+    public IEnumerator ApplyCanBeSelectedShader(Func<bool> continueWhile)
+    {
+        yield return new WaitUntil(() => !ShaderActive);
+        ShaderActive = true;
+        Material oldMaterial = Renderer.material;
+
+        Material material = new Material(Shader.Find("Shader Graphs/PulseHighlight"));
+        material.color = Color.yellow;
+        material.SetFloat("_Intensity", 0.5f);
+        material.SetFloat("_Speed", 3);
+        material.SetFloat("_TimeElapsed", 0);
+
+        Renderer.material = material;
+
+        float timeElasped = 0;
+
+        while (continueWhile())
+        {
+            timeElasped += Time.deltaTime;
+            // This is inefficient for a lot of materials, but it won't matter for this game
+            Renderer.material.SetFloat("_TimeElapsed", timeElasped);
+
+            yield return new WaitForEndOfFrame();
+        }
+
+        Renderer.material = oldMaterial;
+        ShaderActive = false;
     }
 
     private void OnMouseDown()
