@@ -17,6 +17,8 @@ public abstract class GenericUnit : MonoBehaviour
     public HealthBar healthBar;
     
 
+    public bool IsEliminated { get; protected set; }
+
 
     [SerializeField]
     protected int NumTurnsToSwitchSides = 4;
@@ -25,7 +27,13 @@ public abstract class GenericUnit : MonoBehaviour
     public int SwitchSidesCountdown { get; protected set; }
     public int NumTimesSwitched { get; protected set; }
     public bool SwitchingSides { get; protected set; }
-    public bool IsEliminated { get; protected set; }
+
+    // This will be decremented every turn, including the one the unit is picked on and enemy turns
+    [SerializeField]
+    protected int NumTurnsBetweenSelection = 6;
+
+    public int SelectionTimer { get; protected set; }
+
 
     protected Controller Controller;
 
@@ -47,6 +55,8 @@ public abstract class GenericUnit : MonoBehaviour
 
         NumTimesSwitched = 0;
         IsEliminated = false;
+
+        SelectionTimer = 0;
 
         Controller = GameObject.FindGameObjectWithTag("GameController").GetComponent<Controller>();
         Tilemap = FindObjectOfType<Tilemap>();
@@ -71,7 +81,22 @@ public abstract class GenericUnit : MonoBehaviour
 
     public bool CanBeSelected()
     {
+        return !SwitchingSides && SelectionTimer <= 0 && !IsEliminated;
+    }
+
+    public bool IsActive()
+    {
         return !SwitchingSides && !IsEliminated;
+    }
+
+    public void WasSelected()
+    {
+        SelectionTimer = NumTurnsBetweenSelection;
+    }
+
+    public void ResetSelectionTimer()
+    {
+        SelectionTimer = 0;
     }
 
     public Vector3Int GetTilePosition()
@@ -111,6 +136,8 @@ public abstract class GenericUnit : MonoBehaviour
             SwitchingSides = true;
             SwitchSidesCountdown = NumTurnsToSwitchSides;
 
+            ResetSelectionTimer();
+
             TurnCountdownDisplay.text = SwitchSidesCountdown.ToString();
             TurnCountdownDisplay.color = CompareTag("Living") ? Color.black : Color.white;
             TurnCountdownDisplay.enabled = true;
@@ -121,15 +148,17 @@ public abstract class GenericUnit : MonoBehaviour
 
     public void DecrementTurnTimers()
     {
-        if (!SwitchingSides)
+        SelectionTimer = Math.Max(0, SelectionTimer - 1);
+
+        if (SwitchingSides)
         {
-            return;
+            SwitchSidesCountdown = Math.Max(0, SwitchSidesCountdown - 1);
         }
 
-        SwitchSidesCountdown--;
+
         TurnCountdownDisplay.text = SwitchSidesCountdown.ToString();
 
-        if (SwitchSidesCountdown <= 0)
+        if (SwitchingSides && SwitchSidesCountdown <= 0)
         {
             SwitchingSides = false;
             NumTimesSwitched++;

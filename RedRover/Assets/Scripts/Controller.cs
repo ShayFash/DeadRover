@@ -83,7 +83,7 @@ public class Controller : MonoBehaviour
         yield return new WaitForFixedUpdate();
 
         ChangeStateToSelecting();
-        aiPickUnit();
+        AiPickUnit();
     } 
 
     public void UnitClicked(GenericUnit Unit)
@@ -106,6 +106,8 @@ public class Controller : MonoBehaviour
                 }
                 selectedUnit = unit;
                 state = State.Waiting;
+
+                selectedUnit.WasSelected();
 
                 unitMenu.enabled = true;
                 rangeText.text = "Range: " + unit.Reach.ToString();
@@ -275,19 +277,54 @@ public class Controller : MonoBehaviour
             activePlayer = Player.Living;
             Array.ForEach(actionButtons, delegate (Button b) { b.interactable = true; });
         }
-        Array.ForEach(units, delegate (GenericUnit u) { u.DecrementTurnTimers(); });
 
-        checkLoseCondition();
+        DecrementTurnTimers();
+
+        CheckLoseCondition();
 
         ChangeStateToSelecting();
 
         if (activePlayer == Player.Living)
         {
-            aiPickUnit();
+            AiPickUnit();
         }
     }
 
-    private void checkLoseCondition()
+    private void DecrementTurnTimers()
+    {
+        Array.ForEach(units, delegate (GenericUnit u) { u.DecrementTurnTimers(); });
+
+        GenericUnit[] activePlayerUnits = Array.FindAll(units, delegate (GenericUnit u)
+        {
+            return u.CompareTag(activePlayer.ToString()) && u.IsActive();
+        });
+
+        GenericUnit nextSelectableUnit = null;
+        int lowestSelectionTimer = 100000;
+
+        // If no unit is selectable due to turn timers, just set the lowest turn timer to 0
+        for (int i=0; i < activePlayerUnits.Length; i++)
+        {
+            GenericUnit unit = activePlayerUnits[i];
+            if (unit.CanBeSelected())
+            {
+                return;
+            } else if (!unit.SwitchingSides && unit.SelectionTimer < lowestSelectionTimer)
+            {
+                lowestSelectionTimer = unit.SelectionTimer;
+                nextSelectableUnit = unit;
+            }
+        }
+
+        // If it was still null, there are no selectable units and no units that aren't switching sides
+        // So the active player should lose
+        if (nextSelectableUnit != null)
+        {
+            nextSelectableUnit.ResetSelectionTimer();
+        }
+    }
+
+    private void CheckLoseCondition()
     {
         bool unitsLeft = Array.Exists(units, delegate (GenericUnit u)
         {
@@ -300,11 +337,15 @@ public class Controller : MonoBehaviour
         }
     }
 
-    private void aiPickUnit()
+    private void AiPickUnit()
     {
         GenericUnit[] selectableUnits = Array.FindAll(units, delegate (GenericUnit u) {
             return u.CompareTag(activePlayer.ToString()) && u.CanBeSelected();
         });
+        if (selectableUnits.Length <= 0)
+        {
+            return;
+        }
         StartCoroutine(ai.PickUnit(selectableUnits));
     }
 }
