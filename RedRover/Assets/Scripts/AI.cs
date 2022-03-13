@@ -1,33 +1,37 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class AI
 {
     private readonly Controller controller;
     private readonly StateMachine stateMachine;
+    
+    static float Delay = 1;
 
     public AI(Controller controller)
     {
         this.controller = controller;
         stateMachine = new StateMachine(controller);
     }
-    public void PickUnit(GenericUnit[] units)
+    public IEnumerator PickUnit(GenericUnit[] units)
     {
+        yield return new WaitForSeconds(Delay * 2);
+
         int index = UnityEngine.Random.Range(0, units.Length);
         GenericUnit unit = units[index];
 
         controller.SelectUnit(unit);
-        Debug.Log("Picked unit");
     }
 
     public void DecideActions(GenericUnit actingUnit, GenericUnit[] units)
     {
-        stateMachine.DecideActions(actingUnit, units);
+        controller.StartCoroutine(stateMachine.DecideActions(actingUnit, units));
     }
 
     private interface IState
     {
-        void DoActions(Controller controller);
+        IEnumerator DoActions(Controller controller);
     }
 
     private class Attack : IState
@@ -38,10 +42,12 @@ public class AI
         {
             this.targetUnit = targetUnit;
         }
-        void IState.DoActions(Controller controller)
+        IEnumerator IState.DoActions(Controller controller)
         {
-            Debug.Log("Attacked unit");
+            yield return new WaitForSeconds(Delay);
             controller.Attack();
+
+            yield return new WaitForSeconds(Delay);
             controller.SelectUnit(targetUnit);
         }
     }
@@ -54,10 +60,12 @@ public class AI
         {
             this.tilePosition = tilePosition;
         }
-        void IState.DoActions(Controller controller)
+        IEnumerator IState.DoActions(Controller controller)
         {
-            Debug.Log("Moved unit");
+            yield return new WaitForSeconds(Delay);
             controller.Move();
+
+            yield return new WaitForSeconds(Delay);
             controller.MoveSelectedUnit(tilePosition);
         }
     }
@@ -72,17 +80,19 @@ public class AI
             this.controller = controller;
         }
 
-        public void DecideActions(GenericUnit actingUnit, GenericUnit[] units)
+        public IEnumerator DecideActions(GenericUnit actingUnit, GenericUnit[] units)
         {
             state = Transition(actingUnit, units);
-            state.DoActions(controller);
+
+            // StartCoroutine is only for MonoBehaviours, so use the controller to start it
+            yield return controller.StartCoroutine(state.DoActions(controller));
 
             if (state.GetType().Equals(typeof(Move)))
             {
                 state = Transition(actingUnit, units);
                 if (state.GetType().Equals(typeof(Attack)))
                 {
-                    state.DoActions(controller);
+                    yield return controller.StartCoroutine(state.DoActions(controller));
                 } else
                 {
                     controller.EndTurn();

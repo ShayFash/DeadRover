@@ -9,6 +9,8 @@ TagManager:
   - HealthStatDisplay
   - Living
   - Dead
+  - TurnCountdown
+  - RangeStatDisplay
   layers:
   - Default
   - TransparentFX

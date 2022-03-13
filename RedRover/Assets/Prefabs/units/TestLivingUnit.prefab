@@ -385,7 +385,7 @@ GameObject:
   - component: {fileID: 4080435231151619949}
   - component: {fileID: 4080435231151619936}
   m_Layer: 0
-  m_Name: LivingUnit
+  m_Name: TestLivingUnit
   m_TagString: Living
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

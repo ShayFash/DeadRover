@@ -10,6 +10,7 @@ public class Controller : MonoBehaviour
     private enum State
     {
         SelectingUnit,
+        Waiting,
         Attacking,
         Moving
     }
@@ -20,7 +21,7 @@ public class Controller : MonoBehaviour
         Dead
     }
 
-    private State state = State.SelectingUnit;
+    private State state = State.Waiting;
     private Player activePlayer = Player.Living;   // Living starts
     
     private GenericUnit selectedUnit;
@@ -29,6 +30,7 @@ public class Controller : MonoBehaviour
     private Tilemap tilemap;
 
     private Canvas unitMenu;
+    private TextMeshProUGUI rangeText;
     private TextMeshProUGUI attackText;
     private Button[] actionButtons;
 
@@ -42,7 +44,7 @@ public class Controller : MonoBehaviour
             if (MoveSelectedUnit(mousePosOnGrid))
             {
                 // TODO: prevent them from moving again
-                state = State.SelectingUnit;
+                state = State.Waiting;
             }
         }
     }
@@ -55,11 +57,18 @@ public class Controller : MonoBehaviour
         unitMenu = GameObject.FindGameObjectWithTag("UnitMenu").GetComponent<Canvas>();
         TextMeshProUGUI[] unitMenuChildren = unitMenu.GetComponentsInChildren<TextMeshProUGUI>();
 
+        rangeText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) {
+            return t.gameObject.CompareTag("RangeStatDisplay");
+        });
         attackText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) {
             return t.gameObject.CompareTag("AttackStatDisplay");
         });
 
-        actionButtons = unitMenu.GetComponentsInChildren<Button>();
+        Button[] buttons = unitMenu.GetComponentsInChildren<Button>();
+        actionButtons = Array.FindAll(buttons, delegate (Button b)
+        {
+            return b.CompareTag("ActionButton");
+        });
     }
 
     private void Start()
@@ -73,12 +82,13 @@ public class Controller : MonoBehaviour
     {
         yield return new WaitForFixedUpdate();
 
+        ChangeStateToSelecting();
         AiPickUnit();
     } 
 
     public void UnitClicked(GenericUnit Unit)
     {
-        if (activePlayer == Player.Living && state != State.Attacking)
+        if ((activePlayer == Player.Living && state != State.Attacking) || (activePlayer == Player.Dead && state != State.SelectingUnit))
         {
             return;
         }
@@ -95,18 +105,18 @@ public class Controller : MonoBehaviour
                     return;
                 }
                 selectedUnit = unit;
+                state = State.Waiting;
 
                 selectedUnit.WasSelected();
 
                 unitMenu.enabled = true;
-                attackText.text = unit.Attack.ToString() + " Attack";
+                rangeText.text = "Range: " + unit.Reach.ToString();
+                attackText.text = "Attack: " + unit.Attack.ToString();
 
-                if (activePlayer == Player.Living)
-                {
-                    StartCoroutine(selectedUnit.ApplySelectedShader(delegate () {
-                        return state == State.SelectingUnit && activePlayer == Player.Living;
-                    }));
-                }
+                Player currentPlayer = activePlayer;
+                StartCoroutine(selectedUnit.ApplySelectedShader(delegate () {
+                    return activePlayer == currentPlayer;
+                }));
 
                 if (activePlayer == Player.Dead)
                 {
@@ -125,9 +135,6 @@ public class Controller : MonoBehaviour
                 {
                     selectedUnit.AttackUnit(unit);
 
-                    state = State.SelectingUnit;
-                    unitMenu.enabled = false;
-
                     EndTurn();
                 }
                 break;
@@ -145,17 +152,19 @@ public class Controller : MonoBehaviour
         }
         state = State.Attacking;
 
-        GenericUnit[] enemyUnitsInRange = Array.FindAll(units, delegate (GenericUnit target)
+        Player currentPlayer = activePlayer;
+        for (int i=0; i < units.Length; i++)
         {
-            return !selectedUnit.CompareTag(target.tag) && target.CanBeAttacked() && selectedUnit.UnitInRange(target);
-        });
+            GenericUnit target = units[i];
 
-        Array.ForEach(enemyUnitsInRange, delegate (GenericUnit enemy)
-        {
-            StartCoroutine(enemy.ApplyAttackShader(delegate () { 
-                return state == State.Attacking && activePlayer == Player.Living;
-            }));
-        });
+            bool isTargetInRange = !selectedUnit.CompareTag(target.tag) && target.CanBeAttacked() && selectedUnit.UnitInRange(target);
+            if (isTargetInRange)
+            {
+                StartCoroutine(target.ApplyAttackShader(delegate () {
+                    return state == State.Attacking && activePlayer == currentPlayer;
+                }));
+            }
+        }
     }
 
     public void Move()
@@ -166,10 +175,6 @@ public class Controller : MonoBehaviour
 
     public void EndTurn()
     {
-        Debug.Log("Turn has ended!");
-        state = State.SelectingUnit;
-        unitMenu.enabled = false;
-
         ChangeTurns();
     }
 
@@ -216,12 +221,21 @@ public class Controller : MonoBehaviour
         return tilemap.HasTile(position);
     }
 
-    public void unitEliminated()
+    private void ChangeStateToSelecting()
     {
-        units = Array.FindAll(units, delegate (GenericUnit u)
+        state = State.SelectingUnit;
+
+        for (int i=0; i < units.Length; i++)
         {
-            return !u.gameObject.activeInHierarchy;
-        });
+            GenericUnit unit = units[i];
+
+            if (unit.CompareTag(activePlayer.ToString()) && unit.CanBeSelected())
+            {
+                StartCoroutine(unit.ApplyCanBeSelectedShader(delegate () {
+                    return state == State.SelectingUnit;
+                }));
+            }
+        }
     }
 
     private Vector3Int GetClickedGridPosition()
@@ -256,19 +270,19 @@ public class Controller : MonoBehaviour
         if (activePlayer == Player.Living) 
         {
             activePlayer = Player.Dead;
-            // TODO: Uncomment to turn off buttons for player once AI can play
-            // Array.ForEach(actionButtons, delegate (Button b) { b.interactable = false; });
+            Array.ForEach(actionButtons, delegate (Button b) { b.interactable = false; });
         }
         else if (activePlayer == Player.Dead) 
         {
             activePlayer = Player.Living;
-
-            // Array.ForEach(actionButtons, delegate (Button b) { b.interactable = true; });
+            Array.ForEach(actionButtons, delegate (Button b) { b.interactable = true; });
         }
 
         DecrementTurnTimers();
 
         CheckLoseCondition();
+
+        ChangeStateToSelecting();
 
         if (activePlayer == Player.Living)
         {
@@ -325,15 +339,13 @@ public class Controller : MonoBehaviour
 
     private void AiPickUnit()
     {
-        GenericUnit[] livingUnits = Array.FindAll(units, delegate (GenericUnit u) {
-            return u.CompareTag("Living") && u.CanBeSelected();
+        GenericUnit[] selectableUnits = Array.FindAll(units, delegate (GenericUnit u) {
+            return u.CompareTag(activePlayer.ToString()) && u.CanBeSelected();
         });
-
-        if(livingUnits.Length == 0)
+        if (selectableUnits.Length <= 0)
         {
             return;
         }
-
-        ai.PickUnit(livingUnits);
+        StartCoroutine(ai.PickUnit(selectableUnits));
     }
 }
