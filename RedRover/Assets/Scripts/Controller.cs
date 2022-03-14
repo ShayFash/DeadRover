@@ -55,11 +55,11 @@ public class Controller : MonoBehaviour
         Button[] buttons = unitMenu.GetComponentsInChildren<Button>();
         actionButtons = Array.FindAll(buttons, delegate (Button b)
         {
-            return b.CompareTag("ActionButton");
+            return b.CompareTag("ActionButton") || b.CompareTag("MoveButton");
         });
         moveButton = Array.Find(actionButtons, delegate (Button b)
         {
-            return b.gameObject.name == "Move";
+            return b.CompareTag("MoveButton");
         });
     }
 
