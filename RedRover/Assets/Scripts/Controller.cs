@@ -33,6 +33,7 @@ public class Controller : MonoBehaviour
     private TextMeshProUGUI rangeText;
     private TextMeshProUGUI attackText;
     private Button[] actionButtons;
+    private Button moveButton;
 
     private AI ai;
 
@@ -55,6 +56,10 @@ public class Controller : MonoBehaviour
         actionButtons = Array.FindAll(buttons, delegate (Button b)
         {
             return b.CompareTag("ActionButton");
+        });
+        moveButton = Array.Find(actionButtons, delegate (Button b)
+        {
+            return b.gameObject.name == "Move";
         });
     }
 
@@ -343,6 +348,7 @@ public class Controller : MonoBehaviour
 
                 bool moved = TryMoveSelectedUnit(mousePosOnGrid);
                 if (moved) {
+                    moveButton.interactable = false;
                     state = State.Waiting;
                 }
             }
