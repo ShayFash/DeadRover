@@ -23,17 +23,20 @@ public class UnitLink : MonoBehaviour
         lineRenderer.useWorldSpace = true;
     }
 
-    public void SetLink(GenericUnit unit) 
+    public void SetLink(Transform other) 
     {
-        if (unit == null)
-        {
-            lineRenderer.enabled = false;
-        }
-        else
-        {
-            lineRenderer.enabled = true;
-            StartCoroutine(FollowTransform(unit.transform));
-        }
+        lineRenderer.enabled = true;
+        StartCoroutine(FollowTransform(other));
+    }
+
+    public bool AlreadyConnected()
+    {
+        return lineRenderer.enabled;
+    }
+
+    public void HideLink()
+    {
+        lineRenderer.enabled = false;
     }
 
     private IEnumerator FollowTransform(Transform other)

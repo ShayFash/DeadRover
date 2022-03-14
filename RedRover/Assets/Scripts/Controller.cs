@@ -27,10 +27,6 @@ public class Controller : MonoBehaviour
     private GenericUnit selectedUnit;
     private GenericUnit[] units;
 
-    private List<GenericUnit> livingLinks;
-    private List<GenericUnit> deadLinks;
-    private List<GenericUnit> linksWaitList;
-
     private Tilemap tilemap;
 
     private Canvas unitMenu;
@@ -52,22 +48,13 @@ public class Controller : MonoBehaviour
             }
         }
 
-        UpdateUnitLinks();
+        UpdateLinks();
     }
 
     private void Awake()
     {
         tilemap = FindObjectOfType<Tilemap>();
         units = FindObjectsOfType<GenericUnit>();
-
-        livingLinks = new List<GenericUnit>();
-        deadLinks = new List<GenericUnit>();
-        linksWaitList = new List<GenericUnit>();
-        for (int i = 0; i < units.Length; i++) 
-        {
-            if (units[i].tag == "Living") livingLinks.Add(units[i]);
-            else if (units[i].tag == "Dead") deadLinks.Add(units[i]);
-        }
 
         unitMenu = GameObject.FindGameObjectWithTag("UnitMenu").GetComponent<Canvas>();
         TextMeshProUGUI[] unitMenuChildren = unitMenu.GetComponentsInChildren<TextMeshProUGUI>();
@@ -310,72 +297,40 @@ public class Controller : MonoBehaviour
         ai.PickUnit(livingUnits);
     }
 
-
-    //----Beginning-of-the-code-for-the-links--------------------------------------------
-
-    private void UpdateUnitLinks() 
+    private void UpdateLinks()
     {
-        CheckLinks(livingLinks);
-        CheckLinks(deadLinks);
-
-        CheckWaitList();
-
-        DesignateLinks(livingLinks);
-        DesignateLinks(deadLinks);
-    }
-
-    private void DesignateLinks(List<GenericUnit> unitList) 
-    {
-        for(int i = 0; i < unitList.Count; i++) 
+        GenericUnit previousLivingUnit = null;
+        GenericUnit previousDeadUnit = null;
+        for (int i = 0; i < units.Length; i++)
         {
-            UnitLink link = unitList[i].GetComponent<UnitLink>();
-            if (i == unitList.Count-1) link.SetLink(null);
-            else link.SetLink(unitList[i+1]);
-        }
-    }
-
-    private void CheckLinks(List<GenericUnit> unitList) 
-    {
-        for(int i = 0; i < unitList.Count; i++) 
-        {
-            UnitLink link = unitList[i].GetComponent<UnitLink>();
-            if (unitList[i].IsEliminated) RemoveLink(unitList, unitList[i]);
-            else if (unitList[i].SwitchingSides) 
+            GenericUnit unit = units[i];
+            if (!unit.IsActiveUnit())
             {
-                AddLink(linksWaitList, unitList[i]);
-                RemoveLink(unitList, unitList[i]);
+                unit.HideLink();
+                continue;
+            }
+
+            if (unit.CompareTag("Living"))
+            {
+                if (previousLivingUnit != null && !previousLivingUnit.LinkAlreadyCoonected())
+                {
+                    previousLivingUnit.SetLink(unit.transform);
+                } else if (previousLivingUnit == null)
+                {
+                    unit.HideLink();
+                }
+                previousLivingUnit = unit;
+            } else if (unit.CompareTag("Dead"))
+            {
+                if (previousDeadUnit != null && !previousDeadUnit.LinkAlreadyCoonected())
+                {
+                    previousDeadUnit.SetLink(unit.transform);
+                } else if (previousDeadUnit == null)
+                {
+                    unit.HideLink();
+                }
+                previousDeadUnit = unit;
             }
         }
     }
-
-    private void CheckWaitList() 
-    {
-        for(int i = 0; i < linksWaitList.Count; i++) 
-        {
-            UnitLink link = linksWaitList[i].GetComponent<UnitLink>();
-            if (!linksWaitList[i].SwitchingSides && linksWaitList[i].tag == "Living") 
-            {
-                AddLink(livingLinks, linksWaitList[i]);
-                RemoveLink(linksWaitList, linksWaitList[i]);
-            } 
-            else if (!linksWaitList[i].SwitchingSides && linksWaitList[i].tag == "Dead") 
-            {
-                AddLink(deadLinks, linksWaitList[i]);
-                RemoveLink(linksWaitList, linksWaitList[i]);
-            }
-        }
-    }
-
-    private void AddLink(List<GenericUnit> unitList, GenericUnit unit) 
-    {
-        unitList.Add(unit);
-    }
-
-    private void RemoveLink(List<GenericUnit> unitList, GenericUnit unit) 
-    {
-        int index = unitList.IndexOf(unit);
-        unitList.RemoveAt(index);
-    }
-
-    //----End-of-the-code-for-the-links-------------------------------------------------
 }

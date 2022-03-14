@@ -36,10 +36,12 @@ public abstract class GenericUnit : MonoBehaviour
 
     protected TextMeshProUGUI HealthDisplay;
 
+    protected UnitLink link;
+
     protected void Init()
     {
         MaxHealth = Health;
-        healthBar.SetMaxHealth(MaxHealth);
+        // healthBar.SetMaxHealth(MaxHealth);
         InitialMaxHealth = MaxHealth;
 
         NumTimesSwitched = 0;
@@ -52,9 +54,10 @@ public abstract class GenericUnit : MonoBehaviour
         TurnCountdownDisplay = Array.Find(childTexts, delegate (TextMeshProUGUI t) { return t.CompareTag("TurnCountdown"); });
         HealthDisplay = Array.Find(childTexts, delegate (TextMeshProUGUI t) { return t.CompareTag("HealthStatDisplay"); });
 
-
         Renderer = gameObject.GetComponent<SpriteRenderer>();
         Renderer.color = CompareTag("Living") ? Color.white : Color.black;
+
+        link = GetComponent<UnitLink>();
 
         UpdateHealthDisplay();
 
@@ -67,6 +70,11 @@ public abstract class GenericUnit : MonoBehaviour
     }
 
     public bool CanBeSelected()
+    {
+        return !SwitchingSides && !IsEliminated;
+    }
+
+    public bool IsActiveUnit()
     {
         return !SwitchingSides && !IsEliminated;
     }
@@ -89,11 +97,25 @@ public abstract class GenericUnit : MonoBehaviour
         transform.position = alignedPosition;
     }
 
+    public void SetLink(Transform other)
+    {
+        link.SetLink(other);
+    }
+
+    public bool LinkAlreadyCoonected()
+    {
+        return link.AlreadyConnected();
+    }
+    public void HideLink()
+    {
+        link.HideLink();
+    }
+
     public void TakeDamage(int value)
     {
         Debug.Log("I'm hurt");
         Health = Mathf.Max(0, Health - value);
-        healthBar.SetHealth(Health);
+        // healthBar.SetHealth(Health);
         UpdateHealthDisplay();
 
         if (Health == 0)
