@@ -266,7 +266,7 @@ public class Controller : MonoBehaviour
     {
         if (showAttack)
         {
-            foreach (Vector3Int tilePos in unit.TilesInMoveAndAttackRange())
+            foreach (Vector3Int tilePos in unit.TilesInAttackRange())
             {
                 tilemap.SetTileFlags(tilePos, TileFlags.None);
                 tilemap.SetColor(tilePos, Color.red);
@@ -282,14 +282,6 @@ public class Controller : MonoBehaviour
         tilemap.SetTileFlags(new Vector3Int(0, 0, 1), TileFlags.None);
         tilemap.SetColor(new Vector3Int(0,0,0), Color.yellow);
     }
-    public void ShowTilesInMoveandAttackRange(GenericUnit unit)
-    {
-        foreach (Vector3Int tilePos in unit.TilesInMoveAndAttackRange())
-        {
-            tilemap.SetTileFlags(tilePos, TileFlags.None);
-            tilemap.SetColor(tilePos, Color.blue);
-        }
-    }
 
     public void RemoveColorFromTilesInRange(GenericUnit unit)
     {
@@ -300,7 +292,7 @@ public class Controller : MonoBehaviour
         }
 
         //Remove attack color
-        foreach (Vector3Int tileInRange in unit.TilesInMoveAndAttackRange())
+        foreach (Vector3Int tileInRange in unit.TilesInAttackRange())
         {
             tilemap.SetColor(tileInRange, new Color(1.0f, 1.0f, 1.0f, 1.0f));
             tilemap.SetTileFlags(tileInRange, TileFlags.LockColor);

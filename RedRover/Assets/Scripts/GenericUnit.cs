@@ -232,7 +232,7 @@ public abstract class GenericUnit : MonoBehaviour
         }
     }
 
-    public IEnumerable<Vector3Int> TilesInMoveAndAttackRange()
+    public IEnumerable<Vector3Int> TilesInAttackRange()
     {
         foreach (Vector3Int position in Tilemap.cellBounds.allPositionsWithin)
         {
