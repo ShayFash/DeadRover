@@ -14,13 +14,14 @@ public class AI
         this.controller = controller;
         stateMachine = new StateMachine(controller);
     }
-    public void PickUnit(GenericUnit[] units)
+    public IEnumerator PickUnit(GenericUnit[] units)
     {
+        yield return new WaitForSeconds(Delay * 2);
+
         int index = UnityEngine.Random.Range(0, units.Length);
         GenericUnit unit = units[index];
 
         controller.SelectUnit(unit);
-        Debug.Log("Picked unit");
     }
 
     public void DecideActions(GenericUnit actingUnit, GenericUnit[] units)
