@@ -1,15 +1,9 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class UnitLink : MonoBehaviour
 {
     private LineRenderer lineRenderer;
-
-    private GenericUnit unit;
-    private GenericUnit linkedUnit;
-
-    private bool currentlyLinked;
 
     // Start is called before the first frame update
     void Awake()
@@ -17,8 +11,8 @@ public class UnitLink : MonoBehaviour
         unit = GetComponent<GenericUnit>();
         lineRenderer = GetComponent<LineRenderer>();
 
-        lineRenderer.startWidth = 0.10f;
-        lineRenderer.endWidth = 0.10f;
+        lineRenderer.startWidth = 0.1f;
+        lineRenderer.endWidth = 0.1f;
         lineRenderer.positionCount = 2;
         lineRenderer.useWorldSpace = true;
     }
