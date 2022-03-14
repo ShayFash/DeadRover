@@ -12,7 +12,6 @@ TagManager:
   - TurnCountdown
   - RangeStatDisplay
   - ActionButton
-  - StatsDisplay
   layers:
   - Default
   - TransparentFX
