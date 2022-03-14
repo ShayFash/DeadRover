@@ -43,7 +43,6 @@ public abstract class GenericUnit : MonoBehaviour
     protected SpriteRenderer Renderer;
 
     protected TextMeshProUGUI HealthDisplay;
-    protected TextMeshProUGUI StatsDisplay;
 
     protected bool ShaderActive = false;
     protected bool MouseOver = false;
@@ -65,7 +64,6 @@ public abstract class GenericUnit : MonoBehaviour
         TextMeshProUGUI[] childTexts = gameObject.GetComponentsInChildren<TextMeshProUGUI>();
         TurnCountdownDisplay = Array.Find(childTexts, delegate (TextMeshProUGUI t) { return t.CompareTag("TurnCountdown"); });
         HealthDisplay = Array.Find(childTexts, delegate (TextMeshProUGUI t) { return t.CompareTag("HealthStatDisplay"); });
-        StatsDisplay = Array.Find(childTexts, delegate (TextMeshProUGUI t) { return t.CompareTag("StatsDisplay"); });
 
 
         Renderer = gameObject.GetComponent<SpriteRenderer>();
@@ -344,15 +342,12 @@ public abstract class GenericUnit : MonoBehaviour
 
     private void DisplayStats()
     {
-        if(StatsDisplay != null)
-        {
-           StatsDisplay.text = " Health: " + Health.ToString() + "/" + MaxHealth.ToString() + " HP" + "\n Attack: " + Attack.ToString() + "\n Reach: " + Reach.ToString();
-        }
+        Controller.SetRangeAndAttackText(this);
     }
 
     private void RemoveStatsDisplay()
     {
-        StatsDisplay.text = "";
+        Controller.ResetRangeAndAttackText();
     }
 
     private void DisplayMoveAndAttackRange()

@@ -110,8 +110,7 @@ public class Controller : MonoBehaviour
                 selectedUnit.WasSelected();
 
                 unitMenu.enabled = true;
-                rangeText.text = "Range: " + unit.Reach.ToString();
-                attackText.text = "Attack: " + unit.Attack.ToString();
+                SetRangeAndAttackText(unit);
 
                 Player currentPlayer = activePlayer;
                 StartCoroutine(selectedUnit.ApplySelectedShader(delegate () {
@@ -142,6 +141,24 @@ public class Controller : MonoBehaviour
             default:
                 break;
         }
+    }
+
+    public void SetRangeAndAttackText(GenericUnit unit)
+    {
+        if(unit == null)
+        {
+            rangeText.text = "Range: - ";
+            attackText.text = "Attack: - ";
+            return;
+        }
+
+        rangeText.text = "Range: " + unit.Reach.ToString();
+        attackText.text = "Attack: " + unit.Attack.ToString();
+    }
+
+    public void ResetRangeAndAttackText()
+    {
+        SetRangeAndAttackText(selectedUnit);   
     }
 
     public void Attack()
