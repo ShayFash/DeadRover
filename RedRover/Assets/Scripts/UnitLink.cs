@@ -5,10 +5,8 @@ public class UnitLink : MonoBehaviour
 {
     private LineRenderer lineRenderer;
 
-    // Start is called before the first frame update
     void Awake()
     {
-        unit = GetComponent<GenericUnit>();
         lineRenderer = GetComponent<LineRenderer>();
 
         lineRenderer.startWidth = 0.1f;
