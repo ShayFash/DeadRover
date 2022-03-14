@@ -245,21 +245,46 @@ public class Controller : MonoBehaviour
         return FindClosestTile(mouseWorldPos);
     }
 
-    private void ShowTilesInRange(GenericUnit unit)
+    public void ShowTilesInRange(GenericUnit unit, bool showAttack=false)
     {
+        if (showAttack)
+        {
+            foreach (Vector3Int tilePos in unit.TilesInMoveAndAttackRange())
+            {
+                tilemap.SetTileFlags(tilePos, TileFlags.None);
+                tilemap.SetColor(tilePos, Color.red);
+            }
+        }
+    
         foreach(Vector3Int tilePos in unit.TilesInRange())
         {
             tilemap.SetTileFlags(tilePos, TileFlags.None);
-            tilemap.SetColor(tilePos, Color.red);
+            tilemap.SetColor(tilePos, Color.blue);
         }
 
         tilemap.SetTileFlags(new Vector3Int(0, 0, 1), TileFlags.None);
         tilemap.SetColor(new Vector3Int(0,0,0), Color.yellow);
     }
-
-    private void RemoveColorFromTilesInRange(GenericUnit unit)
+    public void ShowTilesInMoveandAttackRange(GenericUnit unit)
     {
+        foreach (Vector3Int tilePos in unit.TilesInMoveAndAttackRange())
+        {
+            tilemap.SetTileFlags(tilePos, TileFlags.None);
+            tilemap.SetColor(tilePos, Color.blue);
+        }
+    }
+
+    public void RemoveColorFromTilesInRange(GenericUnit unit)
+    {
+        //Remove movement color
         foreach(Vector3Int tileInRange in unit.TilesInRange()){
+            tilemap.SetColor(tileInRange, new Color(1.0f, 1.0f, 1.0f, 1.0f));
+            tilemap.SetTileFlags(tileInRange, TileFlags.LockColor);
+        }
+
+        //Remove attack color
+        foreach (Vector3Int tileInRange in unit.TilesInMoveAndAttackRange())
+        {
             tilemap.SetColor(tileInRange, new Color(1.0f, 1.0f, 1.0f, 1.0f));
             tilemap.SetTileFlags(tileInRange, TileFlags.LockColor);
         }
