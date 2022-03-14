@@ -47,8 +47,6 @@ public class Controller : MonoBehaviour
                 state = State.SelectingUnit;
             }
         }
-
-        UpdateLinks();
     }
 
     private void Awake()
@@ -86,6 +84,7 @@ public class Controller : MonoBehaviour
     {
         yield return new WaitForFixedUpdate();
 
+        UpdateLinks();
         aiPickUnit();
     } 
 
@@ -134,6 +133,7 @@ public class Controller : MonoBehaviour
 
                 {
                     selectedUnit.AttackUnit(unit);
+                    UpdateLinks();
 
                     EndTurn();
 
@@ -267,6 +267,7 @@ public class Controller : MonoBehaviour
             Array.ForEach(actionButtons, delegate (Button b) { b.interactable = true; });
         }
         Array.ForEach(units, delegate (GenericUnit u) { u.DecrementTurnTimers(); });
+        UpdateLinks();
 
         checkLoseCondition();
 
