@@ -362,7 +362,10 @@ public class Controller : MonoBehaviour
             GenericUnit unit = units[i];
             if (!unit.IsActiveUnit())
             {
-                unit.HideLink();
+                if (unit.IsEliminated)
+                {
+                    unit.HideLink();
+                }
                 continue;
             }
 
