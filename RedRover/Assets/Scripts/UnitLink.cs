@@ -4,10 +4,9 @@ using UnityEngine;
 
 public class UnitLink : MonoBehaviour
 {
-    public GameObject link;
-    public LineRenderer lineRenderer;
+    private LineRenderer lineRenderer;
 
-    private GenericUnit thisUnit;
+    private GenericUnit unit;
     private GenericUnit linkedUnit;
 
     private bool currentlyLinked;
@@ -15,47 +14,37 @@ public class UnitLink : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        thisUnit = this.GetComponent<GenericUnit>();
-    }
+        unit = GetComponent<GenericUnit>();
+        lineRenderer = GetComponent<LineRenderer>();
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (currentlyLinked) 
-        {
-            link.SetActive(true);
-
-            Vector3 startPosition = thisUnit.transform.position;
-            Vector3 endPosition = linkedUnit.transform.position;
-
-            //For creating line renderer object
-            lineRenderer.startColor = thisUnit.CompareTag("Living") ? Color.green : Color.red;
-            lineRenderer.endColor = thisUnit.CompareTag("Living") ? Color.green : Color.red;
-            lineRenderer.startWidth = 0.10f;
-            lineRenderer.endWidth = 0.10f;
-            lineRenderer.positionCount = 2;
-            lineRenderer.useWorldSpace = true; 
-
-            //For drawing line in the world space, provide the x,y,z values
-            lineRenderer.SetPosition(0, startPosition); 
-            lineRenderer.SetPosition(1, endPosition); 
-        } 
-        else 
-        {
-            link.SetActive(false);
-        }
+        lineRenderer.startWidth = 0.10f;
+        lineRenderer.endWidth = 0.10f;
+        lineRenderer.positionCount = 2;
+        lineRenderer.useWorldSpace = true;
     }
 
     public void SetLink(GenericUnit unit) 
     {
-        if (unit == null) currentlyLinked = false;
-        else currentlyLinked = true;
-        linkedUnit = unit;
+        if (unit == null)
+        {
+            lineRenderer.enabled = false;
+        }
+        else
+        {
+            lineRenderer.enabled = true;
+            StartCoroutine(FollowTransform(unit.transform));
+        }
     }
 
-    public bool IsLinked() 
+    private IEnumerator FollowTransform(Transform other)
     {
-        return currentlyLinked;
+        while (lineRenderer.enabled)
+        {
+            lineRenderer.SetPosition(0, transform.position);
+            lineRenderer.SetPosition(1, other.position);
+
+            yield return new WaitForEndOfFrame();
+        }
     }
 
 }
