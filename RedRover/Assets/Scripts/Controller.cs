@@ -34,21 +34,9 @@ public class Controller : MonoBehaviour
     private TextMeshProUGUI rangeText;
     private TextMeshProUGUI attackText;
     private Button[] actionButtons;
+    private Button moveButton;
 
     private AI ai;
-
-    private void Update()
-    {
-        if (Input.GetMouseButtonDown(0) && state == State.Moving)
-        {
-            Vector3Int mousePosOnGrid = GetClickedGridPosition();
-            if (MoveSelectedUnit(mousePosOnGrid))
-            {
-                // TODO: prevent them from moving again
-                state = State.Waiting;
-            }
-        }
-    }
 
     private void Awake()
     {
@@ -68,7 +56,11 @@ public class Controller : MonoBehaviour
         Button[] buttons = unitMenu.GetComponentsInChildren<Button>();
         actionButtons = Array.FindAll(buttons, delegate (Button b)
         {
-            return b.CompareTag("ActionButton");
+            return b.CompareTag("ActionButton") || b.CompareTag("MoveButton");
+        });
+        moveButton = Array.Find(actionButtons, delegate (Button b)
+        {
+            return b.CompareTag("MoveButton");
         });
     }
 
@@ -149,7 +141,7 @@ public class Controller : MonoBehaviour
 
     public void Attack()
     {
-        if (state == State.Attacking)
+        if (state == State.Attacking || selectedUnit == null)
         {
             return;
         }
@@ -172,8 +164,13 @@ public class Controller : MonoBehaviour
 
     public void Move()
     {
+        if (selectedUnit == null)
+        {
+            return;
+        }
         state = State.Moving;
         ShowTilesInRange(selectedUnit);
+        StartCoroutine(WaitForMoveInput());
     }
 
     public void EndTurn()
@@ -205,7 +202,7 @@ public class Controller : MonoBehaviour
         return tilemap.layoutGrid.WorldToCell(closestTile);
     }
 
-    public bool MoveSelectedUnit(Vector3Int cellPosition)
+    public bool TryMoveSelectedUnit(Vector3Int cellPosition)
     {
         if (selectedUnit.TileInRange(cellPosition))
         {
@@ -226,6 +223,7 @@ public class Controller : MonoBehaviour
 
     private void ChangeStateToSelecting()
     {
+        selectedUnit = null;
         state = State.SelectingUnit;
 
         for (int i=0; i < units.Length; i++)
@@ -234,18 +232,12 @@ public class Controller : MonoBehaviour
 
             if (unit.CompareTag(activePlayer.ToString()) && unit.CanBeSelected())
             {
+                Player currentPlayer = activePlayer;
                 StartCoroutine(unit.ApplyCanBeSelectedShader(delegate () {
-                    return state == State.SelectingUnit;
+                    return state == State.SelectingUnit && activePlayer == currentPlayer;
                 }));
             }
         }
-    }
-
-    private Vector3Int GetClickedGridPosition()
-    {
-        Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-        return FindClosestTile(mouseWorldPos);
     }
 
     private void ShowTilesInRange(GenericUnit unit)
@@ -387,6 +379,27 @@ public class Controller : MonoBehaviour
                 }
                 previousDeadUnit = unit;
             }
+        }
+    }
+
+    private IEnumerator WaitForMoveInput()
+    {
+        Player currentPlayer = activePlayer;
+        while (state == State.Moving && activePlayer == currentPlayer)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+                Vector3Int mousePosOnGrid = FindClosestTile(mouseWorldPos);
+
+                bool moved = TryMoveSelectedUnit(mousePosOnGrid);
+                if (moved) {
+                    moveButton.interactable = false;
+                    state = State.Waiting;
+                }
+            }
+            yield return null;
         }
     }
 }
