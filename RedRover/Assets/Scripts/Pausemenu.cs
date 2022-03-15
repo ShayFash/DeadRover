@@ -12,6 +12,7 @@ public class Pausemenu : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        /*
         if (Input.GetKeyDown("escape"))
         {
             if (GameIsPaused)
@@ -23,6 +24,7 @@ public class Pausemenu : MonoBehaviour
                 Pause();
             }
         }
+        */
     }
 
      public void Resume()
