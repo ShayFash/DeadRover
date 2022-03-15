@@ -296,6 +296,11 @@ public class Controller : MonoBehaviour
             tilemap.SetColor(tileInRange, new Color(1.0f, 1.0f, 1.0f, 1.0f));
             tilemap.SetTileFlags(tileInRange, TileFlags.LockColor);
         }
+
+        if (state == State.Moving)
+        {
+            ShowTilesInRange(selectedUnit);
+        }
     }
 
     private void ChangeTurns() 
