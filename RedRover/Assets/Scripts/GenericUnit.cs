@@ -15,7 +15,9 @@ public abstract class GenericUnit : MonoBehaviour
     public int MaxHealth { get; protected set; }
     public int InitialMaxHealth { get; protected set; }
     public HealthBar healthBar;
-    
+
+    public Sprite livingSprite;
+    public Sprite deadSprite;
 
     public bool IsEliminated { get; protected set; }
 
@@ -68,7 +70,8 @@ public abstract class GenericUnit : MonoBehaviour
         HealthDisplay = Array.Find(childTexts, delegate (TextMeshProUGUI t) { return t.CompareTag("HealthStatDisplay"); });
 
         Renderer = gameObject.GetComponent<SpriteRenderer>();
-        Renderer.color = CompareTag("Living") ? Color.white : Color.black;
+        Renderer.sprite = CompareTag("Living") ? livingSprite : deadSprite;
+
 
         link = GetComponent<UnitLink>();
 
@@ -162,7 +165,7 @@ public abstract class GenericUnit : MonoBehaviour
             ResetSelectionTimer();
 
             TurnCountdownDisplay.text = SwitchSidesCountdown.ToString();
-            TurnCountdownDisplay.color = CompareTag("Living") ? Color.black : Color.white;
+            Renderer.sprite = CompareTag("Living") ? livingSprite : deadSprite;
             TurnCountdownDisplay.enabled = true;
 
             HealthDisplay.enabled = false;
@@ -187,7 +190,7 @@ public abstract class GenericUnit : MonoBehaviour
             link.HideLink();
             NumTimesSwitched++;
             tag = CompareTag("Living") ? "Dead" : "Living";
-            Renderer.color = CompareTag("Living") ? Color.white : Color.black;
+            Renderer.sprite = CompareTag("Living") ? livingSprite : deadSprite;
 
             MaxHealth = Mathf.RoundToInt(InitialMaxHealth * (1 - (NumTimesSwitched / (MaxAllowedSwitches + 1f))));
             Health = MaxHealth;
