@@ -138,7 +138,7 @@ public class Controller : MonoBehaviour
 
     public void Attack()
     {
-        if (state == State.Attacking)
+        if (state == State.Attacking || selectedUnit == null)
         {
             return;
         }
@@ -161,6 +161,10 @@ public class Controller : MonoBehaviour
 
     public void Move()
     {
+        if (selectedUnit == null)
+        {
+            return;
+        }
         state = State.Moving;
         ShowTilesInRange(selectedUnit);
         StartCoroutine(WaitForMoveInput());
@@ -216,6 +220,7 @@ public class Controller : MonoBehaviour
 
     private void ChangeStateToSelecting()
     {
+        selectedUnit = null;
         state = State.SelectingUnit;
 
         for (int i=0; i < units.Length; i++)
@@ -224,8 +229,9 @@ public class Controller : MonoBehaviour
 
             if (unit.CompareTag(activePlayer.ToString()) && unit.CanBeSelected())
             {
+                Player currentPlayer = activePlayer;
                 StartCoroutine(unit.ApplyCanBeSelectedShader(delegate () {
-                    return state == State.SelectingUnit;
+                    return state == State.SelectingUnit && activePlayer == currentPlayer;
                 }));
             }
         }
