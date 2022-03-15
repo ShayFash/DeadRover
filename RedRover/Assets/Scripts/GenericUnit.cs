@@ -156,6 +156,7 @@ public abstract class GenericUnit : MonoBehaviour
             }
 
             SwitchingSides = true;
+            link.SwitchingSides();
             SwitchSidesCountdown = NumTurnsToSwitchSides;
 
             ResetSelectionTimer();
@@ -183,6 +184,7 @@ public abstract class GenericUnit : MonoBehaviour
         if (SwitchingSides && SwitchSidesCountdown <= 0)
         {
             SwitchingSides = false;
+            link.HideLink();
             NumTimesSwitched++;
             tag = CompareTag("Living") ? "Dead" : "Living";
             Renderer.color = CompareTag("Living") ? Color.white : Color.black;
