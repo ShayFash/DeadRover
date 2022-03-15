@@ -297,7 +297,7 @@ public class Controller : MonoBehaviour
             tilemap.SetTileFlags(tileInRange, TileFlags.LockColor);
         }
 
-        if (state == State.Moving)
+        if (state == State.Moving && unit != selectedUnit)
         {
             ShowTilesInRange(selectedUnit);
         }
