@@ -476,6 +476,8 @@ MonoBehaviour:
   Health: 8
   Movement: 3
   healthBar: {fileID: 0}
+  livingSprite: {fileID: 21300000, guid: 01a2fd6eec4744641b7f8111b4e9fac0, type: 3}
+  deadSprite: {fileID: 21300000, guid: 4e636cfdba63ca44b8f7f7f0b0efe820, type: 3}
   NumTurnsToSwitchSides: 4
   MaxAllowedSwitches: 3
   NumTurnsBetweenSelection: 6
