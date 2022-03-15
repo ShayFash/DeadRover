@@ -17,6 +17,8 @@ public abstract class GenericUnit : MonoBehaviour
     public HealthBar healthBar;
     
 
+    public bool IsEliminated { get; protected set; }
+
 
     [SerializeField]
     protected int NumTurnsToSwitchSides = 4;
@@ -25,7 +27,13 @@ public abstract class GenericUnit : MonoBehaviour
     public int SwitchSidesCountdown { get; protected set; }
     public int NumTimesSwitched { get; protected set; }
     public bool SwitchingSides { get; protected set; }
-    public bool IsEliminated { get; protected set; }
+
+    // This will be decremented every turn, including the one the unit is picked on and enemy turns
+    [SerializeField]
+    protected int NumTurnsBetweenSelection = 6;
+
+    public int SelectionTimer { get; protected set; }
+
 
     protected Controller Controller;
 
@@ -36,6 +44,9 @@ public abstract class GenericUnit : MonoBehaviour
 
     protected TextMeshProUGUI HealthDisplay;
 
+    protected bool ShaderActive = false;
+    protected bool MouseOver = false;
+
     protected void Init()
     {
         MaxHealth = Health;
@@ -44,6 +55,8 @@ public abstract class GenericUnit : MonoBehaviour
 
         NumTimesSwitched = 0;
         IsEliminated = false;
+
+        SelectionTimer = 0;
 
         Controller = GameObject.FindGameObjectWithTag("GameController").GetComponent<Controller>();
         Tilemap = FindObjectOfType<Tilemap>();
@@ -68,7 +81,22 @@ public abstract class GenericUnit : MonoBehaviour
 
     public bool CanBeSelected()
     {
+        return !SwitchingSides && SelectionTimer <= 0 && !IsEliminated;
+    }
+
+    public bool IsActive()
+    {
         return !SwitchingSides && !IsEliminated;
+    }
+
+    public void WasSelected()
+    {
+        SelectionTimer = NumTurnsBetweenSelection;
+    }
+
+    public void ResetSelectionTimer()
+    {
+        SelectionTimer = 0;
     }
 
     public Vector3Int GetTilePosition()
@@ -108,6 +136,8 @@ public abstract class GenericUnit : MonoBehaviour
             SwitchingSides = true;
             SwitchSidesCountdown = NumTurnsToSwitchSides;
 
+            ResetSelectionTimer();
+
             TurnCountdownDisplay.text = SwitchSidesCountdown.ToString();
             TurnCountdownDisplay.color = CompareTag("Living") ? Color.black : Color.white;
             TurnCountdownDisplay.enabled = true;
@@ -118,15 +148,17 @@ public abstract class GenericUnit : MonoBehaviour
 
     public void DecrementTurnTimers()
     {
-        if (!SwitchingSides)
+        SelectionTimer = Math.Max(0, SelectionTimer - 1);
+
+        if (SwitchingSides)
         {
-            return;
+            SwitchSidesCountdown = Math.Max(0, SwitchSidesCountdown - 1);
         }
 
-        SwitchSidesCountdown--;
+
         TurnCountdownDisplay.text = SwitchSidesCountdown.ToString();
 
-        if (SwitchSidesCountdown <= 0)
+        if (SwitchingSides && SwitchSidesCountdown <= 0)
         {
             SwitchingSides = false;
             NumTimesSwitched++;
@@ -188,49 +220,97 @@ public abstract class GenericUnit : MonoBehaviour
 
     public IEnumerator ApplyAttackShader(Func<bool> continueWhile)
     {
-        // Material oldMaterial = Renderer.material;
+        yield return new WaitUntil(() => !ShaderActive);
+        ShaderActive = true;
+        Material oldMaterial = Renderer.material;
 
-        // Material material = new Material(Shader.Find("Shader Graphs/PulseHighlight"));
-        // material.color = Color.red;
-        // material.SetFloat("_Intensity", 0.5f);
-        // material.SetFloat("_Speed", 3);
-        // material.SetFloat("_TimeElapsed", 0);
+        Material material = new Material(Shader.Find("Shader Graphs/PulseHighlight"));
+        material.color = Color.red;
+        material.SetFloat("_Intensity", 0.5f);
+        material.SetFloat("_Speed", 3);
+        material.SetFloat("_TimeElapsed", 0);
 
-        // Renderer.material = material;
+        Renderer.material = material;
 
-        // float timeElasped = 0;
-
-        Color oldColor = Renderer.color;
-
-        Renderer.color = Color.red;
+        float timeElasped = 0;
 
         while (continueWhile())
         {
-            // timeElasped += Time.deltaTime;
+            timeElasped += Time.deltaTime;
             // This is inefficient for a lot of materials, but it won't matter for this game
-            // Renderer.material.SetFloat("_TimeElapsed", timeElasped);
+            Renderer.material.SetFloat("_TimeElapsed", timeElasped);
 
             yield return new WaitForEndOfFrame();
         }
 
-        Renderer.color = oldColor;
+        Renderer.material = oldMaterial;
 
-        // Renderer.material = oldMaterial;
+        ShaderActive = false;
     }
 
     public IEnumerator ApplySelectedShader(Func<bool> continueWhile)
     {
-        Color oldColor = Renderer.color;
+        yield return new WaitUntil(() => !ShaderActive);
+        ShaderActive = true;
+        Material oldMaterial = Renderer.material;
 
-        Renderer.color = Color.blue;
+        Material material = new Material(Shader.Find("Shader Graphs/Highlight"));
+        material.color = Color.yellow;
+        material.SetFloat("_Intensity", 0.5f);
+
+        Renderer.material = material;
+
+        yield return new WaitWhile(() => continueWhile());
+
+        Renderer.material = oldMaterial;
+        ShaderActive = false;
+    }
+
+    public IEnumerator ApplyCanBeSelectedShader(Func<bool> continueWhile)
+    {
+        yield return new WaitUntil(() => !ShaderActive);
+        ShaderActive = true;
+        Material oldMaterial = Renderer.material;
+
+        Material material = new Material(Shader.Find("Shader Graphs/PulseHighlight"));
+        material.color = Color.yellow;
+        material.SetFloat("_Intensity", 0.5f);
+        material.SetFloat("_Speed", 3);
+        material.SetFloat("_TimeElapsed", 0);
+
+        Renderer.material = material;
+
+        float timeElasped = 0;
 
         while (continueWhile())
         {
+            timeElasped += Time.deltaTime;
+            // This is inefficient for a lot of materials, but it won't matter for this game
+            Renderer.material.SetFloat("_TimeElapsed", timeElasped);
+
+            if (MouseOver && Renderer.material.color == Color.yellow)
+            {
+                Renderer.material.color = Color.green;
+            } else if (!MouseOver && Renderer.material.color == Color.green)
+            {
+                Renderer.material.color = Color.yellow;
+            }
 
             yield return new WaitForEndOfFrame();
         }
 
-        Renderer.color = oldColor;
+        Renderer.material = oldMaterial;
+        ShaderActive = false;
+    }
+
+    private void OnMouseEnter()
+    {
+        MouseOver = true;
+    }
+
+    private void OnMouseExit()
+    {
+        MouseOver = false;
     }
 
     private void OnMouseDown()

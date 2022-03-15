@@ -10,6 +10,7 @@ public class Controller : MonoBehaviour
     private enum State
     {
         SelectingUnit,
+        Waiting,
         Attacking,
         Moving
     }
@@ -20,7 +21,7 @@ public class Controller : MonoBehaviour
         Dead
     }
 
-    private State state = State.SelectingUnit;
+    private State state = State.Waiting;
     private Player activePlayer = Player.Living;   // Living starts
     
     private GenericUnit selectedUnit;
@@ -32,21 +33,9 @@ public class Controller : MonoBehaviour
     private TextMeshProUGUI rangeText;
     private TextMeshProUGUI attackText;
     private Button[] actionButtons;
+    private Button moveButton;
 
     private AI ai;
-
-    private void Update()
-    {
-        if (Input.GetMouseButtonDown(0) && state == State.Moving)
-        {
-            Vector3Int mousePosOnGrid = GetClickedGridPosition();
-            if (MoveSelectedUnit(mousePosOnGrid))
-            {
-                // TODO: prevent them from moving again
-                state = State.SelectingUnit;
-            }
-        }
-    }
 
     private void Awake()
     {
@@ -63,12 +52,14 @@ public class Controller : MonoBehaviour
             return t.gameObject.CompareTag("AttackStatDisplay");
         });
 
-        
-
         Button[] buttons = unitMenu.GetComponentsInChildren<Button>();
         actionButtons = Array.FindAll(buttons, delegate (Button b)
         {
-            return b.CompareTag("ActionButton");
+            return b.CompareTag("ActionButton") || b.CompareTag("MoveButton");
+        });
+        moveButton = Array.Find(actionButtons, delegate (Button b)
+        {
+            return b.CompareTag("MoveButton");
         });
     }
 
@@ -83,12 +74,13 @@ public class Controller : MonoBehaviour
     {
         yield return new WaitForFixedUpdate();
 
-        aiPickUnit();
+        ChangeStateToSelecting();
+        AiPickUnit();
     } 
 
     public void UnitClicked(GenericUnit Unit)
     {
-        if (activePlayer == Player.Living && state != State.Attacking)
+        if ((activePlayer == Player.Living && state != State.Attacking) || (activePlayer == Player.Dead && state != State.SelectingUnit))
         {
             return;
         }
@@ -105,6 +97,9 @@ public class Controller : MonoBehaviour
                     return;
                 }
                 selectedUnit = unit;
+                state = State.Waiting;
+
+                selectedUnit.WasSelected();
 
                 unitMenu.enabled = true;
                 rangeText.text = "Range: " + unit.Reach.ToString();
@@ -112,7 +107,7 @@ public class Controller : MonoBehaviour
 
                 Player currentPlayer = activePlayer;
                 StartCoroutine(selectedUnit.ApplySelectedShader(delegate () {
-                    return state == State.SelectingUnit && activePlayer == currentPlayer;
+                    return activePlayer == currentPlayer;
                 }));
 
                 if (activePlayer == Player.Dead)
@@ -133,8 +128,6 @@ public class Controller : MonoBehaviour
                     selectedUnit.AttackUnit(unit);
 
                     EndTurn();
-
-                    state = State.SelectingUnit;
                 }
                 break;
 
@@ -145,39 +138,40 @@ public class Controller : MonoBehaviour
 
     public void Attack()
     {
-        if (state == State.Attacking)
+        if (state == State.Attacking || selectedUnit == null)
         {
             return;
         }
         state = State.Attacking;
 
-        GenericUnit[] enemyUnitsInRange = Array.FindAll(units, delegate (GenericUnit target)
-        {
-            return !selectedUnit.CompareTag(target.tag) && target.CanBeAttacked() && selectedUnit.UnitInRange(target);
-        });
-
         Player currentPlayer = activePlayer;
-
-        Array.ForEach(enemyUnitsInRange, delegate (GenericUnit enemy)
+        for (int i=0; i < units.Length; i++)
         {
-            StartCoroutine(enemy.ApplyAttackShader(delegate () { 
-                return state == State.Attacking && activePlayer == currentPlayer;
-            }));
-        });
+            GenericUnit target = units[i];
+
+            bool isTargetInRange = !selectedUnit.CompareTag(target.tag) && target.CanBeAttacked() && selectedUnit.UnitInRange(target);
+            if (isTargetInRange)
+            {
+                StartCoroutine(target.ApplyAttackShader(delegate () {
+                    return state == State.Attacking && activePlayer == currentPlayer;
+                }));
+            }
+        }
     }
 
     public void Move()
     {
+        if (selectedUnit == null)
+        {
+            return;
+        }
         state = State.Moving;
         ShowTilesInRange(selectedUnit);
+        StartCoroutine(WaitForMoveInput());
     }
 
     public void EndTurn()
     {
-        Debug.Log("Turn has ended!");
-        state = State.SelectingUnit;
-        
-
         ChangeTurns();
     }
 
@@ -205,7 +199,7 @@ public class Controller : MonoBehaviour
         return tilemap.layoutGrid.WorldToCell(closestTile);
     }
 
-    public bool MoveSelectedUnit(Vector3Int cellPosition)
+    public bool TryMoveSelectedUnit(Vector3Int cellPosition)
     {
         if (selectedUnit.TileInRange(cellPosition))
         {
@@ -224,11 +218,23 @@ public class Controller : MonoBehaviour
         return tilemap.HasTile(position);
     }
 
-    private Vector3Int GetClickedGridPosition()
+    private void ChangeStateToSelecting()
     {
-        Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        selectedUnit = null;
+        state = State.SelectingUnit;
 
-        return FindClosestTile(mouseWorldPos);
+        for (int i=0; i < units.Length; i++)
+        {
+            GenericUnit unit = units[i];
+
+            if (unit.CompareTag(activePlayer.ToString()) && unit.CanBeSelected())
+            {
+                Player currentPlayer = activePlayer;
+                StartCoroutine(unit.ApplyCanBeSelectedShader(delegate () {
+                    return state == State.SelectingUnit && activePlayer == currentPlayer;
+                }));
+            }
+        }
     }
 
     private void ShowTilesInRange(GenericUnit unit)
@@ -263,17 +269,54 @@ public class Controller : MonoBehaviour
             activePlayer = Player.Living;
             Array.ForEach(actionButtons, delegate (Button b) { b.interactable = true; });
         }
-        Array.ForEach(units, delegate (GenericUnit u) { u.DecrementTurnTimers(); });
 
-        checkLoseCondition();
+        DecrementTurnTimers();
+
+        CheckLoseCondition();
+
+        ChangeStateToSelecting();
 
         if (activePlayer == Player.Living)
         {
-            aiPickUnit();
+            AiPickUnit();
         }
     }
 
-    private void checkLoseCondition()
+    private void DecrementTurnTimers()
+    {
+        Array.ForEach(units, delegate (GenericUnit u) { u.DecrementTurnTimers(); });
+
+        GenericUnit[] activePlayerUnits = Array.FindAll(units, delegate (GenericUnit u)
+        {
+            return u.CompareTag(activePlayer.ToString()) && u.IsActive();
+        });
+
+        GenericUnit nextSelectableUnit = null;
+        int lowestSelectionTimer = 100000;
+
+        // If no unit is selectable due to turn timers, just set the lowest turn timer to 0
+        for (int i=0; i < activePlayerUnits.Length; i++)
+        {
+            GenericUnit unit = activePlayerUnits[i];
+            if (unit.CanBeSelected())
+            {
+                return;
+            } else if (!unit.SwitchingSides && unit.SelectionTimer < lowestSelectionTimer)
+            {
+                lowestSelectionTimer = unit.SelectionTimer;
+                nextSelectableUnit = unit;
+            }
+        }
+
+        // If it was still null, there are no selectable units and no units that aren't switching sides
+        // So the active player should lose
+        if (nextSelectableUnit != null)
+        {
+            nextSelectableUnit.ResetSelectionTimer();
+        }
+    }
+
+    private void CheckLoseCondition()
     {
         bool unitsLeft = Array.Exists(units, delegate (GenericUnit u)
         {
@@ -286,11 +329,36 @@ public class Controller : MonoBehaviour
         }
     }
 
-    private void aiPickUnit()
+    private void AiPickUnit()
     {
-        GenericUnit[] livingUnits = Array.FindAll(units, delegate (GenericUnit u) {
-            return u.CompareTag("Living") && u.CanBeSelected();
+        GenericUnit[] selectableUnits = Array.FindAll(units, delegate (GenericUnit u) {
+            return u.CompareTag(activePlayer.ToString()) && u.CanBeSelected();
         });
-        ai.PickUnit(livingUnits);
+        if (selectableUnits.Length <= 0)
+        {
+            return;
+        }
+        StartCoroutine(ai.PickUnit(selectableUnits));
+    }
+
+    private IEnumerator WaitForMoveInput()
+    {
+        Player currentPlayer = activePlayer;
+        while (state == State.Moving && activePlayer == currentPlayer)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+                Vector3Int mousePosOnGrid = FindClosestTile(mouseWorldPos);
+
+                bool moved = TryMoveSelectedUnit(mousePosOnGrid);
+                if (moved) {
+                    moveButton.interactable = false;
+                    state = State.Waiting;
+                }
+            }
+            yield return null;
+        }
     }
 }
