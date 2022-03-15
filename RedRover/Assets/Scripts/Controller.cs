@@ -104,8 +104,7 @@ public class Controller : MonoBehaviour
                 selectedUnit.WasSelected();
 
                 unitMenu.enabled = true;
-                rangeText.text = "Range: " + unit.Reach.ToString();
-                attackText.text = "Attack: " + unit.Attack.ToString();
+                SetRangeAndAttackText(unit);
 
                 Player currentPlayer = activePlayer;
                 StartCoroutine(selectedUnit.ApplySelectedShader(delegate () {
@@ -137,6 +136,24 @@ public class Controller : MonoBehaviour
             default:
                 break;
         }
+    }
+
+    public void SetRangeAndAttackText(GenericUnit unit)
+    {
+        if(unit == null)
+        {
+            rangeText.text = "Range: - ";
+            attackText.text = "Attack: - ";
+            return;
+        }
+
+        rangeText.text = "Range: " + unit.Reach.ToString();
+        attackText.text = "Attack: " + unit.Attack.ToString();
+    }
+
+    public void ResetRangeAndAttackText()
+    {
+        SetRangeAndAttackText(selectedUnit);   
     }
 
     public void Attack()
@@ -240,23 +257,52 @@ public class Controller : MonoBehaviour
         }
     }
 
-    private void ShowTilesInRange(GenericUnit unit)
+    private Vector3Int GetClickedGridPosition()
     {
+        Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+        return FindClosestTile(mouseWorldPos);
+    }
+
+    public void ShowTilesInRange(GenericUnit unit, bool showAttack=false)
+    {
+        if (showAttack)
+        {
+            foreach (Vector3Int tilePos in unit.TilesInAttackRange())
+            {
+                tilemap.SetTileFlags(tilePos, TileFlags.None);
+                tilemap.SetColor(tilePos, Color.red);
+            }
+        }
+    
         foreach(Vector3Int tilePos in unit.TilesInRange())
         {
             tilemap.SetTileFlags(tilePos, TileFlags.None);
-            tilemap.SetColor(tilePos, Color.red);
+            tilemap.SetColor(tilePos, Color.blue);
         }
 
         tilemap.SetTileFlags(new Vector3Int(0, 0, 1), TileFlags.None);
         tilemap.SetColor(new Vector3Int(0,0,0), Color.yellow);
     }
 
-    private void RemoveColorFromTilesInRange(GenericUnit unit)
+    public void RemoveColorFromTilesInRange(GenericUnit unit)
     {
+        //Remove movement color
         foreach(Vector3Int tileInRange in unit.TilesInRange()){
             tilemap.SetColor(tileInRange, new Color(1.0f, 1.0f, 1.0f, 1.0f));
             tilemap.SetTileFlags(tileInRange, TileFlags.LockColor);
+        }
+
+        //Remove attack color
+        foreach (Vector3Int tileInRange in unit.TilesInAttackRange())
+        {
+            tilemap.SetColor(tileInRange, new Color(1.0f, 1.0f, 1.0f, 1.0f));
+            tilemap.SetTileFlags(tileInRange, TileFlags.LockColor);
+        }
+
+        if (state == State.Moving && unit != selectedUnit)
+        {
+            ShowTilesInRange(selectedUnit);
         }
     }
 

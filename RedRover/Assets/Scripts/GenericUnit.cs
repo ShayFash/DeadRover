@@ -231,11 +231,36 @@ public abstract class GenericUnit : MonoBehaviour
 
         return tileDistance <= Movement;
     }
+
+    public bool TileInAttackRange(Vector3Int tilePosition)
+    {
+        Vector3Int myTilePosition = Tilemap.layoutGrid.WorldToCell(transform.position);
+
+        int tileDistance = 0;
+        for (int i = 0; i <= 1; i++)
+        {
+            tileDistance += Mathf.Abs(myTilePosition[i] - tilePosition[i]);
+        }
+
+        return tileDistance > Movement && tileDistance <= Movement+Reach;
+    }
+
     public IEnumerable<Vector3Int> TilesInRange()
     {
         foreach (Vector3Int position in Tilemap.cellBounds.allPositionsWithin)
         {
             if (TileInRange(position))
+            {
+                yield return position;
+            }
+        }
+    }
+
+    public IEnumerable<Vector3Int> TilesInAttackRange()
+    {
+        foreach (Vector3Int position in Tilemap.cellBounds.allPositionsWithin)
+        {
+            if (TileInAttackRange(position))
             {
                 yield return position;
             }
@@ -327,14 +352,48 @@ public abstract class GenericUnit : MonoBehaviour
         ShaderActive = false;
     }
 
+    private void DisplayDetailedInformation()
+    {
+        DisplayStats();
+        DisplayMoveAndAttackRange();
+    }
+
+    private void RemoveDetailedInformation()
+    {
+        RemoveStatsDisplay();
+        RemoveMoveAndAttackDisplay();
+    }
+
+    private void DisplayStats()
+    {
+        Controller.SetRangeAndAttackText(this);
+    }
+
+    private void RemoveStatsDisplay()
+    {
+        Controller.ResetRangeAndAttackText();
+    }
+
+    private void DisplayMoveAndAttackRange()
+    {
+        Controller.ShowTilesInRange(this, true);
+    }
+
+    private void RemoveMoveAndAttackDisplay()
+    {
+        Controller.RemoveColorFromTilesInRange(this);
+    }
+
     private void OnMouseEnter()
     {
         MouseOver = true;
+        DisplayDetailedInformation();
     }
 
     private void OnMouseExit()
     {
         MouseOver = false;
+        RemoveDetailedInformation();
     }
 
     private void OnMouseDown()
