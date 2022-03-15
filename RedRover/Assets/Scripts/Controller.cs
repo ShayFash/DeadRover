@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -74,6 +75,7 @@ public class Controller : MonoBehaviour
     {
         yield return new WaitForFixedUpdate();
 
+        UpdateLinks();
         ChangeStateToSelecting();
         AiPickUnit();
     } 
@@ -125,6 +127,7 @@ public class Controller : MonoBehaviour
 
                 {
                     selectedUnit.AttackUnit(unit);
+                    UpdateLinks();
 
                     EndTurn();
                 }
@@ -331,6 +334,7 @@ public class Controller : MonoBehaviour
     private void DecrementTurnTimers()
     {
         Array.ForEach(units, delegate (GenericUnit u) { u.DecrementTurnTimers(); });
+        UpdateLinks();
 
         GenericUnit[] activePlayerUnits = Array.FindAll(units, delegate (GenericUnit u)
         {
@@ -385,6 +389,46 @@ public class Controller : MonoBehaviour
             return;
         }
         StartCoroutine(ai.PickUnit(selectableUnits));
+    }
+
+    private void UpdateLinks()
+    {
+        GenericUnit previousLivingUnit = null;
+        GenericUnit previousDeadUnit = null;
+        for (int i = 0; i < units.Length; i++)
+        {
+            GenericUnit unit = units[i];
+            if (!unit.IsActiveUnit())
+            {
+                if (unit.IsEliminated)
+                {
+                    unit.HideLink();
+                }
+                continue;
+            }
+
+            if (unit.CompareTag("Living"))
+            {
+                if (previousLivingUnit != null && !previousLivingUnit.LinkAlreadyCoonected())
+                {
+                    previousLivingUnit.SetLink(unit.transform);
+                } else if (previousLivingUnit == null)
+                {
+                    unit.HideLink();
+                }
+                previousLivingUnit = unit;
+            } else if (unit.CompareTag("Dead"))
+            {
+                if (previousDeadUnit != null && !previousDeadUnit.LinkAlreadyCoonected())
+                {
+                    previousDeadUnit.SetLink(unit.transform);
+                } else if (previousDeadUnit == null)
+                {
+                    unit.HideLink();
+                }
+                previousDeadUnit = unit;
+            }
+        }
     }
 
     private IEnumerator WaitForMoveInput()
