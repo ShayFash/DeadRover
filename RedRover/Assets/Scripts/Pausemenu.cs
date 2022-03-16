@@ -58,4 +58,9 @@ public class Pausemenu : MonoBehaviour
         Debug.Log("Quitting Game...");
         Application.Quit();
     }
+
+    public void Mute()
+    {
+        FindObjectOfType<AudioManager>().MuteToggle("Theme");
+    }
 }
