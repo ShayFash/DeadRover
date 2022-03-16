@@ -214,6 +214,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2052618431279884504, guid: 6265e2120d8af6e4bae88df6dc1262f1, type: 3}
+      propertyPath: healthBar
+      value: 
+      objectReference: {fileID: 306704761}
     - target: {fileID: 2052618431279884505, guid: 6265e2120d8af6e4bae88df6dc1262f1, type: 3}
       propertyPath: m_Name
       value: LivingGlassCannon
@@ -319,8 +323,23 @@ PrefabInstance:
       propertyPath: m_Name
       value: DeadTank
       objectReference: {fileID: 0}
+    - target: {fileID: 8573693587837772691, guid: 3005cf4bb99b2b94195af6e21121cb7d, type: 3}
+      propertyPath: healthBar
+      value: 
+      objectReference: {fileID: 306704761}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3005cf4bb99b2b94195af6e21121cb7d, type: 3}
+--- !u!114 &306704761 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5163060366200398704, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
+  m_PrefabInstance: {fileID: 1244601458}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e2197b8377f23247a01c6115944f6ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &333182021
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -328,6 +347,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 6434049928325986256, guid: 0a8dacd3f832b6440b1d405a18bbb977, type: 3}
+      propertyPath: healthBar
+      value: 
+      objectReference: {fileID: 306704761}
     - target: {fileID: 6434049928325986257, guid: 0a8dacd3f832b6440b1d405a18bbb977, type: 3}
       propertyPath: m_Name
       value: DeadPawn
@@ -474,6 +497,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3557807815676642334, guid: 5f85576577e4335458a9a0f122d4a13d, type: 3}
+      propertyPath: healthBar
+      value: 
+      objectReference: {fileID: 306704761}
     - target: {fileID: 3557807815676642335, guid: 5f85576577e4335458a9a0f122d4a13d, type: 3}
       propertyPath: m_Name
       value: LivingPawn
@@ -12279,6 +12306,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 272208243240410346, guid: cbf508f538d2ed346ad431c5e0a47a88, type: 3}
+      propertyPath: healthBar
+      value: 
+      objectReference: {fileID: 306704761}
     - target: {fileID: 272208243240410347, guid: cbf508f538d2ed346ad431c5e0a47a88, type: 3}
       propertyPath: m_Name
       value: LivingTank
@@ -12296,6 +12327,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DeadGlassCannon
       objectReference: {fileID: 0}
+    - target: {fileID: 4604847465400645981, guid: 4143f3c2308fa8941a1d637a9959d564, type: 3}
+      propertyPath: healthBar
+      value: 
+      objectReference: {fileID: 306704761}
     - target: {fileID: 4604847465400645983, guid: 4143f3c2308fa8941a1d637a9959d564, type: 3}
       propertyPath: m_RootOrder
       value: 6
