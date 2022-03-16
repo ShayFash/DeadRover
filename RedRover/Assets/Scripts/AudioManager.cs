@@ -41,11 +41,36 @@ public class AudioManager : MonoBehaviour
     public void Play (string name)
     {
         Sound s = Array.Find(sounds, sound => sound.name == name);
-        if (s == null)
+        if (s == null) //aka typo
         {
             Debug.LogWarning("Sound: " + name + " not found!");
             return;
         }
         s.source.Play();
+    }
+
+    public void MuteToggle (string name)
+    {
+        
+        Sound s = Array.Find(sounds, sound => sound.name == name);
+
+        if (!s.source.mute)
+        {
+            Play("Back");
+
+            foreach (Sound i in sounds)
+            {
+                i.source.mute = true;
+            }   
+        }
+
+        else
+        {
+            Play("Forward");
+            foreach (Sound i in sounds)
+            {
+                i.source.mute = false;
+            }  
+        }
     }
 }
