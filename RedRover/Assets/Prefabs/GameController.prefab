@@ -332,8 +332,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: Pausemenu, Assembly-CSharp
+      - m_Target: {fileID: 8353234847513043700}
+        m_TargetAssemblyTypeName: EndGameUI, Assembly-CSharp
         m_MethodName: LoadMenu
         m_Mode: 1
         m_Arguments:
@@ -432,6 +432,7 @@ GameObject:
   - component: {fileID: 5087063098274279908}
   - component: {fileID: 4351143644370373694}
   - component: {fileID: 6375690134305367903}
+  - component: {fileID: 8353234847513043700}
   m_Layer: 5
   m_Name: Canvas Won
   m_TagString: Untagged
@@ -521,6 +522,19 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &8353234847513043700
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1799712741472610247}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e73d9892d71ca0d48bcb98479ddaa516, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  EndUI: {fileID: 1983700438522949307}
 --- !u!1 &1841147311146054117
 GameObject:
   m_ObjectHideFlags: 0
@@ -3359,6 +3373,7 @@ GameObject:
   - component: {fileID: 6666002815355208476}
   - component: {fileID: 6180840072205087810}
   - component: {fileID: 1924333652887937962}
+  - component: {fileID: 5384858455922393003}
   m_Layer: 5
   m_Name: Canvas Loss
   m_TagString: Untagged
@@ -3448,6 +3463,19 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &5384858455922393003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6530227182781673819}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e73d9892d71ca0d48bcb98479ddaa516, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  EndUI: {fileID: 7104514663481744580}
 --- !u!1 &6801302732246227321
 GameObject:
   m_ObjectHideFlags: 0
@@ -3996,8 +4024,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: Pausemenu, Assembly-CSharp
+      - m_Target: {fileID: 5384858455922393003}
+        m_TargetAssemblyTypeName: EndGameUI, Assembly-CSharp
         m_MethodName: LoadMenu
         m_Mode: 1
         m_Arguments:

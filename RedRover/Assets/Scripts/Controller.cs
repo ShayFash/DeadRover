@@ -35,7 +35,13 @@ public class Controller : MonoBehaviour
     private TextMeshProUGUI attackText;
     private Button[] actionButtons;
     private Button moveButton;
-
+ 
+    ///
+    public GameObject[] WinPanel;
+    public GameObject[] LossPanel;
+    private GameObject WinScreen;
+    private GameObject LossScreen;
+    ///
     private AI ai;
 
     private void Awake()
@@ -69,6 +75,13 @@ public class Controller : MonoBehaviour
         ai = new AI(this);
 
         StartCoroutine(lateStart());
+        /////
+        WinPanel = GameObject.FindGameObjectsWithTag("Win");
+        LossPanel = GameObject.FindGameObjectsWithTag("Loss");
+
+        WinScreen = GameObject.Find("WinScreen");
+        LossScreen = GameObject.Find("LossScreen");
+        /////
     }
 
     private IEnumerator lateStart()
@@ -376,6 +389,16 @@ public class Controller : MonoBehaviour
         if (!unitsLeft)
         {
             Debug.Log(activePlayer.ToString() + " lose");
+            ////
+            if(activePlayer == Player.Living)
+            {
+                LossScreen.gameObject.SetActive(true);
+            }
+            else
+            {
+                WinScreen.gameObject.SetActive(true);
+            }
+            ////
         }
     }
 
