@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -74,6 +75,7 @@ public class Controller : MonoBehaviour
     {
         yield return new WaitForFixedUpdate();
 
+        UpdateLinks();
         ChangeStateToSelecting();
         AiPickUnit();
     } 
@@ -102,8 +104,7 @@ public class Controller : MonoBehaviour
                 selectedUnit.WasSelected();
 
                 unitMenu.enabled = true;
-                rangeText.text = "Range: " + unit.Reach.ToString();
-                attackText.text = "Attack: " + unit.Attack.ToString();
+                SetRangeAndAttackText(unit);
 
                 Player currentPlayer = activePlayer;
                 StartCoroutine(selectedUnit.ApplySelectedShader(delegate () {
@@ -126,6 +127,7 @@ public class Controller : MonoBehaviour
 
                 {
                     selectedUnit.AttackUnit(unit);
+                    UpdateLinks();
 
                     EndTurn();
                 }
@@ -134,6 +136,24 @@ public class Controller : MonoBehaviour
             default:
                 break;
         }
+    }
+
+    public void SetRangeAndAttackText(GenericUnit unit)
+    {
+        if(unit == null)
+        {
+            rangeText.text = "Range: - ";
+            attackText.text = "Attack: - ";
+            return;
+        }
+
+        rangeText.text = "Range: " + unit.Reach.ToString();
+        attackText.text = "Attack: " + unit.Attack.ToString();
+    }
+
+    public void ResetRangeAndAttackText()
+    {
+        SetRangeAndAttackText(selectedUnit);   
     }
 
     public void Attack()
@@ -237,23 +257,52 @@ public class Controller : MonoBehaviour
         }
     }
 
-    private void ShowTilesInRange(GenericUnit unit)
+    private Vector3Int GetClickedGridPosition()
     {
+        Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+        return FindClosestTile(mouseWorldPos);
+    }
+
+    public void ShowTilesInRange(GenericUnit unit, bool showAttack=false)
+    {
+        if (showAttack)
+        {
+            foreach (Vector3Int tilePos in unit.TilesInAttackRange())
+            {
+                tilemap.SetTileFlags(tilePos, TileFlags.None);
+                tilemap.SetColor(tilePos, Color.red);
+            }
+        }
+    
         foreach(Vector3Int tilePos in unit.TilesInRange())
         {
             tilemap.SetTileFlags(tilePos, TileFlags.None);
-            tilemap.SetColor(tilePos, Color.red);
+            tilemap.SetColor(tilePos, Color.blue);
         }
 
         tilemap.SetTileFlags(new Vector3Int(0, 0, 1), TileFlags.None);
         tilemap.SetColor(new Vector3Int(0,0,0), Color.yellow);
     }
 
-    private void RemoveColorFromTilesInRange(GenericUnit unit)
+    public void RemoveColorFromTilesInRange(GenericUnit unit)
     {
+        //Remove movement color
         foreach(Vector3Int tileInRange in unit.TilesInRange()){
             tilemap.SetColor(tileInRange, new Color(1.0f, 1.0f, 1.0f, 1.0f));
             tilemap.SetTileFlags(tileInRange, TileFlags.LockColor);
+        }
+
+        //Remove attack color
+        foreach (Vector3Int tileInRange in unit.TilesInAttackRange())
+        {
+            tilemap.SetColor(tileInRange, new Color(1.0f, 1.0f, 1.0f, 1.0f));
+            tilemap.SetTileFlags(tileInRange, TileFlags.LockColor);
+        }
+
+        if (state == State.Moving && unit != selectedUnit)
+        {
+            ShowTilesInRange(selectedUnit);
         }
     }
 
@@ -285,6 +334,7 @@ public class Controller : MonoBehaviour
     private void DecrementTurnTimers()
     {
         Array.ForEach(units, delegate (GenericUnit u) { u.DecrementTurnTimers(); });
+        UpdateLinks();
 
         GenericUnit[] activePlayerUnits = Array.FindAll(units, delegate (GenericUnit u)
         {
@@ -339,6 +389,46 @@ public class Controller : MonoBehaviour
             return;
         }
         StartCoroutine(ai.PickUnit(selectableUnits));
+    }
+
+    private void UpdateLinks()
+    {
+        GenericUnit previousLivingUnit = null;
+        GenericUnit previousDeadUnit = null;
+        for (int i = 0; i < units.Length; i++)
+        {
+            GenericUnit unit = units[i];
+            if (!unit.IsActiveUnit())
+            {
+                if (unit.IsEliminated)
+                {
+                    unit.HideLink();
+                }
+                continue;
+            }
+
+            if (unit.CompareTag("Living"))
+            {
+                if (previousLivingUnit != null && !previousLivingUnit.LinkAlreadyCoonected())
+                {
+                    previousLivingUnit.SetLink(unit.transform);
+                } else if (previousLivingUnit == null)
+                {
+                    unit.HideLink();
+                }
+                previousLivingUnit = unit;
+            } else if (unit.CompareTag("Dead"))
+            {
+                if (previousDeadUnit != null && !previousDeadUnit.LinkAlreadyCoonected())
+                {
+                    previousDeadUnit.SetLink(unit.transform);
+                } else if (previousDeadUnit == null)
+                {
+                    unit.HideLink();
+                }
+                previousDeadUnit = unit;
+            }
+        }
     }
 
     private IEnumerator WaitForMoveInput()

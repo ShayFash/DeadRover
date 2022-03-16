@@ -15,7 +15,9 @@ public abstract class GenericUnit : MonoBehaviour
     public int MaxHealth { get; protected set; }
     public int InitialMaxHealth { get; protected set; }
     public HealthBar healthBar;
-    
+
+    public Sprite livingSprite;
+    public Sprite deadSprite;
 
     public bool IsEliminated { get; protected set; }
 
@@ -44,13 +46,15 @@ public abstract class GenericUnit : MonoBehaviour
 
     protected TextMeshProUGUI HealthDisplay;
 
+    protected UnitLink link;
+
     protected bool ShaderActive = false;
     protected bool MouseOver = false;
 
     protected void Init()
     {
         MaxHealth = Health;
-        healthBar.SetMaxHealth(MaxHealth);
+        // healthBar.SetMaxHealth(MaxHealth);
         InitialMaxHealth = MaxHealth;
 
         NumTimesSwitched = 0;
@@ -65,9 +69,11 @@ public abstract class GenericUnit : MonoBehaviour
         TurnCountdownDisplay = Array.Find(childTexts, delegate (TextMeshProUGUI t) { return t.CompareTag("TurnCountdown"); });
         HealthDisplay = Array.Find(childTexts, delegate (TextMeshProUGUI t) { return t.CompareTag("HealthStatDisplay"); });
 
-
         Renderer = gameObject.GetComponent<SpriteRenderer>();
-        Renderer.color = CompareTag("Living") ? Color.white : Color.black;
+        Renderer.sprite = CompareTag("Living") ? livingSprite : deadSprite;
+
+
+        link = GetComponent<UnitLink>();
 
         UpdateHealthDisplay();
 
@@ -99,6 +105,11 @@ public abstract class GenericUnit : MonoBehaviour
         SelectionTimer = 0;
     }
 
+    public bool IsActiveUnit()
+    {
+        return !SwitchingSides && !IsEliminated;
+    }
+
     public Vector3Int GetTilePosition()
     {
         return Tilemap.layoutGrid.WorldToCell(transform.position);
@@ -117,11 +128,25 @@ public abstract class GenericUnit : MonoBehaviour
         transform.position = alignedPosition;
     }
 
+    public void SetLink(Transform other)
+    {
+        link.SetLink(other);
+    }
+
+    public bool LinkAlreadyCoonected()
+    {
+        return link.AlreadyConnected();
+    }
+    public void HideLink()
+    {
+        link.HideLink();
+    }
+
     public void TakeDamage(int value)
     {
         Debug.Log("I'm hurt");
         Health = Mathf.Max(0, Health - value);
-        healthBar.SetHealth(Health);
+        // healthBar.SetHealth(Health);
         UpdateHealthDisplay();
 
         if (Health == 0)
@@ -134,12 +159,13 @@ public abstract class GenericUnit : MonoBehaviour
             }
 
             SwitchingSides = true;
+            link.SwitchingSides();
             SwitchSidesCountdown = NumTurnsToSwitchSides;
 
             ResetSelectionTimer();
 
             TurnCountdownDisplay.text = SwitchSidesCountdown.ToString();
-            TurnCountdownDisplay.color = CompareTag("Living") ? Color.black : Color.white;
+            Renderer.sprite = CompareTag("Living") ? livingSprite : deadSprite;
             TurnCountdownDisplay.enabled = true;
 
             HealthDisplay.enabled = false;
@@ -161,9 +187,10 @@ public abstract class GenericUnit : MonoBehaviour
         if (SwitchingSides && SwitchSidesCountdown <= 0)
         {
             SwitchingSides = false;
+            link.HideLink();
             NumTimesSwitched++;
             tag = CompareTag("Living") ? "Dead" : "Living";
-            Renderer.color = CompareTag("Living") ? Color.white : Color.black;
+            Renderer.sprite = CompareTag("Living") ? livingSprite : deadSprite;
 
             MaxHealth = Mathf.RoundToInt(InitialMaxHealth * (1 - (NumTimesSwitched / (MaxAllowedSwitches + 1f))));
             Health = MaxHealth;
@@ -207,11 +234,36 @@ public abstract class GenericUnit : MonoBehaviour
 
         return tileDistance <= Movement;
     }
+
+    public bool TileInAttackRange(Vector3Int tilePosition)
+    {
+        Vector3Int myTilePosition = Tilemap.layoutGrid.WorldToCell(transform.position);
+
+        int tileDistance = 0;
+        for (int i = 0; i <= 1; i++)
+        {
+            tileDistance += Mathf.Abs(myTilePosition[i] - tilePosition[i]);
+        }
+
+        return tileDistance > Movement && tileDistance <= Movement+Reach;
+    }
+
     public IEnumerable<Vector3Int> TilesInRange()
     {
         foreach (Vector3Int position in Tilemap.cellBounds.allPositionsWithin)
         {
             if (TileInRange(position))
+            {
+                yield return position;
+            }
+        }
+    }
+
+    public IEnumerable<Vector3Int> TilesInAttackRange()
+    {
+        foreach (Vector3Int position in Tilemap.cellBounds.allPositionsWithin)
+        {
+            if (TileInAttackRange(position))
             {
                 yield return position;
             }
@@ -303,14 +355,48 @@ public abstract class GenericUnit : MonoBehaviour
         ShaderActive = false;
     }
 
+    private void DisplayDetailedInformation()
+    {
+        DisplayStats();
+        DisplayMoveAndAttackRange();
+    }
+
+    private void RemoveDetailedInformation()
+    {
+        RemoveStatsDisplay();
+        RemoveMoveAndAttackDisplay();
+    }
+
+    private void DisplayStats()
+    {
+        Controller.SetRangeAndAttackText(this);
+    }
+
+    private void RemoveStatsDisplay()
+    {
+        Controller.ResetRangeAndAttackText();
+    }
+
+    private void DisplayMoveAndAttackRange()
+    {
+        Controller.ShowTilesInRange(this, true);
+    }
+
+    private void RemoveMoveAndAttackDisplay()
+    {
+        Controller.RemoveColorFromTilesInRange(this);
+    }
+
     private void OnMouseEnter()
     {
         MouseOver = true;
+        DisplayDetailedInformation();
     }
 
     private void OnMouseExit()
     {
         MouseOver = false;
+        RemoveDetailedInformation();
     }
 
     private void OnMouseDown()
@@ -323,4 +409,5 @@ public abstract class GenericUnit : MonoBehaviour
     {
         HealthDisplay.text = Health.ToString() + "/" + MaxHealth.ToString() + " HP";
     }
+
 }
