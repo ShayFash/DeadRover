@@ -13,6 +13,11 @@ TagManager:
   - RangeStatDisplay
   - ActionButton
   - MoveButton
+  - HealthBar
+  - HealthNum
+  - UnitName
+  - Loss
+  - Win
   layers:
   - Default
   - TransparentFX
