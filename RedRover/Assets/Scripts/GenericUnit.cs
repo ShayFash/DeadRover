@@ -14,12 +14,13 @@ public abstract class GenericUnit : MonoBehaviour
     public int Movement;
     public int MaxHealth { get; protected set; }
     public int InitialMaxHealth { get; protected set; }
-    public HealthBar healthBar;
 
     public Sprite livingSprite;
     public Sprite deadSprite;
 
     public bool IsEliminated { get; protected set; }
+
+    public string unitName;
 
 
     [SerializeField]
@@ -53,8 +54,8 @@ public abstract class GenericUnit : MonoBehaviour
 
     protected void Init()
     {
+
         MaxHealth = Health;
-        // healthBar.SetMaxHealth(MaxHealth);
         InitialMaxHealth = MaxHealth;
 
         NumTimesSwitched = 0;
@@ -146,7 +147,6 @@ public abstract class GenericUnit : MonoBehaviour
     {
         Debug.Log("I'm hurt");
         Health = Mathf.Max(0, Health - value);
-        // healthBar.SetHealth(Health);
         UpdateHealthDisplay();
 
         if (Health == 0)

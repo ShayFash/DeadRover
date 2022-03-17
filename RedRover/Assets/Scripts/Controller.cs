@@ -33,6 +33,8 @@ public class Controller : MonoBehaviour
     private Canvas unitMenu;
     private TextMeshProUGUI rangeText;
     private TextMeshProUGUI attackText;
+    private TextMeshProUGUI healthNumText;
+    private TextMeshProUGUI unitNameText;
     private Button[] actionButtons;
     private Button moveButton;
  
@@ -58,6 +60,11 @@ public class Controller : MonoBehaviour
         attackText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) {
             return t.gameObject.CompareTag("AttackStatDisplay");
         });
+        unitNameText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) {
+            return t.gameObject.CompareTag("UnitName");
+        });
+
+        healthNumText = GameObject.FindGameObjectWithTag("HealthBar").GetComponentInChildren<TextMeshProUGUI>();
 
         Button[] buttons = unitMenu.GetComponentsInChildren<Button>();
         actionButtons = Array.FindAll(buttons, delegate (Button b)
@@ -157,11 +164,16 @@ public class Controller : MonoBehaviour
         {
             rangeText.text = "Range: - ";
             attackText.text = "Attack: - ";
+            healthNumText.text = "-/-";
+            unitNameText.text = unit.unitName;
+
             return;
         }
 
         rangeText.text = "Range: " + unit.Reach.ToString();
         attackText.text = "Attack: " + unit.Attack.ToString();
+        healthNumText.text =  unit.Health.ToString() + " / " + unit.MaxHealth.ToString();
+        unitNameText.text = unit.unitName;
     }
 
     public void ResetRangeAndAttackText()
@@ -456,8 +468,7 @@ public class Controller : MonoBehaviour
 
     private IEnumerator WaitForMoveInput()
     {
-        Player currentPlayer = activePlayer;
-        while (state == State.Moving && activePlayer == currentPlayer)
+        while (state == State.Moving && activePlayer == Player.Living)
         {
             if (Input.GetMouseButtonDown(0))
             {
