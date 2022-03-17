@@ -16,6 +16,8 @@ TagManager:
   - HealthBar
   - HealthNum
   - UnitName
+  - Loss
+  - Win
   layers:
   - Default
   - TransparentFX
