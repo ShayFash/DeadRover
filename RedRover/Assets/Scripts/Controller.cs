@@ -165,7 +165,7 @@ public class Controller : MonoBehaviour
             rangeText.text = "Range: - ";
             attackText.text = "Attack: - ";
             healthNumText.text = "-/-";
-            unitNameText.text = unit.unitName;
+            unitNameText.text = "";
 
             return;
         }
