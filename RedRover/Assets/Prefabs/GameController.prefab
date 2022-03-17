@@ -2179,11 +2179,11 @@ GameObject:
   - component: {fileID: 1530776923995170613}
   m_Layer: 5
   m_Name: healthNum
-  m_TagString: RangeStatDisplay
+  m_TagString: HealthNum
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &7064178914528288300
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2232,7 +2232,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 50 / 50
+  m_text: -/-
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 03e2c4c35d990104d959ca96e8f4bee0, type: 2}
   m_sharedMaterial: {fileID: -1027223521663050526, guid: 03e2c4c35d990104d959ca96e8f4bee0, type: 2}

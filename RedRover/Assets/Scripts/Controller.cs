@@ -33,8 +33,10 @@ public class Controller : MonoBehaviour
     private Canvas unitMenu;
     private TextMeshProUGUI rangeText;
     private TextMeshProUGUI attackText;
+    private TextMeshProUGUI healthNumText;
     private Button[] actionButtons;
     private Button moveButton;
+    
 
     private AI ai;
 
@@ -52,6 +54,8 @@ public class Controller : MonoBehaviour
         attackText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) {
             return t.gameObject.CompareTag("AttackStatDisplay");
         });
+
+        healthNumText = GameObject.FindGameObjectWithTag("HealthBar").GetComponentInChildren<TextMeshProUGUI>();
 
         Button[] buttons = unitMenu.GetComponentsInChildren<Button>();
         actionButtons = Array.FindAll(buttons, delegate (Button b)
@@ -144,11 +148,14 @@ public class Controller : MonoBehaviour
         {
             rangeText.text = "Range: - ";
             attackText.text = "Attack: - ";
+            healthNumText.text = "-/-";
+
             return;
         }
 
         rangeText.text = "Range: " + unit.Reach.ToString();
         attackText.text = "Attack: " + unit.Attack.ToString();
+        healthNumText.text =  unit.MaxHealth.ToString() + " / " + unit.Health.ToString();
     }
 
     public void ResetRangeAndAttackText()
