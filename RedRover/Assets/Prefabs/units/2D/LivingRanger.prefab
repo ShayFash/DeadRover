@@ -107,6 +107,7 @@ MonoBehaviour:
   Movement: 3
   livingSprite: {fileID: 21300000, guid: e871c8d89c3a6f44895c48af414022a4, type: 3}
   deadSprite: {fileID: 21300000, guid: 707842cdd3c72d747acb86b486628a04, type: 3}
+  unitName: Owl
   NumTurnsToSwitchSides: 4
   MaxAllowedSwitches: 3
   NumTurnsBetweenSelection: 6

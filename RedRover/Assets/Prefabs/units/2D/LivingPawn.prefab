@@ -479,6 +479,7 @@ MonoBehaviour:
   Movement: 6
   livingSprite: {fileID: 21300000, guid: b00f03abb723944409010164545f19ce, type: 3}
   deadSprite: {fileID: 21300000, guid: 364abfe2aea064342b15eec997cc55e2, type: 3}
+  unitName: Rabbit
   NumTurnsToSwitchSides: 4
   MaxAllowedSwitches: 3
   NumTurnsBetweenSelection: 6

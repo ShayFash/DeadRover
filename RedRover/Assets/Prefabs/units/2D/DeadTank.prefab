@@ -479,6 +479,7 @@ MonoBehaviour:
   Movement: 2
   livingSprite: {fileID: 21300000, guid: 286b8507e3b87ac4a855fe8f8d01ef58, type: 3}
   deadSprite: {fileID: 21300000, guid: 380cd5c81895cca4eb672818fa730061, type: 3}
+  unitName: Bear
   NumTurnsToSwitchSides: 4
   MaxAllowedSwitches: 3
   NumTurnsBetweenSelection: 6

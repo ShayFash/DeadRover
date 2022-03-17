@@ -479,6 +479,7 @@ MonoBehaviour:
   Movement: 3
   livingSprite: {fileID: 21300000, guid: 9106a777c20eca04793c33168c78120f, type: 3}
   deadSprite: {fileID: 21300000, guid: c63c9e6adfd3c5e41bd63e2317c27d8c, type: 3}
+  unitName: Deer
   NumTurnsToSwitchSides: 4
   MaxAllowedSwitches: 3
   NumTurnsBetweenSelection: 6

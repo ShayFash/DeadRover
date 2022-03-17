@@ -107,6 +107,7 @@ MonoBehaviour:
   Movement: 3
   livingSprite: {fileID: 21300000, guid: 6889243b63a8aff469b797bc3c46ff2c, type: 3}
   deadSprite: {fileID: 21300000, guid: 525179c39baa3d341983eb6f226df6e3, type: 3}
+  unitName: Fox
   NumTurnsToSwitchSides: 4
   MaxAllowedSwitches: 3
   NumTurnsBetweenSelection: 6

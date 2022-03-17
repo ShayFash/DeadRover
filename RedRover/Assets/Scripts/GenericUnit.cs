@@ -20,6 +20,8 @@ public abstract class GenericUnit : MonoBehaviour
 
     public bool IsEliminated { get; protected set; }
 
+    public string unitName;
+
 
     [SerializeField]
     protected int NumTurnsToSwitchSides = 4;

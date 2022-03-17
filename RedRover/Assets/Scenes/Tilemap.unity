@@ -214,18 +214,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 5620533255108702245, guid: 6e9f108093aa8314eb7ae3a89c0353d3, type: 3}
-      propertyPath: m_Size.x
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 5620533255108702245, guid: 6e9f108093aa8314eb7ae3a89c0353d3, type: 3}
-      propertyPath: m_Size.y
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5620533255108702248, guid: 6e9f108093aa8314eb7ae3a89c0353d3, type: 3}
-      propertyPath: healthBar
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 5620533255108702249, guid: 6e9f108093aa8314eb7ae3a89c0353d3, type: 3}
       propertyPath: m_Name
       value: LivingRanger
@@ -283,10 +271,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 6434049928325986256, guid: 0a8dacd3f832b6440b1d405a18bbb977, type: 3}
-      propertyPath: healthBar
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 6434049928325986257, guid: 0a8dacd3f832b6440b1d405a18bbb977, type: 3}
       propertyPath: m_Name
       value: DeadPawn
@@ -335,14 +319,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6434049928325986269, guid: 0a8dacd3f832b6440b1d405a18bbb977, type: 3}
-      propertyPath: m_Size.x
-      value: 2.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6434049928325986269, guid: 0a8dacd3f832b6440b1d405a18bbb977, type: 3}
-      propertyPath: m_Size.y
-      value: 2.5
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0a8dacd3f832b6440b1d405a18bbb977, type: 3}
 --- !u!1001 &639687041
@@ -355,10 +331,6 @@ PrefabInstance:
     - target: {fileID: 8113924906889184432, guid: 9f492b2f0b479a74d982796fcaa10f7e, type: 3}
       propertyPath: m_Name
       value: DeadLancer
-      objectReference: {fileID: 0}
-    - target: {fileID: 8113924906889184433, guid: 9f492b2f0b479a74d982796fcaa10f7e, type: 3}
-      propertyPath: healthBar
-      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8113924906889184435, guid: 9f492b2f0b479a74d982796fcaa10f7e, type: 3}
       propertyPath: m_RootOrder
@@ -404,14 +376,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8113924906889184444, guid: 9f492b2f0b479a74d982796fcaa10f7e, type: 3}
-      propertyPath: m_Size.x
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 8113924906889184444, guid: 9f492b2f0b479a74d982796fcaa10f7e, type: 3}
-      propertyPath: m_Size.y
-      value: 2.5
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9f492b2f0b479a74d982796fcaa10f7e, type: 3}
 --- !u!1001 &782792372
@@ -421,10 +385,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 6491195289621974180, guid: 625d36fff45470d458a8e959706d16dc, type: 3}
-      propertyPath: healthBar
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 6491195289621974181, guid: 625d36fff45470d458a8e959706d16dc, type: 3}
       propertyPath: m_Name
       value: LivingLancer
@@ -472,14 +432,6 @@ PrefabInstance:
     - target: {fileID: 6491195289621974182, guid: 625d36fff45470d458a8e959706d16dc, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6491195289621974185, guid: 625d36fff45470d458a8e959706d16dc, type: 3}
-      propertyPath: m_Size.x
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 6491195289621974185, guid: 625d36fff45470d458a8e959706d16dc, type: 3}
-      propertyPath: m_Size.y
-      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 625d36fff45470d458a8e959706d16dc, type: 3}
@@ -12115,14 +12067,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 272208243240410343, guid: cbf508f538d2ed346ad431c5e0a47a88, type: 3}
-      propertyPath: m_Size.x
-      value: 3.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 272208243240410343, guid: cbf508f538d2ed346ad431c5e0a47a88, type: 3}
-      propertyPath: m_Size.y
-      value: 3.5
-      objectReference: {fileID: 0}
     - target: {fileID: 272208243240410344, guid: cbf508f538d2ed346ad431c5e0a47a88, type: 3}
       propertyPath: m_RootOrder
       value: 9
@@ -12166,10 +12110,6 @@ PrefabInstance:
     - target: {fileID: 272208243240410344, guid: cbf508f538d2ed346ad431c5e0a47a88, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 272208243240410346, guid: cbf508f538d2ed346ad431c5e0a47a88, type: 3}
-      propertyPath: healthBar
-      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 272208243240410347, guid: cbf508f538d2ed346ad431c5e0a47a88, type: 3}
       propertyPath: m_Name
@@ -12232,10 +12172,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameController
       objectReference: {fileID: 0}
-    - target: {fileID: 2479435230475765579, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3101003052146999749, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -12253,21 +12189,9 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 4604847465400645968, guid: 4143f3c2308fa8941a1d637a9959d564, type: 3}
-      propertyPath: m_Size.x
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 4604847465400645968, guid: 4143f3c2308fa8941a1d637a9959d564, type: 3}
-      propertyPath: m_Size.y
-      value: 3
-      objectReference: {fileID: 0}
     - target: {fileID: 4604847465400645980, guid: 4143f3c2308fa8941a1d637a9959d564, type: 3}
       propertyPath: m_Name
       value: DeadGlassCannon
-      objectReference: {fileID: 0}
-    - target: {fileID: 4604847465400645981, guid: 4143f3c2308fa8941a1d637a9959d564, type: 3}
-      propertyPath: healthBar
-      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 4604847465400645983, guid: 4143f3c2308fa8941a1d637a9959d564, type: 3}
       propertyPath: m_RootOrder
@@ -12393,10 +12317,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: DeadRanger
       objectReference: {fileID: 0}
-    - target: {fileID: 1305463719481515285, guid: 399b08c054b68c246aa8e7d0d7ce1558, type: 3}
-      propertyPath: healthBar
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 1305463719481515287, guid: 399b08c054b68c246aa8e7d0d7ce1558, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -12441,14 +12361,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1305463719481515288, guid: 399b08c054b68c246aa8e7d0d7ce1558, type: 3}
-      propertyPath: m_Size.x
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 1305463719481515288, guid: 399b08c054b68c246aa8e7d0d7ce1558, type: 3}
-      propertyPath: m_Size.y
-      value: 2.3
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 399b08c054b68c246aa8e7d0d7ce1558, type: 3}
 --- !u!1001 &1955262207
@@ -12458,14 +12370,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 3557807815676642323, guid: 5f85576577e4335458a9a0f122d4a13d, type: 3}
-      propertyPath: m_Size.x
-      value: 1.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 3557807815676642323, guid: 5f85576577e4335458a9a0f122d4a13d, type: 3}
-      propertyPath: m_Size.y
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 3557807815676642332, guid: 5f85576577e4335458a9a0f122d4a13d, type: 3}
       propertyPath: m_RootOrder
       value: 7
@@ -12509,10 +12413,6 @@ PrefabInstance:
     - target: {fileID: 3557807815676642332, guid: 5f85576577e4335458a9a0f122d4a13d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3557807815676642334, guid: 5f85576577e4335458a9a0f122d4a13d, type: 3}
-      propertyPath: healthBar
-      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 3557807815676642335, guid: 5f85576577e4335458a9a0f122d4a13d, type: 3}
       propertyPath: m_Name
@@ -12575,18 +12475,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: DeadTank
       objectReference: {fileID: 0}
-    - target: {fileID: 8573693587837772691, guid: 3005cf4bb99b2b94195af6e21121cb7d, type: 3}
-      propertyPath: healthBar
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 8573693587837772702, guid: 3005cf4bb99b2b94195af6e21121cb7d, type: 3}
-      propertyPath: m_Size.x
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 8573693587837772702, guid: 3005cf4bb99b2b94195af6e21121cb7d, type: 3}
-      propertyPath: m_Size.y
-      value: 2.5
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3005cf4bb99b2b94195af6e21121cb7d, type: 3}
 --- !u!1001 &2101494390
@@ -12596,14 +12484,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2052618431279884501, guid: 6265e2120d8af6e4bae88df6dc1262f1, type: 3}
-      propertyPath: m_Size.x
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 2052618431279884501, guid: 6265e2120d8af6e4bae88df6dc1262f1, type: 3}
-      propertyPath: m_Size.y
-      value: 3
-      objectReference: {fileID: 0}
     - target: {fileID: 2052618431279884505, guid: 6265e2120d8af6e4bae88df6dc1262f1, type: 3}
       propertyPath: m_Name
       value: LivingGlassCannon
