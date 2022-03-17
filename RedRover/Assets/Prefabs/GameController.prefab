@@ -987,8 +987,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 22.925917, y: 0}
-  m_SizeDelta: {x: 46.5099, y: -0.328}
+  m_AnchoredPosition: {x: 22.926086, y: -0.0000076293945}
+  m_SizeDelta: {x: 46.50992, y: -0.32799911}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4784309499146976715
 CanvasRenderer:
@@ -2183,7 +2183,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7064178914528288300
 RectTransform:
   m_ObjectHideFlags: 0
