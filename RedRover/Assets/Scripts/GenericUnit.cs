@@ -155,6 +155,7 @@ public abstract class GenericUnit : MonoBehaviour
             {
                 gameObject.SetActive(false);
                 IsEliminated = true;
+                transform.position = new Vector3(100, 100, 100);
                 return;
             }
 
@@ -389,8 +390,11 @@ public abstract class GenericUnit : MonoBehaviour
 
     private void OnMouseEnter()
     {
-        MouseOver = true;
-        DisplayDetailedInformation();
+        if (!IsEliminated)
+        {
+            MouseOver = true;
+            DisplayDetailedInformation();
+        }
     }
 
     private void OnMouseExit()
