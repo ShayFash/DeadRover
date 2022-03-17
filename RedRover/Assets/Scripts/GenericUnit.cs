@@ -14,7 +14,6 @@ public abstract class GenericUnit : MonoBehaviour
     public int Movement;
     public int MaxHealth { get; protected set; }
     public int InitialMaxHealth { get; protected set; }
-    public HealthBar healthBar;
 
     public Sprite livingSprite;
     public Sprite deadSprite;
@@ -45,6 +44,7 @@ public abstract class GenericUnit : MonoBehaviour
     protected SpriteRenderer Renderer;
 
     protected TextMeshProUGUI HealthDisplay;
+    protected HealthBar healthBar;
 
     protected UnitLink link;
 
@@ -53,6 +53,8 @@ public abstract class GenericUnit : MonoBehaviour
 
     protected void Init()
     {
+        healthBar = GameObject.FindGameObjectWithTag("HealthBar").GetComponent<HealthBar>();
+
         MaxHealth = Health;
         healthBar.SetMaxHealth(MaxHealth);
         InitialMaxHealth = MaxHealth;
