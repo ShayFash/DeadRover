@@ -46,7 +46,6 @@ public abstract class GenericUnit : MonoBehaviour
     protected SpriteRenderer Renderer;
 
     protected TextMeshProUGUI HealthDisplay;
-    protected HealthBar healthBar;
 
     protected UnitLink link;
 
@@ -55,10 +54,8 @@ public abstract class GenericUnit : MonoBehaviour
 
     protected void Init()
     {
-        healthBar = GameObject.FindGameObjectWithTag("HealthBar").GetComponent<HealthBar>();
 
         MaxHealth = Health;
-        healthBar.SetMaxHealth(MaxHealth);
         InitialMaxHealth = MaxHealth;
 
         NumTimesSwitched = 0;
@@ -150,7 +147,6 @@ public abstract class GenericUnit : MonoBehaviour
     {
         Debug.Log("I'm hurt");
         Health = Mathf.Max(0, Health - value);
-        healthBar.SetHealth(Health);
         UpdateHealthDisplay();
 
         if (Health == 0)
