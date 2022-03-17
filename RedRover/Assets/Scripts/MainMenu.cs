@@ -7,23 +7,21 @@ public class MainMenu : MonoBehaviour
 {
     public void PlayGame ()
     {
+        FindObjectOfType<AudioManager>().Play("Confirm");
+        
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
     
     public void QuitGame ()
     {
+        FindObjectOfType<AudioManager>().Play("Back");
+
         Application.Quit();
     }
 
     public void MuteToggle(bool muted)
     {
-        if (muted)
-        {
-            AudioListener.volume = 0;
-        }
-        else
-        {
-            AudioListener.volume = 1;
-        }
+
+            FindObjectOfType<AudioManager>().MuteToggle("Theme");
     }
 }

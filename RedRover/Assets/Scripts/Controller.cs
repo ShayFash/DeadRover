@@ -187,6 +187,7 @@ public class Controller : MonoBehaviour
         {
             return;
         }
+        
         state = State.Attacking;
 
         Player currentPlayer = activePlayer;

@@ -16,10 +16,12 @@ public class Pausemenu : MonoBehaviour
         {
             if (GameIsPaused)
             {
+                FindObjectOfType<AudioManager>().Play("Confirm");
                 Resume();
             }
             else
             {
+                FindObjectOfType<AudioManager>().Play("Back");
                 Pause();
             }
         }
@@ -27,7 +29,7 @@ public class Pausemenu : MonoBehaviour
 
      public void Resume()
      {
-
+         FindObjectOfType<AudioManager>().Play("Confirm");
          PauseUI.SetActive(false);
          Time.timeScale = 1f;
          GameIsPaused = false;
@@ -35,6 +37,7 @@ public class Pausemenu : MonoBehaviour
 
     public void Pause()
     {
+        FindObjectOfType<AudioManager>().Play("Forward");
         PauseUI.SetActive(true);
         Time.timeScale = 0f;  
         GameIsPaused = true;
@@ -42,6 +45,7 @@ public class Pausemenu : MonoBehaviour
     
     public void LoadMenu()
     {
+        FindObjectOfType<AudioManager>().Play("Back");
         Time.timeScale = 1f;
         Debug.Log("Loading Menu...");
         SceneManager.LoadScene("MainMenu");
@@ -50,7 +54,13 @@ public class Pausemenu : MonoBehaviour
 
     public void QuitGame()
     {
+        FindObjectOfType<AudioManager>().Play("Back");
         Debug.Log("Quitting Game...");
         Application.Quit();
+    }
+
+    public void Mute()
+    {
+        FindObjectOfType<AudioManager>().MuteToggle("Theme");
     }
 }
