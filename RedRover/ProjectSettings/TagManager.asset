@@ -13,6 +13,7 @@ TagManager:
   - RangeStatDisplay
   - ActionButton
   - MoveButton
+  - HealthBar
   layers:
   - Default
   - TransparentFX
