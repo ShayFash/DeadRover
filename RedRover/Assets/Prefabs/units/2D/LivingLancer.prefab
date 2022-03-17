@@ -78,12 +78,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: a20e59d0255b0004a8396167b8e5c7b3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 9106a777c20eca04793c33168c78120f, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.75, y: 1.22}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -106,8 +106,8 @@ MonoBehaviour:
   Health: 16
   Movement: 3
   healthBar: {fileID: 0}
-  livingSprite: {fileID: 21300000, guid: a20e59d0255b0004a8396167b8e5c7b3, type: 3}
-  deadSprite: {fileID: 21300000, guid: a348b2f580f67724a89cbb84ad7fa0d9, type: 3}
+  livingSprite: {fileID: 21300000, guid: 9106a777c20eca04793c33168c78120f, type: 3}
+  deadSprite: {fileID: 21300000, guid: c63c9e6adfd3c5e41bd63e2317c27d8c, type: 3}
   NumTurnsToSwitchSides: 4
   MaxAllowedSwitches: 3
   NumTurnsBetweenSelection: 6
@@ -128,8 +128,8 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 5, y: 5}
-    newSize: {x: 1, y: 1}
+    oldSize: {x: 3, y: 4.88}
+    newSize: {x: 0.75, y: 1.22}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
