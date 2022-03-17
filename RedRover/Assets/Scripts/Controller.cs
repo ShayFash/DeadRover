@@ -433,8 +433,7 @@ public class Controller : MonoBehaviour
 
     private IEnumerator WaitForMoveInput()
     {
-        Player currentPlayer = activePlayer;
-        while (state == State.Moving && activePlayer == currentPlayer)
+        while (state == State.Moving && activePlayer == Player.Living)
         {
             if (Input.GetMouseButtonDown(0))
             {
