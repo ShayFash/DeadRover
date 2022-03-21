@@ -44,7 +44,7 @@ public class Controller : MonoBehaviour
     private GameObject WinScreen;
     private GameObject LossScreen;
     ///
-    private GameObject HelpPanel;
+    public GameObject HelpPanel;
     ///
     private AI ai;
 
@@ -91,7 +91,6 @@ public class Controller : MonoBehaviour
         WinScreen = GameObject.Find("WinScreen");
         LossScreen = GameObject.Find("LossScreen");
         /////
-        HelpPanel = GameObject.Find("GameExplanation");
         ShowHelpPanel();
     }
 
@@ -493,13 +492,13 @@ public class Controller : MonoBehaviour
 
     public void ShowHelpPanel() 
     {
-        HelpPanel.SetActive(true);
+        HelpPanel.gameObject.SetActive(true);
         Time.timeScale = 0f;
     }
 
     public void HideHelpPanel() 
     {
-        HelpPanel.SetActive(false);
+        HelpPanel.gameObject.SetActive(false);
         Time.timeScale = 1f;
     }
 }
