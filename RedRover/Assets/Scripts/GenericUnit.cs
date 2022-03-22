@@ -213,7 +213,7 @@ public abstract class GenericUnit : MonoBehaviour
             tileDistance += Mathf.Abs(myTilePosittion[i] - theirTilePosition[i]);
         }
 
-        return tileDistance <= Reach;
+        return tileDistance == Reach;
     }
 
     public IEnumerable<GenericUnit> UnitsInRange(IEnumerable<GenericUnit> units)
@@ -236,7 +236,7 @@ public abstract class GenericUnit : MonoBehaviour
         return tileDistance <= Movement;
     }
 
-    public bool TileInAttackRange(Vector3Int tilePosition)
+    public bool TileInAttackRange(Vector3Int tilePosition, bool showMovement)
     {
         Vector3Int myTilePosition = Tilemap.layoutGrid.WorldToCell(transform.position);
 
@@ -246,7 +246,12 @@ public abstract class GenericUnit : MonoBehaviour
             tileDistance += Mathf.Abs(myTilePosition[i] - tilePosition[i]);
         }
 
-        return tileDistance > Movement && tileDistance <= Movement+Reach;
+        if (!showMovement)
+        {
+            return tileDistance ==  Reach;
+        }
+
+        return tileDistance > Movement && tileDistance == Movement+Reach;
     }
 
     public IEnumerable<Vector3Int> TilesInRange()
@@ -260,11 +265,11 @@ public abstract class GenericUnit : MonoBehaviour
         }
     }
 
-    public IEnumerable<Vector3Int> TilesInAttackRange()
+    public IEnumerable<Vector3Int> TilesInAttackRange(bool showMovement=true)
     {
         foreach (Vector3Int position in Tilemap.cellBounds.allPositionsWithin)
         {
-            if (TileInAttackRange(position))
+            if (TileInAttackRange(position, showMovement))
             {
                 yield return position;
             }

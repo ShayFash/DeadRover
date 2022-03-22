@@ -189,6 +189,11 @@ public class Controller : MonoBehaviour
         }
         
         state = State.Attacking;
+        //Clear, if movement tiles are still highlighted
+        RemoveColorFromTilesInRange(selectedUnit);
+
+        //Show tiles in attack range
+        ShowTilesInRange(selectedUnit, true, false);
 
         Player currentPlayer = activePlayer;
         for (int i=0; i < units.Length; i++)
@@ -212,12 +217,16 @@ public class Controller : MonoBehaviour
             return;
         }
         state = State.Moving;
+        //Clear, if attack tiles are still highlighted
+        RemoveColorFromTilesInRange(selectedUnit);
         ShowTilesInRange(selectedUnit);
         StartCoroutine(WaitForMoveInput());
     }
 
     public void EndTurn()
     {
+        state = State.SelectingUnit;
+        RemoveColorFromTilesInRange(selectedUnit);
         ChangeTurns();
     }
 
@@ -249,10 +258,9 @@ public class Controller : MonoBehaviour
     {
         if (selectedUnit.TileInRange(cellPosition))
         {
+            state = State.Waiting;
             RemoveColorFromTilesInRange(selectedUnit);
-
             selectedUnit.Move(cellPosition);
-
             return true;
         }
 
@@ -290,21 +298,24 @@ public class Controller : MonoBehaviour
         return FindClosestTile(mouseWorldPos);
     }
 
-    public void ShowTilesInRange(GenericUnit unit, bool showAttack=false)
+    public void ShowTilesInRange(GenericUnit unit, bool showAttack=false, bool showMovement = true)
     {
         if (showAttack)
         {
-            foreach (Vector3Int tilePos in unit.TilesInAttackRange())
+            foreach (Vector3Int tilePos in unit.TilesInAttackRange(showMovement))
             {
                 tilemap.SetTileFlags(tilePos, TileFlags.None);
                 tilemap.SetColor(tilePos, Color.red);
             }
         }
-    
-        foreach(Vector3Int tilePos in unit.TilesInRange())
+
+        if (showMovement)
         {
-            tilemap.SetTileFlags(tilePos, TileFlags.None);
-            tilemap.SetColor(tilePos, Color.blue);
+            foreach(Vector3Int tilePos in unit.TilesInRange())
+            {
+                tilemap.SetTileFlags(tilePos, TileFlags.None);
+                tilemap.SetColor(tilePos, Color.blue);
+            }
         }
 
         tilemap.SetTileFlags(new Vector3Int(0, 0, 1), TileFlags.None);
@@ -314,7 +325,8 @@ public class Controller : MonoBehaviour
     public void RemoveColorFromTilesInRange(GenericUnit unit)
     {
         //Remove movement color
-        foreach(Vector3Int tileInRange in unit.TilesInRange()){
+        foreach (Vector3Int tileInRange in unit.TilesInRange())
+        {
             tilemap.SetColor(tileInRange, new Color(1.0f, 1.0f, 1.0f, 1.0f));
             tilemap.SetTileFlags(tileInRange, TileFlags.LockColor);
         }
@@ -326,9 +338,14 @@ public class Controller : MonoBehaviour
             tilemap.SetTileFlags(tileInRange, TileFlags.LockColor);
         }
 
-        if (state == State.Moving && unit != selectedUnit)
+        //Recolor what gets deleted by other units
+        if(state == State.Moving)
         {
             ShowTilesInRange(selectedUnit);
+        }
+        else if(state == State.Attacking)
+        {
+            ShowTilesInRange(selectedUnit, true, false);
         }
     }
 
