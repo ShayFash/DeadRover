@@ -12181,6 +12181,112 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 963538992, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 963538992, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 140
+      objectReference: {fileID: 0}
+    - target: {fileID: 1017424599, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 1017424599, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 320
+      objectReference: {fileID: 0}
+    - target: {fileID: 1017424599, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1017424599, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 41
+      objectReference: {fileID: 0}
+    - target: {fileID: 1555685215, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1555685215, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
+    - target: {fileID: 1744904083, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 423.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1744904083, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 202.97
+      objectReference: {fileID: 0}
+    - target: {fileID: 1744904083, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -0.000058174
+      objectReference: {fileID: 0}
+    - target: {fileID: 1744904083, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 28.289
+      objectReference: {fileID: 0}
+    - target: {fileID: 1744904084, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
+      propertyPath: m_text
+      value: '-   Move and/or attack with the animal your opponent chooses
+
+        -  
+        Once an animal hits 0 health, its team will no longer be in control of that
+        animal and eventually it will join the opposite team in 4 turns
+
+        -  
+        First team with all units win!
+
+        -   Be careful! If you lose control
+        of all your animals, you lose!'
+      objectReference: {fileID: 0}
+    - target: {fileID: 1744904084, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
+      propertyPath: m_fontSize
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 1744904084, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 1760486393, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 222.6843
+      objectReference: {fileID: 0}
+    - target: {fileID: 1760486393, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 49.0937
+      objectReference: {fileID: 0}
+    - target: {fileID: 1760486393, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1760486393, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 169
+      objectReference: {fileID: 0}
+    - target: {fileID: 1826435671, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 98.5729
+      objectReference: {fileID: 0}
+    - target: {fileID: 1826435671, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 35.6041
+      objectReference: {fileID: 0}
+    - target: {fileID: 1826435671, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -0.0000095367
+      objectReference: {fileID: 0}
+    - target: {fileID: 1826435671, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -91
+      objectReference: {fileID: 0}
+    - target: {fileID: 2479435230475765576, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
+      propertyPath: HelpPanel
+      value: 
+      objectReference: {fileID: 1555685215}
     - target: {fileID: 2479435230475765577, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
       propertyPath: m_RootOrder
       value: 13
@@ -12306,6 +12412,11 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1555685215 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1555685215, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
+  m_PrefabInstance: {fileID: 1355483403}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1745812849
 PrefabInstance:
   m_ObjectHideFlags: 0
