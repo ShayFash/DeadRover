@@ -275,9 +275,9 @@ public class Controller : MonoBehaviour
         foreach(GenericUnit u in units)
         {
             Vector3Int tilePos = cellPosition;
-            tilePos.z += 1;
+            Vector3Int unitPosition = u.GetTilePosition();
 
-            if(u.GetTilePosition() == tilePos)
+            if(unitPosition.x == tilePos.x && unitPosition.y == tilePos.y)
             {
                 return true;
             }
