@@ -191,19 +191,19 @@ public class AI
                     for (int d = 0; d <= 1; d++)
                     {
                         tileDistance += Math.Abs(myTilePostion[d] - theirTilePosition[d]);
+                    }
 
-                        if (tileDistance < minTileDistance)
-                        {
-                            minTileDistance = tileDistance;
-                            closestEnemy = enemies[i];
-                        }
+                    if (tileDistance < minTileDistance)
+                    {
+                        minTileDistance = tileDistance;
+                        closestEnemy = enemies[i];
                     }
                 }
 
                 Vector3Int goodTilePosition = new Vector3Int(1000, 1000);
                 foreach (Vector3Int tilePos in actingUnit.TilesInRange())
                 {
-                    if (!controller.HasTileAtPosition(tilePos))
+                    if (!controller.HasTileAtPosition(tilePos) || controller.TileOccupied(tilePos))
                     {
                         continue;
                     }
@@ -216,12 +216,12 @@ public class AI
                     for (int d = 0; d <= 1; d++)
                     {
                         tileDistance += Math.Abs(tilePos[d] - closestEnemy.GetTilePosition()[d]);
+                    }
 
-                        if (tileDistance <= minTileDistance)
-                        {
-                            minTileDistance = tileDistance;
-                            goodTilePosition = tilePos;
-                        }
+                    if (tileDistance <= minTileDistance)
+                    {
+                        minTileDistance = tileDistance;
+                        goodTilePosition = tilePos;
                     }
                 }
 
