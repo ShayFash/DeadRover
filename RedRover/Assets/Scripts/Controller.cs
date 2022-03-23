@@ -43,7 +43,18 @@ public class Controller : MonoBehaviour
     public GameObject[] LossPanel;
     private GameObject WinScreen;
     private GameObject LossScreen;
-    ///
+    /// 
+    public GameObject BearImage;
+    public GameObject DeerImage;
+    public GameObject RabbitImage;
+    public GameObject FoxImage;
+    public GameObject OwlImage;
+    public GameObject DeadBearImage;
+    public GameObject DeadDeerImage;
+    public GameObject DeadRabbitImage;
+    public GameObject DeadFoxImage;
+    public GameObject DeadOwlImage;
+    /// 
     public GameObject HelpPanel;
     ///
     private AI ai;
@@ -165,6 +176,7 @@ public class Controller : MonoBehaviour
     {
         if(unit == null)
         {
+            
             rangeText.text = "Range: - ";
             attackText.text = "Attack: - ";
             healthNumText.text = "-/-";
@@ -177,6 +189,8 @@ public class Controller : MonoBehaviour
         attackText.text = "Attack: " + unit.Attack.ToString();
         healthNumText.text =  unit.Health.ToString() + " / " + unit.MaxHealth.ToString();
         unitNameText.text = unit.unitName;
+
+     
     }
 
     public void ResetRangeAndAttackText()
@@ -517,5 +531,69 @@ public class Controller : MonoBehaviour
     {
         HelpPanel.gameObject.SetActive(false);
         Time.timeScale = 1f;
+    }
+
+    public void ShowBear()
+    {
+        BearImage.gameObject.SetActive(true);
+    }
+
+    public void ShowDeer()
+    {
+        DeerImage.gameObject.SetActive(true);
+    }
+
+    public void ShowRabbit()
+    {
+        RabbitImage.gameObject.SetActive(true);
+    }
+
+    public void ShowFox()
+    {
+        FoxImage.gameObject.SetActive(true);
+    }
+
+    public void ShowOwl()
+    {
+        OwlImage.gameObject.SetActive(true);
+    }
+
+    public void ShowDeadBear()
+    {
+        DeadBearImage.gameObject.SetActive(true);
+    }
+
+    public void ShowDeadDeer()
+    {
+        DeadDeerImage.gameObject.SetActive(true);
+    }
+
+    public void ShowDeadRabbit()
+    {
+        DeadRabbitImage.gameObject.SetActive(true);
+    }
+
+    public void ShowDeadFox()
+    {
+        DeadFoxImage.gameObject.SetActive(true);
+    }
+
+    public void ShowDeadOwl()
+    {
+        DeadOwlImage.gameObject.SetActive(true);
+    }
+
+    public void ShowNull()
+    {
+        BearImage.gameObject.SetActive(false);
+        DeerImage.gameObject.SetActive(false);
+        RabbitImage.gameObject.SetActive(false);
+        FoxImage.gameObject.SetActive(false);
+        OwlImage.gameObject.SetActive(false);
+        DeadBearImage.gameObject.SetActive(false);
+        DeadDeerImage.gameObject.SetActive(false);
+        DeadRabbitImage.gameObject.SetActive(false);
+        DeadFoxImage.gameObject.SetActive(false);
+        DeadOwlImage.gameObject.SetActive(false);
     }
 }
