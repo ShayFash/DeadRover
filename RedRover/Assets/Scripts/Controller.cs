@@ -256,12 +256,28 @@ public class Controller : MonoBehaviour
 
     public bool TryMoveSelectedUnit(Vector3Int cellPosition)
     {
-        if (selectedUnit.TileInRange(cellPosition))
+        if (selectedUnit.TileInRange(cellPosition) && !TileOccupied(cellPosition))
         {
             state = State.Waiting;
             RemoveColorFromTilesInRange(selectedUnit);
             selectedUnit.Move(cellPosition);
             return true;
+        }
+
+        return false;
+    }
+
+    public bool TileOccupied(Vector3Int cellPosition)
+    {
+        foreach(GenericUnit u in units)
+        {
+            Vector3Int tilePos = cellPosition;
+            tilePos.z += 1;
+
+            if(u.GetTilePosition() == tilePos)
+            {
+                return true;
+            }
         }
 
         return false;
