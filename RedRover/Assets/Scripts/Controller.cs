@@ -228,6 +228,10 @@ public class Controller : MonoBehaviour
 
     public void EndTurn()
     {
+        if(selectedUnit == null)
+        {
+            return;
+        }
         state = State.SelectingUnit;
         RemoveColorFromTilesInRange(selectedUnit);
         ChangeTurns();
@@ -259,12 +263,27 @@ public class Controller : MonoBehaviour
 
     public bool TryMoveSelectedUnit(Vector3Int cellPosition)
     {
-        if (selectedUnit.TileInRange(cellPosition))
+        if (selectedUnit.TileInRange(cellPosition) && !TileOccupied(cellPosition))
         {
             state = State.Waiting;
             RemoveColorFromTilesInRange(selectedUnit);
             selectedUnit.Move(cellPosition);
             return true;
+        }
+        return false;
+    }
+
+    public bool TileOccupied(Vector3Int cellPosition)
+    {
+        foreach(GenericUnit u in units)
+        {
+            Vector3Int tilePos = cellPosition;
+            Vector3Int unitPosition = u.GetTilePosition();
+
+            if(unitPosition.x == tilePos.x && unitPosition.y == tilePos.y)
+            {
+                return true;
+            }
         }
 
         return false;
