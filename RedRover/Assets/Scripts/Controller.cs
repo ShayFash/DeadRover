@@ -225,6 +225,10 @@ public class Controller : MonoBehaviour
 
     public void EndTurn()
     {
+        if(selectedUnit == null)
+        {
+            return;
+        }
         state = State.SelectingUnit;
         RemoveColorFromTilesInRange(selectedUnit);
         ChangeTurns();
@@ -263,7 +267,6 @@ public class Controller : MonoBehaviour
             selectedUnit.Move(cellPosition);
             return true;
         }
-
         return false;
     }
 
