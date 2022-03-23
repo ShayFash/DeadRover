@@ -218,7 +218,7 @@ public class AI
                         tileDistance += Math.Abs(tilePos[d] - closestEnemy.GetTilePosition()[d]);
                     }
 
-                    if (tileDistance <= minTileDistance)
+                    if (0 < tileDistance && tileDistance <= minTileDistance)
                     {
                         minTileDistance = tileDistance;
                         goodTilePosition = tilePos;
