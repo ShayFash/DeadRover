@@ -36,6 +36,7 @@ public class Controller : MonoBehaviour
     private TextMeshProUGUI healthNumText;
     private TextMeshProUGUI unitNameText;
     private TextMeshProUGUI turnCounterText;
+    private TextMeshProUGUI turnSelectionText;
     private Button[] actionButtons;
     private Button moveButton;
 
@@ -57,6 +58,10 @@ public class Controller : MonoBehaviour
 
         unitMenu = GameObject.FindGameObjectWithTag("UnitMenu").GetComponent<Canvas>();
         TextMeshProUGUI[] unitMenuChildren = unitMenu.GetComponentsInChildren<TextMeshProUGUI>();
+
+        turnSelectionText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) {
+            return t.gameObject.CompareTag("TurnsLeftDisplay");
+        });
 
         turnCounterText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) {
             return t.gameObject.CompareTag("TurnCounter");
@@ -177,6 +182,7 @@ public class Controller : MonoBehaviour
             attackText.text = "Attack: - ";
             healthNumText.text = "-/-";
             unitNameText.text = "";
+            turnSelectionText.text = "Turns Left: - ";
 
             return;
         }
@@ -185,6 +191,7 @@ public class Controller : MonoBehaviour
         attackText.text = "Attack: " + unit.Attack.ToString();
         healthNumText.text =  unit.Health.ToString() + " / " + unit.MaxHealth.ToString();
         unitNameText.text = unit.unitName;
+        turnSelectionText.text = "Turns Left: " + unit.SelectionTimer.ToString();
     }
 
     public void ResetRangeAndAttackText()

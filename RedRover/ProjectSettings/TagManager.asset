@@ -19,6 +19,7 @@ TagManager:
   - Loss
   - Win
   - TurnCounter
+  - TurnsLeftDisplay
   layers:
   - Default
   - TransparentFX
