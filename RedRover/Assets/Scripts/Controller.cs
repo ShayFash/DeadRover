@@ -50,7 +50,7 @@ public class Controller : MonoBehaviour
 
     private void Awake()
     {
-        tilemap = FindObjectOfType<Tilemap>();
+        tilemap = GameObject.FindGameObjectWithTag("Ground").GetComponent<Tilemap>();
         units = FindObjectsOfType<GenericUnit>();
 
         unitMenu = GameObject.FindGameObjectWithTag("UnitMenu").GetComponent<Canvas>();

@@ -64,7 +64,7 @@ public abstract class GenericUnit : MonoBehaviour
         SelectionTimer = 0;
 
         Controller = GameObject.FindGameObjectWithTag("GameController").GetComponent<Controller>();
-        Tilemap = FindObjectOfType<Tilemap>();
+        Tilemap = GameObject.FindGameObjectWithTag("Ground").GetComponent<Tilemap>();
 
         TextMeshProUGUI[] childTexts = gameObject.GetComponentsInChildren<TextMeshProUGUI>();
         TurnCountdownDisplay = Array.Find(childTexts, delegate (TextMeshProUGUI t) { return t.CompareTag("TurnCountdown"); });
