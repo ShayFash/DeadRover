@@ -37,23 +37,24 @@ public class Controller : MonoBehaviour
     private TextMeshProUGUI unitNameText;
     private Button[] actionButtons;
     private Button moveButton;
- 
-    ///
+    /// 
+    private GameObject animalImage;
     public GameObject[] WinPanel;
     public GameObject[] LossPanel;
     private GameObject WinScreen;
     private GameObject LossScreen;
-    /// 
-    public GameObject BearImage;
-    public GameObject DeerImage;
-    public GameObject RabbitImage;
-    public GameObject FoxImage;
-    public GameObject OwlImage;
-    public GameObject DeadBearImage;
-    public GameObject DeadDeerImage;
-    public GameObject DeadRabbitImage;
-    public GameObject DeadFoxImage;
-    public GameObject DeadOwlImage;
+    
+    public Sprite oldImage;
+    public Sprite Bear;
+    public Sprite Deer;
+    public Sprite Rabbit;
+    public Sprite Fox;
+    public Sprite Owl;
+    public Sprite DBear;
+    public Sprite DDeer;
+    public Sprite DRabbit;
+    public Sprite DFox;
+    public Sprite DOwl;
     /// 
     public GameObject HelpPanel;
     ///
@@ -66,6 +67,8 @@ public class Controller : MonoBehaviour
 
         unitMenu = GameObject.FindGameObjectWithTag("UnitMenu").GetComponent<Canvas>();
         TextMeshProUGUI[] unitMenuChildren = unitMenu.GetComponentsInChildren<TextMeshProUGUI>();
+
+        animalImage = GameObject.FindGameObjectWithTag("AnimalImage").GetComponent<Image>();
 
         rangeText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) {
             return t.gameObject.CompareTag("RangeStatDisplay");
@@ -190,6 +193,10 @@ public class Controller : MonoBehaviour
         healthNumText.text =  unit.Health.ToString() + " / " + unit.MaxHealth.ToString();
         unitNameText.text = unit.unitName;
 
+        if(unit.unitName == "Bear")
+        {
+            changeBear();
+        }
      
     }
 
@@ -533,67 +540,51 @@ public class Controller : MonoBehaviour
         Time.timeScale = 1f;
     }
 
-    public void ShowBear()
+    public void changeBear()
     {
-        BearImage.gameObject.SetActive(true);
+        animalImage.gameObject.GetComponent<SpriteRenderer>().sprite = Bear;
+    }
+    public void changeDeer()
+    {
+        animalImage.gameObject.GetComponent<SpriteRenderer>().sprite = Deer;
+    }
+    public void changeRabbit()
+    {
+        animalImage.gameObject.GetComponent<SpriteRenderer>().sprite = Rabbit;
+    }
+    public void changeFox()
+    {
+        animalImage.gameObject.GetComponent<SpriteRenderer>().sprite = Fox;
+    }
+    public void changeOwl()
+    {
+        animalImage.gameObject.GetComponent<SpriteRenderer>().sprite = Owl;
     }
 
-    public void ShowDeer()
+    public void changeDBear()
     {
-        DeerImage.gameObject.SetActive(true);
+        animalImage.gameObject.GetComponent<SpriteRenderer>().sprite = DBear;
+    }
+    public void changeDDeer()
+    {
+        animalImage.gameObject.GetComponent<SpriteRenderer>().sprite = DDeer;
+    }
+    public void changeDRabbit()
+    {
+        animalImage.gameObject.GetComponent<SpriteRenderer>().sprite = DRabbit;
+    }
+    public void changeDFox()
+    {
+        animalImage.gameObject.GetComponent<SpriteRenderer>().sprite = DFox;
+    }
+    public void changeDOwl()
+    {
+        animalImage.gameObject.GetComponent<SpriteRenderer>().sprite = DOwl;
+    }
+    public void changeNull()
+    {
+        animalImage.gameObject.GetComponent<SpriteRenderer>().sprite = oldImage;
     }
 
-    public void ShowRabbit()
-    {
-        RabbitImage.gameObject.SetActive(true);
-    }
 
-    public void ShowFox()
-    {
-        FoxImage.gameObject.SetActive(true);
-    }
-
-    public void ShowOwl()
-    {
-        OwlImage.gameObject.SetActive(true);
-    }
-
-    public void ShowDeadBear()
-    {
-        DeadBearImage.gameObject.SetActive(true);
-    }
-
-    public void ShowDeadDeer()
-    {
-        DeadDeerImage.gameObject.SetActive(true);
-    }
-
-    public void ShowDeadRabbit()
-    {
-        DeadRabbitImage.gameObject.SetActive(true);
-    }
-
-    public void ShowDeadFox()
-    {
-        DeadFoxImage.gameObject.SetActive(true);
-    }
-
-    public void ShowDeadOwl()
-    {
-        DeadOwlImage.gameObject.SetActive(true);
-    }
-
-    public void ShowNull()
-    {
-        BearImage.gameObject.SetActive(false);
-        DeerImage.gameObject.SetActive(false);
-        RabbitImage.gameObject.SetActive(false);
-        FoxImage.gameObject.SetActive(false);
-        OwlImage.gameObject.SetActive(false);
-        DeadBearImage.gameObject.SetActive(false);
-        DeadDeerImage.gameObject.SetActive(false);
-        DeadRabbitImage.gameObject.SetActive(false);
-        DeadFoxImage.gameObject.SetActive(false);
-        DeadOwlImage.gameObject.SetActive(false);
-    }
 }

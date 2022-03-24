@@ -2247,16 +2247,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   WinPanel: []
   LossPanel: []
-  BearImage: {fileID: 0}
-  DeerImage: {fileID: 0}
-  RabbitImage: {fileID: 0}
-  FoxImage: {fileID: 0}
-  OwlImage: {fileID: 0}
-  DeadBearImage: {fileID: 0}
-  DeadDeerImage: {fileID: 0}
-  DeadRabbitImage: {fileID: 0}
-  DeadFoxImage: {fileID: 0}
-  DeadOwlImage: {fileID: 0}
+  oldImage: {fileID: 0}
+  Bear: {fileID: 0}
+  Deer: {fileID: 0}
+  Rabbit: {fileID: 0}
+  Fox: {fileID: 0}
+  Owl: {fileID: 0}
+  DBear: {fileID: 0}
+  DDeer: {fileID: 0}
+  DRabbit: {fileID: 0}
+  DFox: {fileID: 0}
+  DOwl: {fileID: 0}
   HelpPanel: {fileID: 0}
 --- !u!1 &2768554900813592433
 GameObject:
@@ -4191,10 +4192,10 @@ GameObject:
   - component: {fileID: 8552245563004124830}
   - component: {fileID: 4205880805260723658}
   - component: {fileID: 1073911686666383921}
-  - component: {fileID: 1316903392523580203}
+  - component: {fileID: 1326185528995071948}
   m_Layer: 5
   m_Name: AnimalImage
-  m_TagString: Untagged
+  m_TagString: AnimalImage
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4257,7 +4258,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &1316903392523580203
+--- !u!114 &1326185528995071948
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4269,7 +4270,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88afea0bd37602b438c5d269ccf3182a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  oldImage: {fileID: 21300000, guid: 0a3facefd44dd3247bbb2203010fbb67, type: 3}
+  oldImage: {fileID: 0}
   Bear: {fileID: 21300000, guid: 286b8507e3b87ac4a855fe8f8d01ef58, type: 3}
   Deer: {fileID: 21300000, guid: 9106a777c20eca04793c33168c78120f, type: 3}
   Rabbit: {fileID: 21300000, guid: b00f03abb723944409010164545f19ce, type: 3}

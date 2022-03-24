@@ -18,6 +18,7 @@ TagManager:
   - UnitName
   - Loss
   - Win
+  - AnimalImage
   layers:
   - Default
   - TransparentFX
