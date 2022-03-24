@@ -202,6 +202,8 @@ public class Controller : MonoBehaviour
 
     public void Attack()
     {
+        FindObjectOfType<AudioManager>().Play("Forward");
+        
         if (state == State.Attacking || selectedUnit == null)
         {
             return;
@@ -547,6 +549,7 @@ public class Controller : MonoBehaviour
 
     public void HideHelpPanel() 
     {
+        FindObjectOfType<AudioManager>().Play("Confirm");
         HelpPanel.gameObject.SetActive(false);
         Time.timeScale = 1f;
     }
