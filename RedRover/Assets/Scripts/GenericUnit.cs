@@ -220,7 +220,7 @@ public abstract class GenericUnit : MonoBehaviour
             tileDistance += Mathf.Abs(myTilePosittion[i] - theirTilePosition[i]);
         }
 
-        return tileDistance == Reach;
+        return tileDistance <= Reach;
     }
 
     public IEnumerable<GenericUnit> UnitsInRange(IEnumerable<GenericUnit> units)
@@ -258,7 +258,7 @@ public abstract class GenericUnit : MonoBehaviour
             return tileDistance ==  Reach;
         }
 
-        return tileDistance > Movement && tileDistance == Movement+Reach;
+        return tileDistance > Movement && tileDistance <= Movement+Reach;
     }
 
     public IEnumerable<Vector3Int> TilesInRange()
