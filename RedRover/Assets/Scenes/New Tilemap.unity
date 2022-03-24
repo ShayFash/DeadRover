@@ -218,9 +218,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: DeadLancer
       objectReference: {fileID: 0}
+    - target: {fileID: 8113924906889184434, guid: 9f492b2f0b479a74d982796fcaa10f7e, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8113924906889184435, guid: 9f492b2f0b479a74d982796fcaa10f7e, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8113924906889184435, guid: 9f492b2f0b479a74d982796fcaa10f7e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -277,7 +281,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6491195289621974182, guid: 625d36fff45470d458a8e959706d16dc, type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 6491195289621974182, guid: 625d36fff45470d458a8e959706d16dc, type: 3}
       propertyPath: m_LocalPosition.x
@@ -318,6 +322,10 @@ PrefabInstance:
     - target: {fileID: 6491195289621974182, guid: 625d36fff45470d458a8e959706d16dc, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6491195289621974183, guid: 625d36fff45470d458a8e959706d16dc, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 625d36fff45470d458a8e959706d16dc, type: 3}
@@ -364,7 +372,7 @@ Transform:
   m_Children:
   - {fileID: 1241096972}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1241096971
 GameObject:
@@ -445,7 +453,7 @@ TilemapRenderer:
   m_MaxChunkCount: 16
   m_MaxFrameAge: 16
   m_SortOrder: 3
-  m_Mode: 0
+  m_Mode: 1
   m_DetectChunkCullingBounds: 0
   m_MaskInteraction: 0
 --- !u!1839735485 &1241096974
@@ -1151,7 +1159,7 @@ Tilemap:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Origin: {x: -14, y: -9, z: 0}
   m_Size: {x: 21, y: 17, z: 1}
-  m_TileAnchor: {x: 0.5, y: 0.5, z: 0}
+  m_TileAnchor: {x: -0.2, y: 0.8, z: 0}
   m_TileOrientation: 0
   m_TileOrientationMatrix:
     e00: 1
@@ -1181,9 +1189,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: DeadGlassCannon
       objectReference: {fileID: 0}
+    - target: {fileID: 4604847465400645982, guid: 4143f3c2308fa8941a1d637a9959d564, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4604847465400645983, guid: 4143f3c2308fa8941a1d637a9959d564, type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4604847465400645983, guid: 4143f3c2308fa8941a1d637a9959d564, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1342,7 +1354,7 @@ PrefabInstance:
       objectReference: {fileID: 1555685215}
     - target: {fileID: 2479435230475765577, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
       propertyPath: m_RootOrder
-      value: 6
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 2479435230475765577, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1479,15 +1491,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3557807815676642332, guid: 5f85576577e4335458a9a0f122d4a13d, type: 3}
       propertyPath: m_RootOrder
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 3557807815676642332, guid: 5f85576577e4335458a9a0f122d4a13d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -6.05
+      value: -5.96
       objectReference: {fileID: 0}
     - target: {fileID: 3557807815676642332, guid: 5f85576577e4335458a9a0f122d4a13d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.26
+      value: 0.47
       objectReference: {fileID: 0}
     - target: {fileID: 3557807815676642332, guid: 5f85576577e4335458a9a0f122d4a13d, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1520,6 +1532,10 @@ PrefabInstance:
     - target: {fileID: 3557807815676642332, guid: 5f85576577e4335458a9a0f122d4a13d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3557807815676642333, guid: 5f85576577e4335458a9a0f122d4a13d, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3557807815676642335, guid: 5f85576577e4335458a9a0f122d4a13d, type: 3}
       propertyPath: m_Name
