@@ -517,6 +517,8 @@ public class Controller : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
+                FindObjectOfType<AudioManager>().Play("Confirm"); //todo switch to animal move sound
+
                 Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
                 Vector3Int mousePosOnGrid = FindClosestTile(mouseWorldPos);
