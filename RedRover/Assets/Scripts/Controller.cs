@@ -554,4 +554,9 @@ public class Controller : MonoBehaviour
         HelpPanel.gameObject.SetActive(false);
         Time.timeScale = 1f;
     }
+
+    public void MuteToggle(bool muted)
+    {
+            FindObjectOfType<AudioManager>().MuteToggle("Theme");
+    }
 }
