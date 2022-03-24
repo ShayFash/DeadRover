@@ -47,8 +47,6 @@ public abstract class GenericUnit : MonoBehaviour
 
     protected TextMeshProUGUI HealthDisplay;
 
-    protected UnitLink link;
-
     protected bool ShaderActive = false;
     protected bool MouseOver = false;
 
@@ -72,9 +70,6 @@ public abstract class GenericUnit : MonoBehaviour
 
         Renderer = gameObject.GetComponent<SpriteRenderer>();
         Renderer.sprite = CompareTag("Living") ? livingSprite : deadSprite;
-
-
-        link = GetComponent<UnitLink>();
 
         UpdateHealthDisplay();
 
@@ -129,20 +124,6 @@ public abstract class GenericUnit : MonoBehaviour
         transform.position = alignedPosition;
     }
 
-    public void SetLink(Transform other)
-    {
-        link.SetLink(other);
-    }
-
-    public bool LinkAlreadyCoonected()
-    {
-        return link.AlreadyConnected();
-    }
-    public void HideLink()
-    {
-        link.HideLink();
-    }
-
     public void TakeDamage(int value)
     {
         Debug.Log("I'm hurt");
@@ -160,7 +141,6 @@ public abstract class GenericUnit : MonoBehaviour
             }
 
             SwitchingSides = true;
-            link.SwitchingSides();
             SwitchSidesCountdown = NumTurnsToSwitchSides;
 
             ResetSelectionTimer();
@@ -188,7 +168,6 @@ public abstract class GenericUnit : MonoBehaviour
         if (SwitchingSides && SwitchSidesCountdown <= 0)
         {
             SwitchingSides = false;
-            link.HideLink();
             NumTimesSwitched++;
             tag = CompareTag("Living") ? "Dead" : "Living";
             Renderer.sprite = CompareTag("Living") ? livingSprite : deadSprite;
