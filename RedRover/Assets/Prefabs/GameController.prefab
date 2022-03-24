@@ -2246,6 +2246,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   WinPanel: []
   LossPanel: []
+  HelpPanel: {fileID: 1047394197}
+  linkObject: {fileID: 4494204007080024721, guid: af921a7794120a442a55ecdec865caff, type: 3}
 --- !u!1 &2768554900813592433
 GameObject:
   m_ObjectHideFlags: 0
