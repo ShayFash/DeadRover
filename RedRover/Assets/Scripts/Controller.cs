@@ -231,10 +231,14 @@ public class Controller : MonoBehaviour
 
     public void Move()
     {
+        FindObjectOfType<AudioManager>().Play("Forward");
+
         if (selectedUnit == null)
         {
             return;
         }
+        
+
         state = State.Moving;
         //Clear, if attack tiles are still highlighted
         RemoveColorFromTilesInRange(selectedUnit);
@@ -244,6 +248,8 @@ public class Controller : MonoBehaviour
 
     public void EndTurn()
     {
+        FindObjectOfType<AudioManager>().Play("Confirm");
+
         if(selectedUnit == null)
         {
             return;
@@ -517,7 +523,7 @@ public class Controller : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
-                FindObjectOfType<AudioManager>().Play("Confirm"); //todo switch to animal move sound
+                FindObjectOfType<AudioManager>().Play("Forward"); //todo switch to animal move sound
 
                 Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
