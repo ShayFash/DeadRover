@@ -38,15 +38,23 @@ public class Controller : MonoBehaviour
     private Button[] actionButtons;
     private Button moveButton;
  
-    ///
     public GameObject[] WinPanel;
     public GameObject[] LossPanel;
     private GameObject WinScreen;
     private GameObject LossScreen;
-    ///
+
     public GameObject HelpPanel;
-    ///
+
     private AI ai;
+
+    private UnitLink[] linkObjectPool = new UnitLink[10];
+    public GameObject linkObject;
+
+    private Dictionary<string, string> linkPairNames = new Dictionary<string, string>
+    {
+        {"Bear", "Rabbit"}, {"Owl", "Fox"}, {"Deer", "Deer"},
+        {"Rabbit", "Bear"}, {"Fox", "Owl"}
+    };
 
     private void Awake()
     {
@@ -77,6 +85,14 @@ public class Controller : MonoBehaviour
         {
             return b.CompareTag("MoveButton");
         });
+
+        UnitLink temp;
+        for (int i = 0; i < linkObjectPool.Length; i++)
+        {
+            temp = Instantiate(linkObject).GetComponent<UnitLink>();
+            temp.HideLink();
+            linkObjectPool[i] = temp;
+        }
     }
 
     private void Start()
@@ -84,13 +100,13 @@ public class Controller : MonoBehaviour
         ai = new AI(this);
 
         StartCoroutine(lateStart());
-        /////
+
         WinPanel = GameObject.FindGameObjectsWithTag("Win");
         LossPanel = GameObject.FindGameObjectsWithTag("Loss");
 
         WinScreen = GameObject.Find("WinScreen");
         LossScreen = GameObject.Find("LossScreen");
-        /////
+
         ShowHelpPanel();
     }
 
@@ -268,6 +284,7 @@ public class Controller : MonoBehaviour
             state = State.Waiting;
             RemoveColorFromTilesInRange(selectedUnit);
             selectedUnit.Move(cellPosition);
+            UpdateLinks();
             return true;
         }
         return false;
@@ -311,13 +328,6 @@ public class Controller : MonoBehaviour
                 }));
             }
         }
-    }
-
-    private Vector3Int GetClickedGridPosition()
-    {
-        Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-        return FindClosestTile(mouseWorldPos);
     }
 
     public void ShowTilesInRange(GenericUnit unit, bool showAttack=false, bool showMovement = true)
@@ -441,7 +451,7 @@ public class Controller : MonoBehaviour
         if (!unitsLeft)
         {
             Debug.Log(activePlayer.ToString() + " lose");
-            ////
+
             if(activePlayer == Player.Living)
             {
                 LossScreen.gameObject.SetActive(true);
@@ -450,7 +460,6 @@ public class Controller : MonoBehaviour
             {
                 WinScreen.gameObject.SetActive(true);
             }
-            ////
         }
     }
 
@@ -468,42 +477,38 @@ public class Controller : MonoBehaviour
 
     private void UpdateLinks()
     {
-        GenericUnit previousLivingUnit = null;
-        GenericUnit previousDeadUnit = null;
-        for (int i = 0; i < units.Length; i++)
+        void updateForTeam(string team)
         {
-            GenericUnit unit = units[i];
-            if (!unit.IsActiveUnit())
+            GenericUnit[] activeTeamUnits = Array.FindAll(units, delegate (GenericUnit u)
             {
-                if (unit.IsEliminated)
-                {
-                    unit.HideLink();
-                }
-                continue;
-            }
+                return u.CompareTag(team) && u.IsActive();
+            });
 
-            if (unit.CompareTag("Living"))
+            for (int i = 0; i < activeTeamUnits.Length; i++)
             {
-                if (previousLivingUnit != null && !previousLivingUnit.LinkAlreadyCoonected())
+                GenericUnit unit = activeTeamUnits[i];
+
+                for (int j = i-1; j >= 0; j--)
                 {
-                    previousLivingUnit.SetLink(unit.transform);
-                } else if (previousLivingUnit == null)
-                {
-                    unit.HideLink();
+                    GenericUnit otherUnit = activeTeamUnits[j];
+
+                    if (linkPairNames[unit.unitName] == otherUnit.unitName && !(unit.linked && otherUnit.linked))
+                    {
+                        for (int l = 0; l < linkObjectPool.Length; l++)
+                        {
+                            if (!linkObjectPool[l].AlreadyConnected())
+                            {
+                                linkObjectPool[l].SetLink(unit, otherUnit);
+                                break;
+                            }
+                        }
+                    }
                 }
-                previousLivingUnit = unit;
-            } else if (unit.CompareTag("Dead"))
-            {
-                if (previousDeadUnit != null && !previousDeadUnit.LinkAlreadyCoonected())
-                {
-                    previousDeadUnit.SetLink(unit.transform);
-                } else if (previousDeadUnit == null)
-                {
-                    unit.HideLink();
-                }
-                previousDeadUnit = unit;
             }
         }
+
+        updateForTeam(Player.Living.ToString());
+        updateForTeam(Player.Dead.ToString());
     }
 
     private IEnumerator WaitForMoveInput()

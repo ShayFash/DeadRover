@@ -12,6 +12,11 @@ public abstract class GenericUnit : MonoBehaviour
     public int Attack;
     public int Health;
     public int Movement;
+
+    public int BaseReach { get; protected set; }
+    public int BaseAttack { get; protected set; }
+    public int BaseMovement { get; protected set; }
+
     public int MaxHealth { get; protected set; }
     public int InitialMaxHealth { get; protected set; }
 
@@ -37,6 +42,8 @@ public abstract class GenericUnit : MonoBehaviour
 
     public int SelectionTimer { get; protected set; }
 
+    [HideInInspector]
+    public bool linked = false;
 
     protected Controller Controller;
 
@@ -47,13 +54,14 @@ public abstract class GenericUnit : MonoBehaviour
 
     protected TextMeshProUGUI HealthDisplay;
 
-    protected UnitLink link;
-
     protected bool ShaderActive = false;
     protected bool MouseOver = false;
 
     protected void Init()
     {
+        BaseAttack = Attack;
+        BaseReach = Reach;
+        BaseMovement = Movement;
 
         MaxHealth = Health;
         InitialMaxHealth = MaxHealth;
@@ -72,9 +80,6 @@ public abstract class GenericUnit : MonoBehaviour
 
         Renderer = gameObject.GetComponent<SpriteRenderer>();
         Renderer.sprite = CompareTag("Living") ? livingSprite : deadSprite;
-
-
-        link = GetComponent<UnitLink>();
 
         UpdateHealthDisplay();
 
@@ -111,6 +116,24 @@ public abstract class GenericUnit : MonoBehaviour
         return !SwitchingSides && !IsEliminated;
     }
 
+    public void Buff(int attack, int movement, int reach)
+    {
+        if (Attack > BaseAttack || Reach > BaseReach || Movement > BaseMovement)
+        {
+            return;
+        }
+        Attack = BaseAttack + attack;
+        Reach = reach;
+        Movement = BaseMovement + movement;
+    }
+
+    public void RemoveBuff()
+    {
+        Attack = BaseAttack;
+        Reach = BaseReach;
+        Movement = BaseMovement;
+    }
+
     public Vector3Int GetTilePosition()
     {
         return Tilemap.layoutGrid.WorldToCell(transform.position);
@@ -127,20 +150,6 @@ public abstract class GenericUnit : MonoBehaviour
         Vector3 alignedPosition = Tilemap.layoutGrid.GetCellCenterWorld(cellPosition);
         alignedPosition.z += 1;
         transform.position = alignedPosition;
-    }
-
-    public void SetLink(Transform other)
-    {
-        link.SetLink(other);
-    }
-
-    public bool LinkAlreadyCoonected()
-    {
-        return link.AlreadyConnected();
-    }
-    public void HideLink()
-    {
-        link.HideLink();
     }
 
     public void TakeDamage(int value)
@@ -160,7 +169,6 @@ public abstract class GenericUnit : MonoBehaviour
             }
 
             SwitchingSides = true;
-            link.SwitchingSides();
             SwitchSidesCountdown = NumTurnsToSwitchSides;
 
             ResetSelectionTimer();
@@ -188,7 +196,6 @@ public abstract class GenericUnit : MonoBehaviour
         if (SwitchingSides && SwitchSidesCountdown <= 0)
         {
             SwitchingSides = false;
-            link.HideLink();
             NumTimesSwitched++;
             tag = CompareTag("Living") ? "Dead" : "Living";
             Renderer.sprite = CompareTag("Living") ? livingSprite : deadSprite;
