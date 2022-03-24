@@ -35,10 +35,12 @@ public class Controller : MonoBehaviour
     private TextMeshProUGUI attackText;
     private TextMeshProUGUI healthNumText;
     private TextMeshProUGUI unitNameText;
+    private TextMeshProUGUI turnCounterText;
     private Button[] actionButtons;
     private Button moveButton;
- 
-    ///
+
+    /// <summary>
+    private int numTurns;
     public GameObject[] WinPanel;
     public GameObject[] LossPanel;
     private GameObject WinScreen;
@@ -55,6 +57,10 @@ public class Controller : MonoBehaviour
 
         unitMenu = GameObject.FindGameObjectWithTag("UnitMenu").GetComponent<Canvas>();
         TextMeshProUGUI[] unitMenuChildren = unitMenu.GetComponentsInChildren<TextMeshProUGUI>();
+
+        turnCounterText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) {
+            return t.gameObject.CompareTag("TurnCounter");
+        });
 
         rangeText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) {
             return t.gameObject.CompareTag("RangeStatDisplay");
@@ -77,6 +83,7 @@ public class Controller : MonoBehaviour
         {
             return b.CompareTag("MoveButton");
         });
+        numTurns = 0;
     }
 
     private void Start()
@@ -152,6 +159,7 @@ public class Controller : MonoBehaviour
                     selectedUnit.AttackUnit(unit);
                     UpdateLinks();
 
+                    
                     EndTurn();
                 }
                 break;
@@ -235,6 +243,8 @@ public class Controller : MonoBehaviour
         state = State.SelectingUnit;
         RemoveColorFromTilesInRange(selectedUnit);
         ChangeTurns();
+        numTurns++;
+        turnCounterText.text = "TURN: " + numTurns.ToString();
     }
 
     public Vector3Int FindClosestTile(Vector3 position)
