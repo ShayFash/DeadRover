@@ -12,6 +12,11 @@ public abstract class GenericUnit : MonoBehaviour
     public int Attack;
     public int Health;
     public int Movement;
+
+    protected int BaseReach;
+    protected int BaseAttack;
+    protected int BaseMovement;
+
     public int MaxHealth { get; protected set; }
     public int InitialMaxHealth { get; protected set; }
 
@@ -52,6 +57,9 @@ public abstract class GenericUnit : MonoBehaviour
 
     protected void Init()
     {
+        BaseAttack = Attack;
+        BaseReach = Reach;
+        BaseMovement = Movement;
 
         MaxHealth = Health;
         InitialMaxHealth = MaxHealth;
@@ -104,6 +112,20 @@ public abstract class GenericUnit : MonoBehaviour
     public bool IsActiveUnit()
     {
         return !SwitchingSides && !IsEliminated;
+    }
+
+    public void Buff(int attack, int movement, int reach)
+    {
+        Attack = BaseAttack + attack;
+        Reach = reach;
+        Movement = BaseMovement + movement;
+    }
+
+    public void RemoveBuff()
+    {
+        Attack = BaseAttack;
+        Reach = BaseReach;
+        Movement = BaseMovement;
     }
 
     public Vector3Int GetTilePosition()

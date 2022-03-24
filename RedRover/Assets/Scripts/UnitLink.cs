@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -67,6 +68,12 @@ public class UnitLink : MonoBehaviour
 
     private IEnumerator FollowTransform()
     {
+        if (LinkConditionsMet())
+        {
+            unit1.Buff(unit2.Attack, unit2.Movement, Math.Max(unit2.Reach, unit1.Reach));
+            unit2.Buff(unit1.Attack, unit1.Movement, Math.Max(unit2.Reach, unit1.Reach));
+        }
+
         while (LinkConditionsMet())
         {
             lineRenderer.SetPosition(0, unit1.transform.position);
@@ -74,6 +81,8 @@ public class UnitLink : MonoBehaviour
 
             yield return new WaitForEndOfFrame();
         }
+        unit1.RemoveBuff();
+        unit2.RemoveBuff();
         HideLink();
     }
 }
