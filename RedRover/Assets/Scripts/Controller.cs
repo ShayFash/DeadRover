@@ -284,6 +284,7 @@ public class Controller : MonoBehaviour
             state = State.Waiting;
             RemoveColorFromTilesInRange(selectedUnit);
             selectedUnit.Move(cellPosition);
+            UpdateLinks();
             return true;
         }
         return false;
@@ -491,7 +492,7 @@ public class Controller : MonoBehaviour
                 {
                     GenericUnit otherUnit = activeTeamUnits[j];
 
-                    if (linkPairNames[unit.unitName] == otherUnit.unitName)
+                    if (linkPairNames[unit.unitName] == otherUnit.unitName && !(unit.linked && otherUnit.linked))
                     {
                         for (int l = 0; l < linkObjectPool.Length; l++)
                         {

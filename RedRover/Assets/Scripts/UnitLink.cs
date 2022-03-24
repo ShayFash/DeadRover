@@ -68,10 +68,12 @@ public class UnitLink : MonoBehaviour
 
     private IEnumerator FollowTransform()
     {
+        unit1.linked = true;
+        unit2.linked = true;
         if (LinkConditionsMet())
         {
-            unit1.Buff(unit2.Attack, unit2.Movement, Math.Max(unit2.Reach, unit1.Reach));
-            unit2.Buff(unit1.Attack, unit1.Movement, Math.Max(unit2.Reach, unit1.Reach));
+            unit1.Buff(unit2.BaseAttack, unit2.BaseMovement, Math.Max(unit2.BaseReach, unit1.BaseReach));
+            unit2.Buff(unit1.BaseAttack, unit1.BaseMovement, Math.Max(unit2.BaseReach, unit1.BaseReach));
         }
 
         while (LinkConditionsMet())
@@ -83,6 +85,10 @@ public class UnitLink : MonoBehaviour
         }
         unit1.RemoveBuff();
         unit2.RemoveBuff();
+        unit1.linked = false;
+        unit2.linked = false;
+
+
         HideLink();
     }
 }

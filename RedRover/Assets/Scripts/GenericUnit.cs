@@ -13,9 +13,9 @@ public abstract class GenericUnit : MonoBehaviour
     public int Health;
     public int Movement;
 
-    protected int BaseReach;
-    protected int BaseAttack;
-    protected int BaseMovement;
+    public int BaseReach { get; protected set; }
+    public int BaseAttack { get; protected set; }
+    public int BaseMovement { get; protected set; }
 
     public int MaxHealth { get; protected set; }
     public int InitialMaxHealth { get; protected set; }
@@ -42,6 +42,8 @@ public abstract class GenericUnit : MonoBehaviour
 
     public int SelectionTimer { get; protected set; }
 
+    [HideInInspector]
+    public bool linked = false;
 
     protected Controller Controller;
 
@@ -116,6 +118,10 @@ public abstract class GenericUnit : MonoBehaviour
 
     public void Buff(int attack, int movement, int reach)
     {
+        if (Attack > BaseAttack || Reach > BaseReach || Movement > BaseMovement)
+        {
+            return;
+        }
         Attack = BaseAttack + attack;
         Reach = reach;
         Movement = BaseMovement + movement;
