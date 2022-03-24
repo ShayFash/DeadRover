@@ -543,6 +543,7 @@ public class Controller : MonoBehaviour
 
     public void ShowHelpPanel() 
     {
+        FindObjectOfType<AudioManager>().Play("Forward");
         HelpPanel.gameObject.SetActive(true);
         Time.timeScale = 0f;
     }
