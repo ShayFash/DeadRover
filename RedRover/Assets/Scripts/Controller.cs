@@ -219,20 +219,6 @@ public class Controller : MonoBehaviour
 
         //Show tiles in attack range
         ShowTilesInRange(selectedUnit, true, false);
-
-        Player currentPlayer = activePlayer;
-        for (int i=0; i < units.Length; i++)
-        {
-            GenericUnit target = units[i];
-
-            bool isTargetInRange = !selectedUnit.CompareTag(target.tag) && target.CanBeAttacked() && selectedUnit.UnitInRange(target);
-            if (isTargetInRange)
-            {
-                StartCoroutine(target.ApplyAttackShader(delegate () {
-                    return state == State.Attacking && activePlayer == currentPlayer;
-                }));
-            }
-        }
     }
 
     public void Move()

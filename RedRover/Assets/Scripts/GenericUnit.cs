@@ -248,89 +248,54 @@ public abstract class GenericUnit : MonoBehaviour
         }
     }
 
-    public IEnumerator ApplyAttackShader(Func<bool> continueWhile)
-    {
-        yield return new WaitUntil(() => !ShaderActive);
-        //ShaderActive = true;
-        //Material oldMaterial = Renderer.material;
-
-        //Material material = new Material(Shader.Find("Shader Graphs/PulseHighlight"));
-        //material.color = Color.red;
-        //material.SetFloat("_Intensity", 0.5f);
-        //material.SetFloat("_Speed", 3);
-        //material.SetFloat("_TimeElapsed", 0);
-
-        //Renderer.material = material;
-
-        //float timeElasped = 0;
-
-        //while (continueWhile())
-        //{
-        //    timeElasped += Time.deltaTime;
-        //    // This is inefficient for a lot of materials, but it won't matter for this game
-        //    Renderer.material.SetFloat("_TimeElapsed", timeElasped);
-
-        //    yield return new WaitForEndOfFrame();
-        //}
-
-        //Renderer.material = oldMaterial;
-
-        //ShaderActive = false;
-    }
-
     public IEnumerator ApplySelectedShader(Func<bool> continueWhile)
     {
         yield return new WaitUntil(() => !ShaderActive);
-        //ShaderActive = true;
-        //Material oldMaterial = Renderer.material;
+        ShaderActive = true;
+        Material material = Renderer.material;
+        Shader oldShader = material.shader;
 
-        //Material material = new Material(Shader.Find("Shader Graphs/Highlight"));
-        //material.color = Color.yellow;
-        //material.SetFloat("_Intensity", 0.5f);
+        string shaderName = CompareTag("Living") ? "Shader Graphs/Outline" : "Shader Graphs/DeadOutline";
+        Shader shader = Shader.Find(shaderName);
+        material.shader = shader;
 
-        //Renderer.material = material;
+        material.SetFloat("_Size", 1); // Smaller is bigger
+        material.SetColor("_Color", Color.yellow);
 
-        //yield return new WaitWhile(() => continueWhile());
+        Renderer.material = material;
 
-        //Renderer.material = oldMaterial;
-        //ShaderActive = false;
+        yield return new WaitWhile(() => continueWhile());
+
+        material.shader = oldShader;
+        material.SetColor("_Color", Color.white);
+
+        ShaderActive = false;
     }
 
     public IEnumerator ApplyCanBeSelectedShader(Func<bool> continueWhile)
     {
         yield return new WaitUntil(() => !ShaderActive);
-        //ShaderActive = true;
-        //Material oldMaterial = Renderer.material;
+        ShaderActive = true;
+        Material material = Renderer.material;
+        Shader oldShader = material.shader;
 
-        //Material material = new Material(Shader.Find("Shader Graphs/PulseHighlight"));
-        //material.color = Color.yellow;
-        //material.SetFloat("_Intensity", 0.5f);
-        //material.SetFloat("_Speed", 3);
-        //material.SetFloat("_TimeElapsed", 0);
+        string shaderName = CompareTag("Living") ? "Shader Graphs/PulseOutline" : "Shader Graphs/DeadPulseOutline";
+        Shader shader = Shader.Find(shaderName);
+        material.shader = shader;
 
-        //Renderer.material = material;
+        material.SetFloat("_MinValue", 0.3f);
+        material.SetFloat("_Speed", 2);
+        material.SetFloat("_Size", 1); // Smaller is bigger
+        material.SetColor("_Color", Color.yellow);
 
-        //float timeElasped = 0;
+        Renderer.material = material;
 
-        //while (continueWhile())
-        //{
-        //    timeElasped += Time.deltaTime;
-        //    // This is inefficient for a lot of materials, but it won't matter for this game
-        //    Renderer.material.SetFloat("_TimeElapsed", timeElasped);
+        yield return new WaitWhile(() => continueWhile());
 
-        //    if (MouseOver && Renderer.material.color == Color.yellow)
-        //    {
-        //        Renderer.material.color = Color.green;
-        //    } else if (!MouseOver && Renderer.material.color == Color.green)
-        //    {
-        //        Renderer.material.color = Color.yellow;
-        //    }
+        material.shader = oldShader;
+        material.SetColor("_Color", Color.white);
 
-        //    yield return new WaitForEndOfFrame();
-        //}
-
-        //Renderer.material = oldMaterial;
-        //ShaderActive = false;
+        ShaderActive = false;
     }
 
     private void DisplayDetailedInformation()
