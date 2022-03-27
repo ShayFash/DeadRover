@@ -49,8 +49,6 @@ public abstract class GenericUnit : MonoBehaviour
     // protected TextMeshProUGUI TurnCountdownDisplay;
     protected MeshRenderer Renderer;
 
-    protected TextMeshProUGUI HealthDisplay;
-
     protected bool ShaderActive = false;
     protected bool MouseOver = false;
 
@@ -70,14 +68,8 @@ public abstract class GenericUnit : MonoBehaviour
 
         Controller = GameObject.FindGameObjectWithTag("GameController").GetComponent<Controller>();
 
-        TextMeshProUGUI[] childTexts = gameObject.GetComponentsInChildren<TextMeshProUGUI>();
-        // TurnCountdownDisplay = Array.Find(childTexts, delegate (TextMeshProUGUI t) { return t.CompareTag("TurnCountdown"); });
-        HealthDisplay = Array.Find(childTexts, delegate (TextMeshProUGUI t) { return t.CompareTag("HealthStatDisplay"); });
-
         Renderer = gameObject.GetComponent<MeshRenderer>();
         Renderer.material = CompareTag("Living") ? LivingMaterial : DeadMaterial;
-
-        UpdateHealthDisplay();
 
         Move(Controller.FindClosestTile(transform.position));
     }
@@ -151,7 +143,6 @@ public abstract class GenericUnit : MonoBehaviour
     {
         Debug.Log("I'm hurt");
         Health = Mathf.Max(0, Health - value);
-        UpdateHealthDisplay();
 
         if (Health == 0)
         {
@@ -168,11 +159,7 @@ public abstract class GenericUnit : MonoBehaviour
 
             ResetSelectionTimer();
 
-            // TurnCountdownDisplay.text = SwitchSidesCountdown.ToString();
             Renderer.material = CompareTag("Living") ? LivingMaterial : DeadMaterial;
-            // TurnCountdownDisplay.enabled = true;
-
-            // HealthDisplay.enabled = false;
         }
     }
 
@@ -185,9 +172,6 @@ public abstract class GenericUnit : MonoBehaviour
             SwitchSidesCountdown = Math.Max(0, SwitchSidesCountdown - 1);
         }
 
-
-        // TurnCountdownDisplay.text = SwitchSidesCountdown.ToString();
-
         if (SwitchingSides && SwitchSidesCountdown <= 0)
         {
             SwitchingSides = false;
@@ -197,11 +181,6 @@ public abstract class GenericUnit : MonoBehaviour
 
             MaxHealth = Mathf.RoundToInt(InitialMaxHealth * (1 - (NumTimesSwitched / (MaxAllowedSwitches + 1f))));
             Health = MaxHealth;
-
-            // TurnCountdownDisplay.enabled = false;
-
-            // HealthDisplay.enabled = true;
-            UpdateHealthDisplay();
         }
     }
 
@@ -406,10 +385,4 @@ public abstract class GenericUnit : MonoBehaviour
         Controller.UnitClicked(this);
         
     }
-
-    private void UpdateHealthDisplay()
-    {
-        // HealthDisplay.text = Health.ToString() + "/" + MaxHealth.ToString() + " HP";
-    }
-
 }

@@ -113,7 +113,7 @@ public class Controller : MonoBehaviour
 
         StartCoroutine(lateStart());
 
-        // ShowHelpPanel();
+        ShowHelpPanel();
     }
 
     private IEnumerator lateStart()
@@ -249,7 +249,7 @@ public class Controller : MonoBehaviour
 
     public void TileClicked(Vector3 position)
     {
-        // TODO: need something to cancel move if you don't want to move now
+        // TODO: need something to cancel move if you don't want to move
         if (state == State.Moving && activePlayer == Player.Living)
         {
             bool moved = TryMoveSelectedUnit(position);
@@ -375,8 +375,6 @@ public class Controller : MonoBehaviour
 
     public void RemoveColorFromTilesInRange(GenericUnit unit)
     {
-        // TODO: fix showing range
-
         // Remove movement color
         foreach (Tile tile in unit.TilesInRange())
         {
