@@ -202,6 +202,8 @@ public class Controller : MonoBehaviour
 
     public void Attack()
     {
+        FindObjectOfType<AudioManager>().Play("Forward");
+        
         if (state == State.Attacking || selectedUnit == null)
         {
             return;
@@ -231,10 +233,14 @@ public class Controller : MonoBehaviour
 
     public void Move()
     {
+        FindObjectOfType<AudioManager>().Play("Forward");
+
         if (selectedUnit == null)
         {
             return;
         }
+        
+
         state = State.Moving;
         //Clear, if attack tiles are still highlighted
         RemoveColorFromTilesInRange(selectedUnit);
@@ -244,6 +250,8 @@ public class Controller : MonoBehaviour
 
     public void EndTurn()
     {
+        FindObjectOfType<AudioManager>().Play("Confirm");
+
         if(selectedUnit == null)
         {
             return;
@@ -517,6 +525,8 @@ public class Controller : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
+                FindObjectOfType<AudioManager>().Play("Forward"); //todo switch to animal move sound
+
                 Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
                 Vector3Int mousePosOnGrid = FindClosestTile(mouseWorldPos);
@@ -533,13 +543,20 @@ public class Controller : MonoBehaviour
 
     public void ShowHelpPanel() 
     {
+        FindObjectOfType<AudioManager>().Play("Forward");
         HelpPanel.gameObject.SetActive(true);
         Time.timeScale = 0f;
     }
 
     public void HideHelpPanel() 
     {
+        FindObjectOfType<AudioManager>().Play("Confirm");
         HelpPanel.gameObject.SetActive(false);
         Time.timeScale = 1f;
+    }
+
+    public void MuteToggle(bool muted)
+    {
+            FindObjectOfType<AudioManager>().MuteToggle("Theme");
     }
 }
