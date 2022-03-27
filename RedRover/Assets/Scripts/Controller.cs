@@ -345,7 +345,7 @@ public class Controller : MonoBehaviour
             foreach (Vector3Int tilePos in unit.TilesInAttackRange(showMovement))
             {
                 tilemap.SetTileFlags(tilePos, TileFlags.None);
-                tilemap.SetColor(tilePos, Color.red);
+                tilemap.SetColor(tilePos, new Color(0.964f, 0.368f, 0.352f, 1.0f));
             }
         }
 
@@ -354,7 +354,7 @@ public class Controller : MonoBehaviour
             foreach(Vector3Int tilePos in unit.TilesInRange())
             {
                 tilemap.SetTileFlags(tilePos, TileFlags.None);
-                tilemap.SetColor(tilePos, Color.blue);
+                tilemap.SetColor(tilePos, new Color(0.580f, 0.654f, 1f, 1.0f));
             }
         }
 
