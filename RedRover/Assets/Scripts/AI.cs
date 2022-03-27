@@ -54,9 +54,9 @@ public class AI
 
     private class Move : IState
     {
-        private Vector3Int tilePosition;
+        private Vector3 tilePosition;
 
-        public Move(Vector3Int tilePosition)
+        public Move(Vector3 tilePosition)
         {
             this.tilePosition = tilePosition;
         }
@@ -132,14 +132,15 @@ public class AI
             {
                 // Move away from enemy units
                 int minEnemiesNearby = 1000;
-                Vector3Int goodTilePosition = new Vector3Int(1000, 1000);
-                foreach (Vector3Int tilePos in actingUnit.TilesInRange())
+                Vector3 goodTilePosition = Vector3.positiveInfinity;
+                foreach (GameObject tile in actingUnit.TilesInRange())
                 {
+                    Vector3 tilePos = tile.transform.position;
                     if (!controller.HasTileAtPosition(tilePos))
                     {
                         continue;
                     }
-                    if (goodTilePosition.Equals(new Vector3Int(1000, 1000)))
+                    if (goodTilePosition.Equals(Vector3.positiveInfinity))
                     {
                         goodTilePosition = tilePos;
                     }
@@ -179,19 +180,17 @@ public class AI
             if (index == -1)
             {
                 // Move towards enemy unit
-                Vector3Int myTilePostion = actingUnit.GetTilePosition();
+                Vector3 myTilePostion = actingUnit.GetTilePosition();
 
-                int minTileDistance = 100000;
+                float minTileDistance = Mathf.Infinity;
                 GenericUnit closestEnemy = enemies[0]; // If this crashes at some point, fix it
                 for (int i = 0; i < enemies.Length; i++)
                 {
-                    Vector3Int theirTilePosition = enemies[i].GetTilePosition();
+                    Vector3 theirTilePosition = enemies[i].GetTilePosition();
 
-                    int tileDistance = 0;
-                    for (int d = 0; d <= 1; d++)
-                    {
-                        tileDistance += Math.Abs(myTilePostion[d] - theirTilePosition[d]);
-                    }
+                    float tileDistance = 0;
+                    tileDistance += Mathf.Abs(myTilePostion[0] - theirTilePosition[0]);
+                    tileDistance += Mathf.Abs(myTilePostion[2] - theirTilePosition[2]);
 
                     if (tileDistance < minTileDistance)
                     {
@@ -200,23 +199,22 @@ public class AI
                     }
                 }
 
-                Vector3Int goodTilePosition = new Vector3Int(1000, 1000);
-                foreach (Vector3Int tilePos in actingUnit.TilesInRange())
+                Vector3 goodTilePosition = Vector3.positiveInfinity;
+                foreach (GameObject tile in actingUnit.TilesInRange())
                 {
+                    Vector3 tilePos = tile.transform.position;
                     if (!controller.HasTileAtPosition(tilePos) || controller.TileOccupied(tilePos))
                     {
                         continue;
                     }
-                    if (goodTilePosition.Equals(new Vector3Int(1000, 1000)))
+                    if (goodTilePosition.Equals(Vector3.positiveInfinity))
                     {
                         goodTilePosition = tilePos;
                     }
 
-                    int tileDistance = 0;
-                    for (int d = 0; d <= 1; d++)
-                    {
-                        tileDistance += Math.Abs(tilePos[d] - closestEnemy.GetTilePosition()[d]);
-                    }
+                    float tileDistance = 0;
+                    tileDistance += Mathf.Abs(tilePos[0] - closestEnemy.GetTilePosition()[0]);
+                    tileDistance += Mathf.Abs(tilePos[2] - closestEnemy.GetTilePosition()[2]);
 
                     if (0 < tileDistance && tileDistance <= minTileDistance)
                     {

@@ -107,7 +107,7 @@ public class Controller : MonoBehaviour
         WinScreen = GameObject.Find("WinScreen");
         LossScreen = GameObject.Find("LossScreen");
 
-        ShowHelpPanel();
+        // ShowHelpPanel();
     }
 
     private IEnumerator lateStart()
@@ -252,32 +252,27 @@ public class Controller : MonoBehaviour
         RemoveColorFromTilesInRange(selectedUnit);
         ChangeTurns();
     }
-
-    public Vector3Int FindClosestTile(Vector3 position)
+    public Vector3 FindClosestTile(Vector3 position)
     {
-        int maxZ = tilemap.cellBounds.zMax;
-        position.z = maxZ + 1;
-        Vector3 positionCopy = position;
-
         Vector3 closestTile = Vector3.positiveInfinity;
-        for (int z = 0; z < maxZ; z++)
+        float smallestDistance = Mathf.Infinity;
+        for (int i = 0; i < tilemap.transform.childCount; i++)
         {
-            positionCopy.z = z;
-            Vector3Int cellPosition = tilemap.layoutGrid.WorldToCell(positionCopy);
+            Vector3 tilePosition = tilemap.transform.GetChild(i).position;
+            float distance = 0;
+            distance += Mathf.Abs(position[0] - tilePosition[0]);
+            distance += Mathf.Abs(position[2] - tilePosition[2]);
 
-            if (tilemap.HasTile(cellPosition))
+            if (distance < smallestDistance)
             {
-                Vector3 cellMid = tilemap.layoutGrid.GetCellCenterWorld(cellPosition);
-                if (Vector3.Distance(position, cellMid) < Vector3.Distance(position, closestTile))
-                {
-                    closestTile = cellMid;
-                }
+                smallestDistance = distance;
+                closestTile = tilePosition;
             }
         }
-        return tilemap.layoutGrid.WorldToCell(closestTile);
+        return closestTile;
     }
 
-    public bool TryMoveSelectedUnit(Vector3Int cellPosition)
+    public bool TryMoveSelectedUnit(Vector3 cellPosition)
     {
         if (selectedUnit.TileInRange(cellPosition) && !TileOccupied(cellPosition))
         {
@@ -290,14 +285,13 @@ public class Controller : MonoBehaviour
         return false;
     }
 
-    public bool TileOccupied(Vector3Int cellPosition)
+    public bool TileOccupied(Vector3 cellPosition)
     {
         foreach(GenericUnit u in units)
         {
-            Vector3Int tilePos = cellPosition;
-            Vector3Int unitPosition = u.GetTilePosition();
+            Vector3 unitPosition = u.GetTilePosition();
 
-            if(unitPosition.x == tilePos.x && unitPosition.y == tilePos.y)
+            if(Mathf.Approximately(unitPosition.x, cellPosition.x) && Mathf.Approximately(unitPosition.z, cellPosition.z))
             {
                 return true;
             }
@@ -306,9 +300,17 @@ public class Controller : MonoBehaviour
         return false;
     }
 
-    public bool HasTileAtPosition(Vector3Int position)
+    public bool HasTileAtPosition(Vector3 position)
     {
-        return tilemap.HasTile(position);
+        for (int i=0; i < tilemap.transform.childCount; i++)
+        {
+            Vector3 tilePosition = tilemap.transform.GetChild(i).position;
+            if (Mathf.Approximately(position.x, tilePosition.x) && Mathf.Approximately(position.z, tilePosition.z))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void ChangeStateToSelecting()
@@ -332,50 +334,46 @@ public class Controller : MonoBehaviour
 
     public void ShowTilesInRange(GenericUnit unit, bool showAttack=false, bool showMovement = true)
     {
+        // TODO: fix showing range
         if (showAttack)
         {
-            foreach (Vector3Int tilePos in unit.TilesInAttackRange(showMovement))
+            foreach (GameObject tile in unit.TilesInAttackRange(showMovement))
             {
-                tilemap.SetTileFlags(tilePos, TileFlags.None);
-                tilemap.SetColor(tilePos, Color.red);
+                tile.SetActive(false);
             }
         }
 
         if (showMovement)
         {
-            foreach(Vector3Int tilePos in unit.TilesInRange())
+            foreach (GameObject tile in unit.TilesInRange())
             {
-                tilemap.SetTileFlags(tilePos, TileFlags.None);
-                tilemap.SetColor(tilePos, Color.blue);
+                tile.SetActive(false);
             }
         }
-
-        tilemap.SetTileFlags(new Vector3Int(0, 0, 1), TileFlags.None);
-        tilemap.SetColor(new Vector3Int(0,0,0), Color.yellow);
     }
 
     public void RemoveColorFromTilesInRange(GenericUnit unit)
     {
-        //Remove movement color
-        foreach (Vector3Int tileInRange in unit.TilesInRange())
+        // TODO: fix showing range
+
+        // Remove movement color
+        foreach (GameObject tile in unit.TilesInRange())
         {
-            tilemap.SetColor(tileInRange, new Color(1.0f, 1.0f, 1.0f, 1.0f));
-            tilemap.SetTileFlags(tileInRange, TileFlags.LockColor);
+            tile.SetActive(false);
         }
 
         //Remove attack color
-        foreach (Vector3Int tileInRange in unit.TilesInAttackRange())
+        foreach (GameObject tile in unit.TilesInAttackRange())
         {
-            tilemap.SetColor(tileInRange, new Color(1.0f, 1.0f, 1.0f, 1.0f));
-            tilemap.SetTileFlags(tileInRange, TileFlags.LockColor);
+            tile.SetActive(false);
         }
 
         //Recolor what gets deleted by other units
-        if(state == State.Moving)
+        if (state == State.Moving)
         {
             ShowTilesInRange(selectedUnit);
         }
-        else if(state == State.Attacking)
+        else if (state == State.Attacking)
         {
             ShowTilesInRange(selectedUnit, true, false);
         }
@@ -519,7 +517,7 @@ public class Controller : MonoBehaviour
             {
                 Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-                Vector3Int mousePosOnGrid = FindClosestTile(mouseWorldPos);
+                Vector3 mousePosOnGrid = FindClosestTile(mouseWorldPos);
 
                 bool moved = TryMoveSelectedUnit(mousePosOnGrid);
                 if (moved) {
