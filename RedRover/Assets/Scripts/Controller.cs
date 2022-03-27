@@ -354,7 +354,7 @@ public class Controller : MonoBehaviour
     public void ShowTilesInRange(GenericUnit unit, bool showAttack=false, bool showMovement = true)
     {
         Color attackColor = new Color(0.964f, 0.368f, 0.352f);
-        Color moveColor = new Color(0.690f, 0.858f, 0.972f); // TODO: update to stand out from normal tiles
+        Color moveColor = new Color(0.580f, 0.654f, 1f);
 
         if (showAttack)
         {
