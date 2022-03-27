@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 public abstract class GenericUnit : MonoBehaviour
 {
@@ -47,8 +46,6 @@ public abstract class GenericUnit : MonoBehaviour
 
     protected Controller Controller;
 
-    protected Tilemap Tilemap;
-
     // protected TextMeshProUGUI TurnCountdownDisplay;
     protected MeshRenderer Renderer;
 
@@ -72,7 +69,6 @@ public abstract class GenericUnit : MonoBehaviour
         SelectionTimer = 0;
 
         Controller = GameObject.FindGameObjectWithTag("GameController").GetComponent<Controller>();
-        Tilemap = GameObject.FindGameObjectWithTag("Ground").GetComponent<Tilemap>();
 
         TextMeshProUGUI[] childTexts = gameObject.GetComponentsInChildren<TextMeshProUGUI>();
         // TurnCountdownDisplay = Array.Find(childTexts, delegate (TextMeshProUGUI t) { return t.CompareTag("TurnCountdown"); });
@@ -176,7 +172,7 @@ public abstract class GenericUnit : MonoBehaviour
             Renderer.material = CompareTag("Living") ? LivingMaterial : DeadMaterial;
             // TurnCountdownDisplay.enabled = true;
 
-            HealthDisplay.enabled = false;
+            // HealthDisplay.enabled = false;
         }
     }
 
@@ -204,7 +200,7 @@ public abstract class GenericUnit : MonoBehaviour
 
             // TurnCountdownDisplay.enabled = false;
 
-            HealthDisplay.enabled = true;
+            // HealthDisplay.enabled = true;
             UpdateHealthDisplay();
         }
     }
@@ -249,26 +245,26 @@ public abstract class GenericUnit : MonoBehaviour
         return tileDistance > Movement && tileDistance <= Movement+Reach;
     }
 
-    public IEnumerable<GameObject> TilesInRange()
+    public IEnumerable<Tile> TilesInRange()
     {
-        for (int i=0; i < Tilemap.transform.childCount;  i++)
+        for (int i=0; i < Controller.GroundTiles.Count;  i++)
         {
-            Transform tile = Tilemap.transform.GetChild(i);
-            if (TileInRange(tile.position))
+            Tile tile = Controller.GroundTiles[i];
+            if (TileInRange(tile.transform.position))
             {
-                yield return tile.gameObject;
+                yield return tile;
             }
         }
     }
 
-    public IEnumerable<GameObject> TilesInAttackRange(bool showMovement=true)
+    public IEnumerable<Tile> TilesInAttackRange(bool showMovement=true)
     {
-        for (int i = 0; i < Tilemap.transform.childCount; i++)
+        for (int i = 0; i < Controller.GroundTiles.Count; i++)
         {
-            Transform tile = Tilemap.transform.GetChild(i);
-            if (TileInAttackRange(tile.position, showMovement))
+            Tile tile = Controller.GroundTiles[i];
+            if (TileInAttackRange(tile.transform.position, showMovement))
             {
-                yield return tile.gameObject;
+                yield return tile;
             }
         }
     }

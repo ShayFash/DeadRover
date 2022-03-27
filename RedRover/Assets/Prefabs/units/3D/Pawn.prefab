@@ -114,8 +114,8 @@ MonoBehaviour:
   Attack: 8
   Health: 8
   Movement: 6
-  livingSprite: {fileID: 0}
-  deadSprite: {fileID: 0}
+  LivingMaterial: {fileID: 2100000, guid: 7963e11afefb731428498f6b2564faf4, type: 2}
+  DeadMaterial: {fileID: 2100000, guid: 1302eaeb8eadb6047a8fdbee10a8f886, type: 2}
   unitName: 
   NumTurnsToSwitchSides: 4
   MaxAllowedSwitches: 3

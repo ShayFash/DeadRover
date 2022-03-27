@@ -133,7 +133,7 @@ public class AI
                 // Move away from enemy units
                 int minEnemiesNearby = 1000;
                 Vector3 goodTilePosition = Vector3.positiveInfinity;
-                foreach (GameObject tile in actingUnit.TilesInRange())
+                foreach (Tile tile in actingUnit.TilesInRange())
                 {
                     Vector3 tilePos = tile.transform.position;
                     if (!controller.HasTileAtPosition(tilePos))
@@ -200,7 +200,7 @@ public class AI
                 }
 
                 Vector3 goodTilePosition = Vector3.positiveInfinity;
-                foreach (GameObject tile in actingUnit.TilesInRange())
+                foreach (Tile tile in actingUnit.TilesInRange())
                 {
                     Vector3 tilePos = tile.transform.position;
                     if (!controller.HasTileAtPosition(tilePos) || controller.TileOccupied(tilePos))

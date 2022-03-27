@@ -27,8 +27,7 @@ public class Controller : MonoBehaviour
     
     private GenericUnit selectedUnit;
     private GenericUnit[] units;
-
-    private Tilemap tilemap;
+    public List<Tile> GroundTiles { get; private set; }
 
     private Canvas unitMenu;
     private TextMeshProUGUI rangeText;
@@ -37,11 +36,8 @@ public class Controller : MonoBehaviour
     private TextMeshProUGUI unitNameText;
     private Button[] actionButtons;
     private Button moveButton;
- 
-    public GameObject[] WinPanel;
-    public GameObject[] LossPanel;
-    private GameObject WinScreen;
-    private GameObject LossScreen;
+    private Canvas winCanvas;
+    private Canvas lossCanvas;
 
     public GameObject HelpPanel;
 
@@ -58,8 +54,24 @@ public class Controller : MonoBehaviour
 
     private void Awake()
     {
-        tilemap = GameObject.FindGameObjectWithTag("Ground").GetComponent<Tilemap>();
+        GroundTiles = new List<Tile>();
+        Tilemap tilemap = GameObject.FindGameObjectWithTag("Ground").GetComponent<Tilemap>();
+        for (int i=0; i < tilemap.transform.childCount; i++)
+        {
+            Tile tile = tilemap.transform.GetChild(i).GetComponent<Tile>();
+            if (tile == null)
+            {
+                Debug.LogError("Tile in ground tile map without tile script attached");
+                continue;
+            }
+            GroundTiles.Add(tile);
+        }
+
+
         units = FindObjectsOfType<GenericUnit>();
+
+        winCanvas = GameObject.FindGameObjectWithTag("Win").GetComponent<Canvas>();
+        lossCanvas = GameObject.FindGameObjectWithTag("Loss").GetComponent<Canvas>();
 
         unitMenu = GameObject.FindGameObjectWithTag("UnitMenu").GetComponent<Canvas>();
         TextMeshProUGUI[] unitMenuChildren = unitMenu.GetComponentsInChildren<TextMeshProUGUI>();
@@ -100,12 +112,6 @@ public class Controller : MonoBehaviour
         ai = new AI(this);
 
         StartCoroutine(lateStart());
-
-        WinPanel = GameObject.FindGameObjectsWithTag("Win");
-        LossPanel = GameObject.FindGameObjectsWithTag("Loss");
-
-        WinScreen = GameObject.Find("WinScreen");
-        LossScreen = GameObject.Find("LossScreen");
 
         // ShowHelpPanel();
     }
@@ -269,9 +275,9 @@ public class Controller : MonoBehaviour
     {
         Vector3 closestTile = Vector3.positiveInfinity;
         float smallestDistance = Mathf.Infinity;
-        for (int i = 0; i < tilemap.transform.childCount; i++)
+        for (int i = 0; i < GroundTiles.Count; i++)
         {
-            Vector3 tilePosition = tilemap.transform.GetChild(i).position;
+            Vector3 tilePosition = GroundTiles[i].transform.position;
             float distance = 0;
             distance += Mathf.Abs(position[0] - tilePosition[0]);
             distance += Mathf.Abs(position[2] - tilePosition[2]);
@@ -315,9 +321,9 @@ public class Controller : MonoBehaviour
 
     public bool HasTileAtPosition(Vector3 position)
     {
-        for (int i=0; i < tilemap.transform.childCount; i++)
+        for (int i=0; i < GroundTiles.Count; i++)
         {
-            Vector3 tilePosition = tilemap.transform.GetChild(i).position;
+            Vector3 tilePosition = GroundTiles[i].transform.position;
             if (Mathf.Approximately(position.x, tilePosition.x) && Mathf.Approximately(position.z, tilePosition.z))
             {
                 return true;
@@ -347,22 +353,24 @@ public class Controller : MonoBehaviour
 
     public void ShowTilesInRange(GenericUnit unit, bool showAttack=false, bool showMovement = true)
     {
-        // TODO: fix showing range
-        //if (showAttack)
-        //{
-        //    foreach (GameObject tile in unit.TilesInAttackRange(showMovement))
-        //    {
-        //        tile.SetActive(false);
-        //    }
-        //}
+        Color attackColor = new Color(0.964f, 0.368f, 0.352f);
+        Color moveColor = new Color(0.690f, 0.858f, 0.972f); // TODO: update to stand out from normal tiles
 
-        //if (showMovement)
-        //{
-        //    foreach (GameObject tile in unit.TilesInRange())
-        //    {
-        //        tile.SetActive(false);
-        //    }
-        //}
+        if (showAttack)
+        {
+            foreach (Tile tile in unit.TilesInAttackRange(showMovement))
+            {
+                tile.SetColor(attackColor);
+            }
+        }
+
+        if (showMovement)
+        {
+            foreach (Tile tile in unit.TilesInRange())
+            {
+                tile.SetColor(moveColor);
+            }
+        }
     }
 
     public void RemoveColorFromTilesInRange(GenericUnit unit)
@@ -370,26 +378,26 @@ public class Controller : MonoBehaviour
         // TODO: fix showing range
 
         // Remove movement color
-        //foreach (GameObject tile in unit.TilesInRange())
-        //{
-        //    tile.SetActive(false);
-        //}
+        foreach (Tile tile in unit.TilesInRange())
+        {
+            tile.SetColor(Color.white);
+        }
 
-        ////Remove attack color
-        //foreach (GameObject tile in unit.TilesInAttackRange())
-        //{
-        //    tile.SetActive(false);
-        //}
+        //Remove attack color
+        foreach (Tile tile in unit.TilesInAttackRange())
+        {
+            tile.SetColor(Color.white);
+        }
 
-        ////Recolor what gets deleted by other units
-        //if (state == State.Moving)
-        //{
-        //    ShowTilesInRange(selectedUnit);
-        //}
-        //else if (state == State.Attacking)
-        //{
-        //    ShowTilesInRange(selectedUnit, true, false);
-        //}
+        //Recolor what gets deleted by other units
+        if (state == State.Moving)
+        {
+            ShowTilesInRange(selectedUnit);
+        }
+        else if (state == State.Attacking)
+        {
+            ShowTilesInRange(selectedUnit, true, false);
+        }
     }
 
     private void ChangeTurns() 
@@ -465,11 +473,11 @@ public class Controller : MonoBehaviour
 
             if(activePlayer == Player.Living)
             {
-                LossScreen.gameObject.SetActive(true);
+                lossCanvas.enabled = true;
             }
             else
             {
-                WinScreen.gameObject.SetActive(true);
+                winCanvas.enabled = true;
             }
         }
     }

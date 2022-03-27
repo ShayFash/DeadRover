@@ -114,9 +114,9 @@ MonoBehaviour:
   Attack: 16
   Health: 24
   Movement: 2
-  livingSprite: {fileID: 0}
-  deadSprite: {fileID: 0}
-  unitName: 
+  LivingMaterial: {fileID: 2100000, guid: 7963e11afefb731428498f6b2564faf4, type: 2}
+  DeadMaterial: {fileID: 2100000, guid: 1302eaeb8eadb6047a8fdbee10a8f886, type: 2}
+  unitName: Bear
   NumTurnsToSwitchSides: 4
   MaxAllowedSwitches: 3
   NumTurnsBetweenSelection: 6
