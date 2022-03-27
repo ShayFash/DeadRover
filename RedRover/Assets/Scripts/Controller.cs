@@ -239,7 +239,20 @@ public class Controller : MonoBehaviour
         //Clear, if attack tiles are still highlighted
         RemoveColorFromTilesInRange(selectedUnit);
         ShowTilesInRange(selectedUnit);
-        StartCoroutine(WaitForMoveInput());
+    }
+
+    public void TileClicked(Vector3 position)
+    {
+        // TODO: need something to cancel move if you don't want to move now
+        if (state == State.Moving && activePlayer == Player.Living)
+        {
+            bool moved = TryMoveSelectedUnit(position);
+            if (moved)
+            {
+                moveButton.interactable = false;
+                state = State.Waiting;
+            }
+        }
     }
 
     public void EndTurn()
@@ -335,21 +348,21 @@ public class Controller : MonoBehaviour
     public void ShowTilesInRange(GenericUnit unit, bool showAttack=false, bool showMovement = true)
     {
         // TODO: fix showing range
-        if (showAttack)
-        {
-            foreach (GameObject tile in unit.TilesInAttackRange(showMovement))
-            {
-                tile.SetActive(false);
-            }
-        }
+        //if (showAttack)
+        //{
+        //    foreach (GameObject tile in unit.TilesInAttackRange(showMovement))
+        //    {
+        //        tile.SetActive(false);
+        //    }
+        //}
 
-        if (showMovement)
-        {
-            foreach (GameObject tile in unit.TilesInRange())
-            {
-                tile.SetActive(false);
-            }
-        }
+        //if (showMovement)
+        //{
+        //    foreach (GameObject tile in unit.TilesInRange())
+        //    {
+        //        tile.SetActive(false);
+        //    }
+        //}
     }
 
     public void RemoveColorFromTilesInRange(GenericUnit unit)
@@ -357,26 +370,26 @@ public class Controller : MonoBehaviour
         // TODO: fix showing range
 
         // Remove movement color
-        foreach (GameObject tile in unit.TilesInRange())
-        {
-            tile.SetActive(false);
-        }
+        //foreach (GameObject tile in unit.TilesInRange())
+        //{
+        //    tile.SetActive(false);
+        //}
 
-        //Remove attack color
-        foreach (GameObject tile in unit.TilesInAttackRange())
-        {
-            tile.SetActive(false);
-        }
+        ////Remove attack color
+        //foreach (GameObject tile in unit.TilesInAttackRange())
+        //{
+        //    tile.SetActive(false);
+        //}
 
-        //Recolor what gets deleted by other units
-        if (state == State.Moving)
-        {
-            ShowTilesInRange(selectedUnit);
-        }
-        else if (state == State.Attacking)
-        {
-            ShowTilesInRange(selectedUnit, true, false);
-        }
+        ////Recolor what gets deleted by other units
+        //if (state == State.Moving)
+        //{
+        //    ShowTilesInRange(selectedUnit);
+        //}
+        //else if (state == State.Attacking)
+        //{
+        //    ShowTilesInRange(selectedUnit, true, false);
+        //}
     }
 
     private void ChangeTurns() 
@@ -507,26 +520,6 @@ public class Controller : MonoBehaviour
 
         updateForTeam(Player.Living.ToString());
         updateForTeam(Player.Dead.ToString());
-    }
-
-    private IEnumerator WaitForMoveInput()
-    {
-        while (state == State.Moving && activePlayer == Player.Living)
-        {
-            if (Input.GetMouseButtonDown(0))
-            {
-                Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-                Vector3 mousePosOnGrid = FindClosestTile(mouseWorldPos);
-
-                bool moved = TryMoveSelectedUnit(mousePosOnGrid);
-                if (moved) {
-                    moveButton.interactable = false;
-                    state = State.Waiting;
-                }
-            }
-            yield return null;
-        }
     }
 
     public void ShowHelpPanel() 
