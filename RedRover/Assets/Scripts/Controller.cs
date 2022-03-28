@@ -42,10 +42,8 @@ public class Controller : MonoBehaviour
 
     /// <summary>
     private int numTurns;
-    public GameObject[] WinPanel;
-    public GameObject[] LossPanel;
-    private GameObject WinScreen;
-    private GameObject LossScreen;
+    public GameObject WinScreen;
+    public GameObject LossScreen;
     ///
     public GameObject HelpPanel;
     ///
@@ -97,11 +95,10 @@ public class Controller : MonoBehaviour
 
         StartCoroutine(lateStart());
         /////
-        WinPanel = GameObject.FindGameObjectsWithTag("Win");
-        LossPanel = GameObject.FindGameObjectsWithTag("Loss");
+        WinScreen = GameObject.FindGameObjectWithTag("Win");
+        LossScreen = GameObject.FindGameObjectWithTag("Loss");
 
-        WinScreen = GameObject.Find("WinScreen");
-        LossScreen = GameObject.Find("LossScreen");
+        
         /////
         ShowHelpPanel();
     }
@@ -461,11 +458,11 @@ public class Controller : MonoBehaviour
             ////
             if(activePlayer == Player.Living)
             {
-                LossScreen.gameObject.SetActive(true);
+                ShowLoseScreen();
             }
-            else
+            else if(activePlayer == Player.Dead)
             {
-                WinScreen.gameObject.SetActive(true);
+                ShowWinScreen();
             }
             ////
         }
@@ -552,6 +549,18 @@ public class Controller : MonoBehaviour
     public void HideHelpPanel() 
     {
         HelpPanel.gameObject.SetActive(false);
+        Time.timeScale = 1f;
+    }
+
+    public void ShowWinScreen()
+    {
+        WinScreen.gameObject.SetActive(true);
+        Time.timeScale = 1f;
+    }
+
+    public void ShowLoseScreen()
+    {
+        LossScreen.gameObject.SetActive(true);
         Time.timeScale = 1f;
     }
 }
