@@ -19,8 +19,16 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _MainTexture:
+        m_Texture: {fileID: 2800000, guid: cb63a0f7c097d6444b10cc484c7619ab, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _SampleTexture2D_03e3b6f70a164c69bd308e9315007a62_Texture_1:
         m_Texture: {fileID: 2800000, guid: a347ca971a14d1d45baa4481f3de4522, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _mask:
+        m_Texture: {fileID: 2800000, guid: afe73cb6616a516438c7c18ed66972dd, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
@@ -31,7 +39,7 @@ Material:
     - _Speed: 0.5
     - _Tiling: 0.25
     m_Colors:
-    - _Color: {r: 0.2196078, g: 0.05490196, b: 0.2745098, a: 0.003921569}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
 --- !u!114 &1584416809722484369
 MonoBehaviour:
