@@ -548,12 +548,10 @@ public class Controller : MonoBehaviour
         }
         if(unit.unitName == "Fox" || unit.unitName == "Owl")
         {
-            Debug.Log("unit: " + unit.unitName + " active: " + unit.linked);
             foxOwlIcon.sprite = unit.linked ? FoxOwlIconActive : FoxOwlIconInactive;
         }
         if (unit.unitName == "Rabbit" || unit.unitName == "Bear")
         {
-            Debug.Log("unit: " + unit.unitName + " active: " + unit.linked);
             rabbitBearIcon.sprite = unit.linked ? RabbitBearIconActive : RabbitBearIconInactive;
         }
     }
