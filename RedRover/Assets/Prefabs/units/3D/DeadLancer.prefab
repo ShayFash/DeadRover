@@ -7,6 +7,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 680813446422226759, guid: 8ae5b0ad3be1d0240827fa5a725f4188, type: 3}
+      propertyPath: unitName
+      value: Deer
+      objectReference: {fileID: 0}
     - target: {fileID: 6464711961758218558, guid: 8ae5b0ad3be1d0240827fa5a725f4188, type: 3}
       propertyPath: m_Name
       value: DeadLancer
