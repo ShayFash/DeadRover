@@ -41,6 +41,17 @@ public class Controller : MonoBehaviour
 
     public GameObject HelpPanel;
 
+    public Sprite DeerDeerIconActive;
+    public Sprite DeerDeerIconInactive;
+    public Sprite RabbitBearIconActive;
+    public Sprite RabbitBearIconInactive;
+    public Sprite FoxOwlIconActive;
+    public Sprite FoxOwlIconInactive;
+
+    private Image deerDeerIcon;
+    private Image rabbitBearIcon;
+    private Image foxOwlIcon;
+
     private AI ai;
 
     private UnitLink[] linkObjectPool = new UnitLink[10];
@@ -97,6 +108,10 @@ public class Controller : MonoBehaviour
         {
             return b.CompareTag("MoveButton");
         });
+
+        deerDeerIcon = GameObject.FindGameObjectWithTag("DeerDeerIcon").GetComponent<Image>();
+        rabbitBearIcon = GameObject.FindGameObjectWithTag("RabbitBearIcon").GetComponent<Image>();
+        foxOwlIcon = GameObject.FindGameObjectWithTag("FoxOwlIcon").GetComponent<Image>();
 
         UnitLink temp;
         for (int i = 0; i < linkObjectPool.Length; i++)
@@ -208,6 +223,8 @@ public class Controller : MonoBehaviour
 
     public void Attack()
     {
+        FindObjectOfType<AudioManager>().Play("Forward");
+        
         if (state == State.Attacking || selectedUnit == null)
         {
             return;
@@ -223,10 +240,14 @@ public class Controller : MonoBehaviour
 
     public void Move()
     {
+        FindObjectOfType<AudioManager>().Play("Forward");
+
         if (selectedUnit == null)
         {
             return;
         }
+        
+
         state = State.Moving;
         //Clear, if attack tiles are still highlighted
         RemoveColorFromTilesInRange(selectedUnit);
@@ -249,6 +270,8 @@ public class Controller : MonoBehaviour
 
     public void EndTurn()
     {
+        FindObjectOfType<AudioManager>().Play("Confirm");
+
         if(selectedUnit == null)
         {
             return;
@@ -502,11 +525,13 @@ public class Controller : MonoBehaviour
                             if (!linkObjectPool[l].AlreadyConnected())
                             {
                                 linkObjectPool[l].SetLink(unit, otherUnit);
+                                UpdateLinkUI(unit);
                                 break;
                             }
                         }
                     }
                 }
+                
             }
         }
 
@@ -514,15 +539,64 @@ public class Controller : MonoBehaviour
         updateForTeam(Player.Dead.ToString());
     }
 
+    private void UpdateLinkUI(GenericUnit unit)
+    {
+        if (unit.CompareTag("Dead")){
+            return;
+        }
+
+        if(unit.unitName == "Deer")
+        {
+            deerDeerIcon.sprite = unit.linked ? DeerDeerIconActive : DeerDeerIconInactive;
+        }
+        if(unit.unitName == "Fox" || unit.unitName == "Owl")
+        {
+            foxOwlIcon.sprite = unit.linked ? FoxOwlIconActive : FoxOwlIconInactive;
+        }
+        if (unit.unitName == "Rabbit" || unit.unitName == "Bear")
+        {
+            rabbitBearIcon.sprite = unit.linked ? RabbitBearIconActive : RabbitBearIconInactive;
+        }
+    }
+
+    private IEnumerator WaitForMoveInput()
+    {
+        while (state == State.Moving && activePlayer == Player.Living)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                FindObjectOfType<AudioManager>().Play("Forward"); //todo switch to animal move sound
+
+                Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+                Vector3Int mousePosOnGrid = FindClosestTile(mouseWorldPos);
+
+                bool moved = TryMoveSelectedUnit(mousePosOnGrid);
+                if (moved) {
+                    moveButton.interactable = false;
+                    state = State.Waiting;
+                }
+            }
+            yield return null;
+        }
+    }
+
     public void ShowHelpPanel() 
     {
+        FindObjectOfType<AudioManager>().Play("Forward");
         HelpPanel.gameObject.SetActive(true);
         Time.timeScale = 0f;
     }
 
     public void HideHelpPanel() 
     {
+        FindObjectOfType<AudioManager>().Play("Confirm");
         HelpPanel.gameObject.SetActive(false);
         Time.timeScale = 1f;
+    }
+
+    public void MuteToggle(bool muted)
+    {
+            FindObjectOfType<AudioManager>().MuteToggle("Theme");
     }
 }
