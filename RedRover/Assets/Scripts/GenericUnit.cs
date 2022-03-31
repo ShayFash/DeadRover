@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 public abstract class GenericUnit : MonoBehaviour
 {
@@ -20,8 +19,8 @@ public abstract class GenericUnit : MonoBehaviour
     public int MaxHealth { get; protected set; }
     public int InitialMaxHealth { get; protected set; }
 
-    public Sprite livingSprite;
-    public Sprite deadSprite;
+    public Material LivingMaterial;
+    public Material DeadMaterial;
 
     public bool IsEliminated { get; protected set; }
 
@@ -47,12 +46,8 @@ public abstract class GenericUnit : MonoBehaviour
 
     protected Controller Controller;
 
-    protected Tilemap Tilemap;
-
-    protected TextMeshProUGUI TurnCountdownDisplay;
-    protected SpriteRenderer Renderer;
-
-    protected TextMeshProUGUI HealthDisplay;
+    // protected TextMeshProUGUI TurnCountdownDisplay;
+    protected MeshRenderer Renderer;
 
     protected bool ShaderActive = false;
     protected bool MouseOver = false;
@@ -72,16 +67,9 @@ public abstract class GenericUnit : MonoBehaviour
         SelectionTimer = 0;
 
         Controller = GameObject.FindGameObjectWithTag("GameController").GetComponent<Controller>();
-        Tilemap = GameObject.FindGameObjectWithTag("Ground").GetComponent<Tilemap>();
 
-        TextMeshProUGUI[] childTexts = gameObject.GetComponentsInChildren<TextMeshProUGUI>();
-        TurnCountdownDisplay = Array.Find(childTexts, delegate (TextMeshProUGUI t) { return t.CompareTag("TurnCountdown"); });
-        HealthDisplay = Array.Find(childTexts, delegate (TextMeshProUGUI t) { return t.CompareTag("HealthStatDisplay"); });
-
-        Renderer = gameObject.GetComponent<SpriteRenderer>();
-        Renderer.sprite = CompareTag("Living") ? livingSprite : deadSprite;
-
-        UpdateHealthDisplay();
+        Renderer = gameObject.GetComponent<MeshRenderer>();
+        Renderer.material = CompareTag("Living") ? LivingMaterial : DeadMaterial;
 
         Move(Controller.FindClosestTile(transform.position));
     }
@@ -134,9 +122,9 @@ public abstract class GenericUnit : MonoBehaviour
         Movement = BaseMovement;
     }
 
-    public Vector3Int GetTilePosition()
+    public Vector3 GetTilePosition()
     {
-        return Tilemap.layoutGrid.WorldToCell(transform.position);
+        return transform.position;
     }
 
     public void AttackUnit(GenericUnit unit)
@@ -145,18 +133,16 @@ public abstract class GenericUnit : MonoBehaviour
         unit.TakeDamage(Attack);
     }
 
-    public void Move(Vector3Int cellPosition)
+    public void Move(Vector3 cellPosition)
     {
-        Vector3 alignedPosition = Tilemap.layoutGrid.GetCellCenterWorld(cellPosition);
-        alignedPosition.z += 1;
-        transform.position = alignedPosition;
+        cellPosition.y = transform.position.y;
+        transform.position = cellPosition;
     }
 
     public void TakeDamage(int value)
     {
         Debug.Log("I'm hurt");
         Health = Mathf.Max(0, Health - value);
-        UpdateHealthDisplay();
 
         if (Health == 0)
         {
@@ -173,11 +159,7 @@ public abstract class GenericUnit : MonoBehaviour
 
             ResetSelectionTimer();
 
-            TurnCountdownDisplay.text = SwitchSidesCountdown.ToString();
-            Renderer.sprite = CompareTag("Living") ? livingSprite : deadSprite;
-            TurnCountdownDisplay.enabled = true;
-
-            HealthDisplay.enabled = false;
+            Renderer.material = CompareTag("Living") ? LivingMaterial : DeadMaterial;
         }
     }
 
@@ -190,35 +172,24 @@ public abstract class GenericUnit : MonoBehaviour
             SwitchSidesCountdown = Math.Max(0, SwitchSidesCountdown - 1);
         }
 
-
-        TurnCountdownDisplay.text = SwitchSidesCountdown.ToString();
-
         if (SwitchingSides && SwitchSidesCountdown <= 0)
         {
             SwitchingSides = false;
             NumTimesSwitched++;
             tag = CompareTag("Living") ? "Dead" : "Living";
-            Renderer.sprite = CompareTag("Living") ? livingSprite : deadSprite;
+            Renderer.material = CompareTag("Living") ? LivingMaterial : DeadMaterial;
 
             MaxHealth = Mathf.RoundToInt(InitialMaxHealth * (1 - (NumTimesSwitched / (MaxAllowedSwitches + 1f))));
             Health = MaxHealth;
-
-            TurnCountdownDisplay.enabled = false;
-
-            HealthDisplay.enabled = true;
-            UpdateHealthDisplay();
         }
     }
 
     public bool UnitInRange(GenericUnit unit)
     {
-        Vector3Int myTilePosittion = Tilemap.layoutGrid.WorldToCell(transform.position);
-        Vector3Int theirTilePosition = Tilemap.layoutGrid.WorldToCell(unit.transform.position);
 
-        int tileDistance = 0;
-        for (int i = 0; i <= 1; i++) {
-            tileDistance += Mathf.Abs(myTilePosittion[i] - theirTilePosition[i]);
-        }
+        float tileDistance = 0;
+        tileDistance += Mathf.Abs(GetTilePosition()[0] - unit.GetTilePosition()[0]);
+        tileDistance += Mathf.Abs(GetTilePosition()[2] - unit.GetTilePosition()[2]);
 
         return tileDistance <= Reach;
     }
@@ -230,104 +201,74 @@ public abstract class GenericUnit : MonoBehaviour
         return inReach;
     }
 
-    public bool TileInRange(Vector3Int tilePosition)
+    public bool TileInRange(Vector3 tilePosition)
     {
-        Vector3Int myTilePosition = Tilemap.layoutGrid.WorldToCell(transform.position);
-
-        int tileDistance = 0;
-        for (int i = 0; i <= 1; i++)
-        {
-            tileDistance += Mathf.Abs(myTilePosition[i] - tilePosition[i]);
-        }
+        float tileDistance = 0;
+        tileDistance += Mathf.Abs(GetTilePosition()[0] - tilePosition[0]);
+        tileDistance += Mathf.Abs(GetTilePosition()[2] - tilePosition[2]);
 
         return tileDistance <= Movement;
     }
 
-    public bool TileInAttackRange(Vector3Int tilePosition, bool showMovement)
+    public bool TileInAttackRange(Vector3 tilePosition, bool showMovement)
     {
-        Vector3Int myTilePosition = Tilemap.layoutGrid.WorldToCell(transform.position);
-
-        int tileDistance = 0;
-        for (int i = 0; i <= 1; i++)
-        {
-            tileDistance += Mathf.Abs(myTilePosition[i] - tilePosition[i]);
-        }
+        float tileDistance = 0;
+        tileDistance += Mathf.Abs(GetTilePosition()[0] - tilePosition[0]);
+        tileDistance += Mathf.Abs(GetTilePosition()[2] - tilePosition[2]);
 
         if (!showMovement)
         {
-            return tileDistance ==  Reach;
+            return tileDistance <= Reach;
         }
 
         return tileDistance > Movement && tileDistance <= Movement+Reach;
     }
 
-    public IEnumerable<Vector3Int> TilesInRange()
+    public IEnumerable<Tile> TilesInRange()
     {
-        foreach (Vector3Int position in Tilemap.cellBounds.allPositionsWithin)
+        for (int i=0; i < Controller.GroundTiles.Count;  i++)
         {
-            if (TileInRange(position))
+            Tile tile = Controller.GroundTiles[i];
+            if (TileInRange(tile.transform.position))
             {
-                yield return position;
+                yield return tile;
             }
         }
     }
 
-    public IEnumerable<Vector3Int> TilesInAttackRange(bool showMovement=true)
+    public IEnumerable<Tile> TilesInAttackRange(bool showMovement=true)
     {
-        foreach (Vector3Int position in Tilemap.cellBounds.allPositionsWithin)
+        for (int i = 0; i < Controller.GroundTiles.Count; i++)
         {
-            if (TileInAttackRange(position, showMovement))
+            Tile tile = Controller.GroundTiles[i];
+            if (TileInAttackRange(tile.transform.position, showMovement))
             {
-                yield return position;
+                yield return tile;
             }
         }
-    }
-
-    public IEnumerator ApplyAttackShader(Func<bool> continueWhile)
-    {
-        yield return new WaitUntil(() => !ShaderActive);
-        ShaderActive = true;
-        Material oldMaterial = Renderer.material;
-
-        Material material = new Material(Shader.Find("Shader Graphs/PulseHighlight"));
-        material.color = Color.red;
-        material.SetFloat("_Intensity", 0.5f);
-        material.SetFloat("_Speed", 3);
-        material.SetFloat("_TimeElapsed", 0);
-
-        Renderer.material = material;
-
-        float timeElasped = 0;
-
-        while (continueWhile())
-        {
-            timeElasped += Time.deltaTime;
-            // This is inefficient for a lot of materials, but it won't matter for this game
-            Renderer.material.SetFloat("_TimeElapsed", timeElasped);
-
-            yield return new WaitForEndOfFrame();
-        }
-
-        Renderer.material = oldMaterial;
-
-        ShaderActive = false;
     }
 
     public IEnumerator ApplySelectedShader(Func<bool> continueWhile)
     {
         yield return new WaitUntil(() => !ShaderActive);
         ShaderActive = true;
-        Material oldMaterial = Renderer.material;
+        Material material = Renderer.material;
+        Shader oldShader = material.shader;
 
-        Material material = new Material(Shader.Find("Shader Graphs/Highlight"));
-        material.color = Color.yellow;
-        material.SetFloat("_Intensity", 0.5f);
+        string shaderName = CompareTag("Living") ? "Shader Graphs/Outline" : "Shader Graphs/DeadOutline";
+        Shader shader = Shader.Find(shaderName);
+        material.shader = shader;
+
+        material.SetFloat("_Size", 1); // Smaller is bigger
+        material.SetColor("_Color", Color.yellow);
 
         Renderer.material = material;
 
         yield return new WaitWhile(() => continueWhile());
 
-        Renderer.material = oldMaterial;
+        material.shader = oldShader;
+        material.SetColor("_Color", Color.white);
+
         ShaderActive = false;
     }
 
@@ -335,36 +276,25 @@ public abstract class GenericUnit : MonoBehaviour
     {
         yield return new WaitUntil(() => !ShaderActive);
         ShaderActive = true;
-        Material oldMaterial = Renderer.material;
+        Material material = Renderer.material;
+        Shader oldShader = material.shader;
 
-        Material material = new Material(Shader.Find("Shader Graphs/PulseHighlight"));
-        material.color = Color.yellow;
-        material.SetFloat("_Intensity", 0.5f);
-        material.SetFloat("_Speed", 3);
-        material.SetFloat("_TimeElapsed", 0);
+        string shaderName = CompareTag("Living") ? "Shader Graphs/PulseOutline" : "Shader Graphs/DeadPulseOutline";
+        Shader shader = Shader.Find(shaderName);
+        material.shader = shader;
+
+        material.SetFloat("_MinValue", 0.3f);
+        material.SetFloat("_Speed", 2);
+        material.SetFloat("_Size", 1); // Smaller is bigger
+        material.SetColor("_Color", Color.yellow);
 
         Renderer.material = material;
 
-        float timeElasped = 0;
+        yield return new WaitWhile(() => continueWhile());
 
-        while (continueWhile())
-        {
-            timeElasped += Time.deltaTime;
-            // This is inefficient for a lot of materials, but it won't matter for this game
-            Renderer.material.SetFloat("_TimeElapsed", timeElasped);
+        material.shader = oldShader;
+        material.SetColor("_Color", Color.white);
 
-            if (MouseOver && Renderer.material.color == Color.yellow)
-            {
-                Renderer.material.color = Color.green;
-            } else if (!MouseOver && Renderer.material.color == Color.green)
-            {
-                Renderer.material.color = Color.yellow;
-            }
-
-            yield return new WaitForEndOfFrame();
-        }
-
-        Renderer.material = oldMaterial;
         ShaderActive = false;
     }
 
@@ -420,10 +350,4 @@ public abstract class GenericUnit : MonoBehaviour
         Controller.UnitClicked(this);
         
     }
-
-    private void UpdateHealthDisplay()
-    {
-        HealthDisplay.text = Health.ToString() + "/" + MaxHealth.ToString() + " HP";
-    }
-
 }

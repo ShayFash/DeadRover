@@ -53,14 +53,12 @@ public class UnitLink : MonoBehaviour
 
     private bool LinkConditionsMet()
     {
-        Vector3Int unit1TilePosition = unit1.GetTilePosition();
-        Vector3Int unit2TilePosition = unit2.GetTilePosition();
+        Vector3 unit1TilePosition = unit1.GetTilePosition();
+        Vector3 unit2TilePosition = unit2.GetTilePosition();
 
-        int tileDistance = 0;
-        for (int d = 0; d <= 1; d++)
-        {
-            tileDistance += Mathf.Abs(unit1TilePosition[d] - unit2TilePosition[d]);
-        }
+        float tileDistance = 0;
+        tileDistance += Mathf.Abs(unit1TilePosition[0] - unit2TilePosition[0]);
+        tileDistance += Mathf.Abs(unit1TilePosition[2] - unit2TilePosition[2]);
 
         bool unitsActive = unit1.IsActive() && unit2.IsActive();
         return lineRenderer.enabled && unit1.CompareTag(unit2.tag) && unitsActive && tileDistance <= MaxTileDistance;

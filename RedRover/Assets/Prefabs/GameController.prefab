@@ -948,7 +948,7 @@ GameObject:
   - component: {fileID: 8353234847513043700}
   m_Layer: 5
   m_Name: Canvas Won
-  m_TagString: Untagged
+  m_TagString: Win
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -981,7 +981,7 @@ Canvas:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1799712741472610247}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_RenderMode: 0
   m_Camera: {fileID: 0}
@@ -1876,11 +1876,11 @@ GameObject:
   - component: {fileID: 7294591801876711534}
   m_Layer: 5
   m_Name: WinScreen
-  m_TagString: Win
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &7676987721430147257
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2200,12 +2200,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6dfbe4d5e1f91b40aed98403e1559b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  WinPanel: []
-  LossPanel: []
   HelpPanel: {fileID: 1047394197}
-  DeerDeerIcon: {fileID: 0}
-  RabbitBearIcon: {fileID: 0}
-  FoxOwlIcon: {fileID: 0}
+  DeerDeerIconActive: {fileID: 21300000, guid: 44a0e791c44e4a546bfe89e02c7f48b2, type: 3}
+  DeerDeerIconInactive: {fileID: 21300000, guid: 0f8fa39a933ddad4ea2f316f6610a80e, type: 3}
+  RabbitBearIconActive: {fileID: 21300000, guid: b7821be82b587ef4ab1cccab53c73bea, type: 3}
+  RabbitBearIconInactive: {fileID: 21300000, guid: bd337b1f58d3ddf46ab9b8605265c404, type: 3}
+  FoxOwlIconActive: {fileID: 21300000, guid: c2ed41e21ebfca2468ed2a53bd72e0d1, type: 3}
+  FoxOwlIconInactive: {fileID: 21300000, guid: bdf765d6ccddd3048b007cbe3a4ec9cd, type: 3}
   linkObject: {fileID: 4494204007080024721, guid: af921a7794120a442a55ecdec865caff, type: 3}
 --- !u!1 &2622652472638274546
 GameObject:
@@ -4266,7 +4267,7 @@ GameObject:
   - component: {fileID: 5384858455922393003}
   m_Layer: 5
   m_Name: Canvas Loss
-  m_TagString: Untagged
+  m_TagString: Loss
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4299,7 +4300,7 @@ Canvas:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6530227182781673819}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_RenderMode: 0
   m_Camera: {fileID: 0}
@@ -4816,11 +4817,11 @@ GameObject:
   - component: {fileID: 7862950109857942996}
   m_Layer: 5
   m_Name: LossScreen
-  m_TagString: Loss
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &5526742789357846279
 RectTransform:
   m_ObjectHideFlags: 0

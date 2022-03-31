@@ -27,8 +27,7 @@ public class Controller : MonoBehaviour
     
     private GenericUnit selectedUnit;
     private GenericUnit[] units;
-
-    private Tilemap tilemap;
+    public List<Tile> GroundTiles { get; private set; }
 
     private Canvas unitMenu;
     private TextMeshProUGUI rangeText;
@@ -37,11 +36,8 @@ public class Controller : MonoBehaviour
     private TextMeshProUGUI unitNameText;
     private Button[] actionButtons;
     private Button moveButton;
- 
-    public GameObject[] WinPanel;
-    public GameObject[] LossPanel;
-    private GameObject WinScreen;
-    private GameObject LossScreen;
+    private Canvas winCanvas;
+    private Canvas lossCanvas;
 
     public GameObject HelpPanel;
 
@@ -69,8 +65,24 @@ public class Controller : MonoBehaviour
 
     private void Awake()
     {
-        tilemap = GameObject.FindGameObjectWithTag("Ground").GetComponent<Tilemap>();
+        GroundTiles = new List<Tile>();
+        Tilemap tilemap = GameObject.FindGameObjectWithTag("Ground").GetComponent<Tilemap>();
+        for (int i=0; i < tilemap.transform.childCount; i++)
+        {
+            Tile tile = tilemap.transform.GetChild(i).GetComponent<Tile>();
+            if (tile == null)
+            {
+                Debug.LogError("Tile in ground tile map without tile script attached");
+                continue;
+            }
+            GroundTiles.Add(tile);
+        }
+
+
         units = FindObjectsOfType<GenericUnit>();
+
+        winCanvas = GameObject.FindGameObjectWithTag("Win").GetComponent<Canvas>();
+        lossCanvas = GameObject.FindGameObjectWithTag("Loss").GetComponent<Canvas>();
 
         unitMenu = GameObject.FindGameObjectWithTag("UnitMenu").GetComponent<Canvas>();
         TextMeshProUGUI[] unitMenuChildren = unitMenu.GetComponentsInChildren<TextMeshProUGUI>();
@@ -115,12 +127,6 @@ public class Controller : MonoBehaviour
         ai = new AI(this);
 
         StartCoroutine(lateStart());
-
-        WinPanel = GameObject.FindGameObjectsWithTag("Win");
-        LossPanel = GameObject.FindGameObjectsWithTag("Loss");
-
-        WinScreen = GameObject.Find("WinScreen");
-        LossScreen = GameObject.Find("LossScreen");
 
         ShowHelpPanel();
     }
@@ -230,20 +236,6 @@ public class Controller : MonoBehaviour
 
         //Show tiles in attack range
         ShowTilesInRange(selectedUnit, true, false);
-
-        Player currentPlayer = activePlayer;
-        for (int i=0; i < units.Length; i++)
-        {
-            GenericUnit target = units[i];
-
-            bool isTargetInRange = !selectedUnit.CompareTag(target.tag) && target.CanBeAttacked() && selectedUnit.UnitInRange(target);
-            if (isTargetInRange)
-            {
-                StartCoroutine(target.ApplyAttackShader(delegate () {
-                    return state == State.Attacking && activePlayer == currentPlayer;
-                }));
-            }
-        }
     }
 
     public void Move()
@@ -260,7 +252,20 @@ public class Controller : MonoBehaviour
         //Clear, if attack tiles are still highlighted
         RemoveColorFromTilesInRange(selectedUnit);
         ShowTilesInRange(selectedUnit);
-        StartCoroutine(WaitForMoveInput());
+    }
+
+    public void TileClicked(Vector3 position)
+    {
+        // TODO: need something to cancel move if you don't want to move
+        if (state == State.Moving && activePlayer == Player.Living)
+        {
+            bool moved = TryMoveSelectedUnit(position);
+            if (moved)
+            {
+                moveButton.interactable = false;
+                state = State.Waiting;
+            }
+        }
     }
 
     public void EndTurn()
@@ -275,32 +280,27 @@ public class Controller : MonoBehaviour
         RemoveColorFromTilesInRange(selectedUnit);
         ChangeTurns();
     }
-
-    public Vector3Int FindClosestTile(Vector3 position)
+    public Vector3 FindClosestTile(Vector3 position)
     {
-        int maxZ = tilemap.cellBounds.zMax;
-        position.z = maxZ + 1;
-        Vector3 positionCopy = position;
-
         Vector3 closestTile = Vector3.positiveInfinity;
-        for (int z = 0; z < maxZ; z++)
+        float smallestDistance = Mathf.Infinity;
+        for (int i = 0; i < GroundTiles.Count; i++)
         {
-            positionCopy.z = z;
-            Vector3Int cellPosition = tilemap.layoutGrid.WorldToCell(positionCopy);
+            Vector3 tilePosition = GroundTiles[i].transform.position;
+            float distance = 0;
+            distance += Mathf.Abs(position[0] - tilePosition[0]);
+            distance += Mathf.Abs(position[2] - tilePosition[2]);
 
-            if (tilemap.HasTile(cellPosition))
+            if (distance < smallestDistance)
             {
-                Vector3 cellMid = tilemap.layoutGrid.GetCellCenterWorld(cellPosition);
-                if (Vector3.Distance(position, cellMid) < Vector3.Distance(position, closestTile))
-                {
-                    closestTile = cellMid;
-                }
+                smallestDistance = distance;
+                closestTile = tilePosition;
             }
         }
-        return tilemap.layoutGrid.WorldToCell(closestTile);
+        return closestTile;
     }
 
-    public bool TryMoveSelectedUnit(Vector3Int cellPosition)
+    public bool TryMoveSelectedUnit(Vector3 cellPosition)
     {
         if (selectedUnit.TileInRange(cellPosition) && !TileOccupied(cellPosition))
         {
@@ -313,14 +313,13 @@ public class Controller : MonoBehaviour
         return false;
     }
 
-    public bool TileOccupied(Vector3Int cellPosition)
+    public bool TileOccupied(Vector3 cellPosition)
     {
         foreach(GenericUnit u in units)
         {
-            Vector3Int tilePos = cellPosition;
-            Vector3Int unitPosition = u.GetTilePosition();
+            Vector3 unitPosition = u.GetTilePosition();
 
-            if(unitPosition.x == tilePos.x && unitPosition.y == tilePos.y)
+            if(Mathf.Approximately(unitPosition.x, cellPosition.x) && Mathf.Approximately(unitPosition.z, cellPosition.z))
             {
                 return true;
             }
@@ -329,9 +328,17 @@ public class Controller : MonoBehaviour
         return false;
     }
 
-    public bool HasTileAtPosition(Vector3Int position)
+    public bool HasTileAtPosition(Vector3 position)
     {
-        return tilemap.HasTile(position);
+        for (int i=0; i < GroundTiles.Count; i++)
+        {
+            Vector3 tilePosition = GroundTiles[i].transform.position;
+            if (Mathf.Approximately(position.x, tilePosition.x) && Mathf.Approximately(position.z, tilePosition.z))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void ChangeStateToSelecting()
@@ -355,50 +362,46 @@ public class Controller : MonoBehaviour
 
     public void ShowTilesInRange(GenericUnit unit, bool showAttack=false, bool showMovement = true)
     {
+        Color attackColor = new Color(0.964f, 0.368f, 0.352f);
+        Color moveColor = new Color(0.580f, 0.654f, 1f);
+
         if (showAttack)
         {
-            foreach (Vector3Int tilePos in unit.TilesInAttackRange(showMovement))
+            foreach (Tile tile in unit.TilesInAttackRange(showMovement))
             {
-                tilemap.SetTileFlags(tilePos, TileFlags.None);
-                tilemap.SetColor(tilePos, new Color(0.964f, 0.368f, 0.352f, 1.0f));
+                tile.SetColor(attackColor);
             }
         }
 
         if (showMovement)
         {
-            foreach(Vector3Int tilePos in unit.TilesInRange())
+            foreach (Tile tile in unit.TilesInRange())
             {
-                tilemap.SetTileFlags(tilePos, TileFlags.None);
-                tilemap.SetColor(tilePos, new Color(0.580f, 0.654f, 1f, 1.0f));
+                tile.SetColor(moveColor);
             }
         }
-
-        tilemap.SetTileFlags(new Vector3Int(0, 0, 1), TileFlags.None);
-        tilemap.SetColor(new Vector3Int(0,0,0), Color.yellow);
     }
 
     public void RemoveColorFromTilesInRange(GenericUnit unit)
     {
-        //Remove movement color
-        foreach (Vector3Int tileInRange in unit.TilesInRange())
+        // Remove movement color
+        foreach (Tile tile in unit.TilesInRange())
         {
-            tilemap.SetColor(tileInRange, new Color(1.0f, 1.0f, 1.0f, 1.0f));
-            tilemap.SetTileFlags(tileInRange, TileFlags.LockColor);
+            tile.SetColor(Color.white);
         }
 
         //Remove attack color
-        foreach (Vector3Int tileInRange in unit.TilesInAttackRange())
+        foreach (Tile tile in unit.TilesInAttackRange())
         {
-            tilemap.SetColor(tileInRange, new Color(1.0f, 1.0f, 1.0f, 1.0f));
-            tilemap.SetTileFlags(tileInRange, TileFlags.LockColor);
+            tile.SetColor(Color.white);
         }
 
         //Recolor what gets deleted by other units
-        if(state == State.Moving)
+        if (state == State.Moving)
         {
             ShowTilesInRange(selectedUnit);
         }
-        else if(state == State.Attacking)
+        else if (state == State.Attacking)
         {
             ShowTilesInRange(selectedUnit, true, false);
         }
@@ -477,11 +480,11 @@ public class Controller : MonoBehaviour
 
             if(activePlayer == Player.Living)
             {
-                LossScreen.gameObject.SetActive(true);
+                lossCanvas.enabled = true;
             }
             else
             {
-                WinScreen.gameObject.SetActive(true);
+                winCanvas.enabled = true;
             }
         }
     }
@@ -553,28 +556,6 @@ public class Controller : MonoBehaviour
         if (unit.unitName == "Rabbit" || unit.unitName == "Bear")
         {
             rabbitBearIcon.sprite = unit.linked ? RabbitBearIconActive : RabbitBearIconInactive;
-        }
-    }
-
-    private IEnumerator WaitForMoveInput()
-    {
-        while (state == State.Moving && activePlayer == Player.Living)
-        {
-            if (Input.GetMouseButtonDown(0))
-            {
-                FindObjectOfType<AudioManager>().Play("Forward"); //todo switch to animal move sound
-
-                Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-                Vector3Int mousePosOnGrid = FindClosestTile(mouseWorldPos);
-
-                bool moved = TryMoveSelectedUnit(mousePosOnGrid);
-                if (moved) {
-                    moveButton.interactable = false;
-                    state = State.Waiting;
-                }
-            }
-            yield return null;
         }
     }
 
