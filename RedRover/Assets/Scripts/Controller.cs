@@ -559,28 +559,6 @@ public class Controller : MonoBehaviour
         }
     }
 
-    private IEnumerator WaitForMoveInput()
-    {
-        while (state == State.Moving && activePlayer == Player.Living)
-        {
-            if (Input.GetMouseButtonDown(0))
-            {
-                FindObjectOfType<AudioManager>().Play("Forward"); //todo switch to animal move sound
-
-                Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-                Vector3Int mousePosOnGrid = FindClosestTile(mouseWorldPos);
-
-                bool moved = TryMoveSelectedUnit(mousePosOnGrid);
-                if (moved) {
-                    moveButton.interactable = false;
-                    state = State.Waiting;
-                }
-            }
-            yield return null;
-        }
-    }
-
     public void ShowHelpPanel() 
     {
         FindObjectOfType<AudioManager>().Play("Forward");

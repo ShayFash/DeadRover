@@ -19,6 +19,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Dead
       objectReference: {fileID: 0}
+    - target: {fileID: 2366075419856953157, guid: 14cd8e7d01a915d4cb248b29948c6cb1, type: 3}
+      propertyPath: unitName
+      value: Rabbit
+      objectReference: {fileID: 0}
     - target: {fileID: 7711889900877433208, guid: 14cd8e7d01a915d4cb248b29948c6cb1, type: 3}
       propertyPath: m_RootOrder
       value: 0
