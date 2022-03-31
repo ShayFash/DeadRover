@@ -14,8 +14,8 @@ public class UnitLink : MonoBehaviour
     {
         lineRenderer = GetComponent<LineRenderer>();
 
-        lineRenderer.startWidth = 0.1f;
-        lineRenderer.endWidth = 0.1f;
+        lineRenderer.startWidth = 0.5f;
+        lineRenderer.endWidth = 0.5f;
         lineRenderer.positionCount = 2;
         lineRenderer.useWorldSpace = true;
 
