@@ -19,6 +19,9 @@ TagManager:
   - Loss
   - Win
   - Ground
+  - DeerDeerIcon
+  - RabbitBearIcon
+  - FoxOwlIcon
   layers:
   - Default
   - TransparentFX

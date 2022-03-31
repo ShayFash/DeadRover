@@ -45,6 +45,17 @@ public class Controller : MonoBehaviour
 
     public GameObject HelpPanel;
 
+    public Sprite DeerDeerIconActive;
+    public Sprite DeerDeerIconInactive;
+    public Sprite RabbitBearIconActive;
+    public Sprite RabbitBearIconInactive;
+    public Sprite FoxOwlIconActive;
+    public Sprite FoxOwlIconInactive;
+
+    private Image deerDeerIcon;
+    private Image rabbitBearIcon;
+    private Image foxOwlIcon;
+
     private AI ai;
 
     private UnitLink[] linkObjectPool = new UnitLink[10];
@@ -85,6 +96,10 @@ public class Controller : MonoBehaviour
         {
             return b.CompareTag("MoveButton");
         });
+
+        deerDeerIcon = GameObject.FindGameObjectWithTag("DeerDeerIcon").GetComponent<Image>();
+        rabbitBearIcon = GameObject.FindGameObjectWithTag("RabbitBearIcon").GetComponent<Image>();
+        foxOwlIcon = GameObject.FindGameObjectWithTag("FoxOwlIcon").GetComponent<Image>();
 
         UnitLink temp;
         for (int i = 0; i < linkObjectPool.Length; i++)
@@ -507,16 +522,38 @@ public class Controller : MonoBehaviour
                             if (!linkObjectPool[l].AlreadyConnected())
                             {
                                 linkObjectPool[l].SetLink(unit, otherUnit);
+                                UpdateLinkUI(unit);
                                 break;
                             }
                         }
                     }
                 }
+                
             }
         }
 
         updateForTeam(Player.Living.ToString());
         updateForTeam(Player.Dead.ToString());
+    }
+
+    private void UpdateLinkUI(GenericUnit unit)
+    {
+        if (unit.CompareTag("Dead")){
+            return;
+        }
+
+        if(unit.unitName == "Deer")
+        {
+            deerDeerIcon.sprite = unit.linked ? DeerDeerIconActive : DeerDeerIconInactive;
+        }
+        if(unit.unitName == "Fox" || unit.unitName == "Owl")
+        {
+            foxOwlIcon.sprite = unit.linked ? FoxOwlIconActive : FoxOwlIconInactive;
+        }
+        if (unit.unitName == "Rabbit" || unit.unitName == "Bear")
+        {
+            rabbitBearIcon.sprite = unit.linked ? RabbitBearIconActive : RabbitBearIconInactive;
+        }
     }
 
     private IEnumerator WaitForMoveInput()
