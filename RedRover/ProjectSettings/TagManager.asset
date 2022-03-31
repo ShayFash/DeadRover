@@ -19,6 +19,11 @@ TagManager:
   - Loss
   - Win
   - AnimalImage
+  - BearImage
+  - OwlImage
+  - FoxImage
+  - DeerImage
+  - RabbitImage
   layers:
   - Default
   - TransparentFX
