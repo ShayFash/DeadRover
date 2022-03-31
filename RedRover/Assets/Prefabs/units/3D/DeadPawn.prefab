@@ -10,7 +10,7 @@ PrefabInstance:
     - target: {fileID: 252863728567951417, guid: 14cd8e7d01a915d4cb248b29948c6cb1, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 1302eaeb8eadb6047a8fdbee10a8f886, type: 2}
+      objectReference: {fileID: 2100000, guid: b41bba43154344a489c821bc298292cb, type: 2}
     - target: {fileID: 514735472801237966, guid: 14cd8e7d01a915d4cb248b29948c6cb1, type: 3}
       propertyPath: m_Name
       value: DeadPawn

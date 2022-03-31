@@ -54,7 +54,7 @@ PrefabInstance:
     - target: {fileID: 6139071852749347780, guid: 407c4d12ded4af449b6ccfe9399c9019, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 1302eaeb8eadb6047a8fdbee10a8f886, type: 2}
+      objectReference: {fileID: 2100000, guid: b41bba43154344a489c821bc298292cb, type: 2}
     - target: {fileID: 6496102124229938565, guid: 407c4d12ded4af449b6ccfe9399c9019, type: 3}
       propertyPath: m_Name
       value: DeadGlassCannon Variant
