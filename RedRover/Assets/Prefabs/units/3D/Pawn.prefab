@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 252863728567951417}
   - component: {fileID: 6564817670503867038}
   - component: {fileID: 2366075419856953157}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Pawn
   m_TagString: Living
   m_Icon: {fileID: 0}

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4239169101031652484}
   - component: {fileID: 8167280808998450377}
   - component: {fileID: 3968557495316551166}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Ranger
   m_TagString: Living
   m_Icon: {fileID: 0}

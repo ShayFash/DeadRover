@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6139071852749347780}
   - component: {fileID: 8183066230252898589}
   - component: {fileID: 3757993257932622030}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: GlassCannon
   m_TagString: Living
   m_Icon: {fileID: 0}

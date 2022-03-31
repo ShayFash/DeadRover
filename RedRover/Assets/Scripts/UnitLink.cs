@@ -21,7 +21,7 @@ public class UnitLink : MonoBehaviour
 
         Material material = new Material(Shader.Find("Shader Graphs/NewLink"));
         material.SetFloat("_Tiling", 0.25f);
-        material.SetFloat("_Speed", 0.5f);
+        material.SetFloat("_Speed", 0f);
 
         lineRenderer.material = material;
     }
