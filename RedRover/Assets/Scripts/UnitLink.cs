@@ -79,6 +79,7 @@ public class UnitLink : MonoBehaviour
             lineRenderer.SetPosition(0, unit1.transform.position);
             lineRenderer.SetPosition(1, unit2.transform.position);
 
+
             yield return new WaitForEndOfFrame();
         }
         unit1.RemoveBuff();

@@ -19,6 +19,10 @@ PrefabInstance:
       propertyPath: unitName
       value: Owl
       objectReference: {fileID: 0}
+    - target: {fileID: 3968557495316551166, guid: a97fb57ce7aa8d3458c181a4a1e783e6, type: 3}
+      propertyPath: LivingMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: eab2b4cb542552049accd402da6a6bcb, type: 2}
     - target: {fileID: 4239169101031652484, guid: a97fb57ce7aa8d3458c181a4a1e783e6, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 

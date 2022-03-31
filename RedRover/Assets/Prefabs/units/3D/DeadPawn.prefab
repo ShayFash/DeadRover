@@ -23,6 +23,10 @@ PrefabInstance:
       propertyPath: unitName
       value: Rabbit
       objectReference: {fileID: 0}
+    - target: {fileID: 2366075419856953157, guid: 14cd8e7d01a915d4cb248b29948c6cb1, type: 3}
+      propertyPath: LivingMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: eab2b4cb542552049accd402da6a6bcb, type: 2}
     - target: {fileID: 7711889900877433208, guid: 14cd8e7d01a915d4cb248b29948c6cb1, type: 3}
       propertyPath: m_RootOrder
       value: 0

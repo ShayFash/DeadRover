@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8786788316340217960}
   - component: {fileID: 8786788316340217961}
   - component: {fileID: 8786788316340217962}
-  m_Layer: 1
+  m_Layer: 0
   m_Name: Tank
   m_TagString: Living
   m_Icon: {fileID: 0}
@@ -114,8 +114,8 @@ MonoBehaviour:
   Attack: 16
   Health: 24
   Movement: 2
-  LivingMaterial: {fileID: 2100000, guid: 7963e11afefb731428498f6b2564faf4, type: 2}
-  DeadMaterial: {fileID: 2100000, guid: 1302eaeb8eadb6047a8fdbee10a8f886, type: 2}
+  LivingMaterial: {fileID: 2100000, guid: eab2b4cb542552049accd402da6a6bcb, type: 2}
+  DeadMaterial: {fileID: 2100000, guid: b41bba43154344a489c821bc298292cb, type: 2}
   unitName: Bear
   NumTurnsToSwitchSides: 4
   MaxAllowedSwitches: 3
