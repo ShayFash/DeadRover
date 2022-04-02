@@ -3651,6 +3651,18 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7393260441489291385, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
+      propertyPath: imageArray.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7393260441489291385, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
+      propertyPath: imageArray.Array.data[2]
+      value: 
+      objectReference: {fileID: 2800000, guid: 34f93024e0b7dd44cbe3b8f315fa936b, type: 3}
+    - target: {fileID: 7393260441489291385, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
+      propertyPath: imageArray.Array.data[3]
+      value: 
+      objectReference: {fileID: 2800000, guid: e1c2ebaa6f030c646a5b8fe105e3126f, type: 3}
     - target: {fileID: 8316259543559463836, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 31.833008
