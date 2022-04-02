@@ -169,7 +169,7 @@ MonoBehaviour:
   imageArray:
   - {fileID: 2800000, guid: e7ac0d5e2f0b35449a4f3657132d22fa, type: 3}
   - {fileID: 2800000, guid: 75a0f73045712d94db2177b0c3aeeaf6, type: 3}
-  - {fileID: 2800000, guid: 09df4e111ff6da343994977c623600d0, type: 3}
+  - {fileID: 2800000, guid: 34f93024e0b7dd44cbe3b8f315fa936b, type: 3}
   - {fileID: 2800000, guid: e1c2ebaa6f030c646a5b8fe105e3126f, type: 3}
   image: {fileID: 3331573384821339947}
 --- !u!1 &90535848555012489
