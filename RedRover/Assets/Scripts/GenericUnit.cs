@@ -133,10 +133,24 @@ public abstract class GenericUnit : MonoBehaviour
         unit.TakeDamage(Attack);
     }
 
+    IEnumerator SmoothTranlation(Vector3 target, float speed)
+    {
+        while (this.transform.position != target) {
+            this.transform.position = Vector3.Lerp(this.transform.position, target, Time.deltaTime * speed);
+            yield return null;
+        }
+    }
+
+    private void FaceDirectionOfMoving(Vector3 target)
+    {
+        this.transform.LookAt(target);
+    }
+
     public void Move(Vector3 cellPosition)
     {
         cellPosition.y = transform.position.y;
-        transform.position = cellPosition;
+        //FaceDirectionOfMoving(cellPosition);
+        StartCoroutine(SmoothTranlation(cellPosition, 2));
     }
 
     public void TakeDamage(int value)
