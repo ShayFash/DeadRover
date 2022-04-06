@@ -133,24 +133,26 @@ public abstract class GenericUnit : MonoBehaviour
         unit.TakeDamage(Attack);
     }
 
-    IEnumerator SmoothTranlation(Vector3 target, float speed)
+    IEnumerator SmoothTranslation(Vector3 target, float speed)
     {
-        while (this.transform.position != target) {
-            this.transform.position = Vector3.Lerp(this.transform.position, target, Time.deltaTime * speed);
+        while (Vector3.Distance(transform.position, target) > 0.02) {
+            transform.position = Vector3.Lerp(transform.position, target, Time.deltaTime * speed);
             yield return null;
         }
+
+        transform.rotation = CompareTag("Living") ? Quaternion.Euler(0, 0, 0) : Quaternion.Euler(0, 180, 0);
     }
 
     private void FaceDirectionOfMoving(Vector3 target)
     {
-        this.transform.LookAt(target);
+        transform.right = target - transform.position;
     }
 
     public void Move(Vector3 cellPosition)
     {
         cellPosition.y = transform.position.y;
-        //FaceDirectionOfMoving(cellPosition);
-        StartCoroutine(SmoothTranlation(cellPosition, 2));
+        FaceDirectionOfMoving(cellPosition);
+        StartCoroutine(SmoothTranslation(cellPosition, 2));
     }
 
     public void TakeDamage(int value)
