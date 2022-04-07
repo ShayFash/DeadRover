@@ -75,7 +75,9 @@ public abstract class GenericUnit : MonoBehaviour
         Renderer = gameObject.GetComponent<MeshRenderer>();
         Renderer.material = CompareTag("Living") ? LivingMaterial : DeadMaterial;
 
-        Move(Controller.FindClosestTile(transform.position));
+        StartCoroutine(
+            Move(Controller.FindClosestTile(transform.position), teleport:true)
+        );
     }
 
     public bool CanBeAttacked()
@@ -139,12 +141,13 @@ public abstract class GenericUnit : MonoBehaviour
 
     IEnumerator SmoothTranslation(Vector3 target, float speed)
     {
+        float amount = 0;
+        Vector3 oldPosition = transform.position;
         while (Vector3.Distance(transform.position, target) > 0.02) {
-            transform.position = Vector3.Lerp(transform.position, target, Time.deltaTime * speed);
-            yield return null;
+            amount += Time.fixedDeltaTime * speed;
+            transform.position = Vector3.Lerp(oldPosition, target, amount);
+            yield return new WaitForFixedUpdate();
         }
-
-        transform.rotation = CompareTag("Living") ? Quaternion.Euler(0, 0, 0) : Quaternion.Euler(0, 180, 0);
     }
 
     private void FaceDirectionOfMoving(Vector3 target)
@@ -152,13 +155,24 @@ public abstract class GenericUnit : MonoBehaviour
         transform.right = target - transform.position;
     }
 
-    public void Move(Vector3 cellPosition)
+    public IEnumerator Move(Vector3 cellPosition, Action callback=null, bool teleport=false)
     {
         cellPosition.y = transform.position.y;
         FaceDirectionOfMoving(cellPosition);
-        StartCoroutine(SmoothTranslation(cellPosition, 2));
 
         SendAlertForMessaging("Moved", "0");
+        if (!teleport)
+        {
+            yield return StartCoroutine(SmoothTranslation(cellPosition, 2));
+        }
+        transform.position = cellPosition;
+
+        transform.rotation = CompareTag("Living") ? Quaternion.Euler(0, 0, 0) : Quaternion.Euler(0, 180, 0);
+
+        if (callback != null)
+        {
+            callback();
+        }
     }
 
     public void TakeDamage(int value)
