@@ -47,6 +47,8 @@ public class Controller : MonoBehaviour
 
     public GameObject HelpPanel;
 
+    private TurnStateManager TSManager;
+
     public Sprite DeerDeerIconActive;
     public Sprite DeerDeerIconInactive;
     public Sprite RabbitBearIconActive;
@@ -97,6 +99,8 @@ public class Controller : MonoBehaviour
 
         unitMenu = GameObject.FindGameObjectWithTag("UnitMenu").GetComponent<Canvas>();
         TextMeshProUGUI[] unitMenuChildren = unitMenu.GetComponentsInChildren<TextMeshProUGUI>();
+
+        TSManager = GetComponentInChildren<TurnStateManager>();
 
         turnSelectionText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) {
             return t.gameObject.CompareTag("TurnsLeftDisplay");
@@ -150,6 +154,11 @@ public class Controller : MonoBehaviour
         StartCoroutine(lateStart());
 
         ShowHelpPanel();
+    }
+
+    private void Update() 
+    {
+        UpdateTurnStateBar();
     }
 
     private IEnumerator lateStart()
@@ -649,4 +658,16 @@ public class Controller : MonoBehaviour
     {
             FindObjectOfType<AudioManager>().MuteToggle("Theme");
     }
+
+    //----------Methods for the Turn State and Notification Managers-------------
+    public void UpdateTurnStateBar() 
+    {
+        TSManager.UpdateTurnStates(activePlayer.ToString(), state.ToString(), selectedUnit);
+    }
+
+    public void GetAlert(string aTag , string aName, string aState) 
+    {
+        TSManager.ShowAlert(aTag, aName, aState);
+    }
+    //---------------------------------------------------------------------------
 }
