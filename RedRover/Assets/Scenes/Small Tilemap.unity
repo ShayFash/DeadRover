@@ -3663,9 +3663,17 @@ PrefabInstance:
       propertyPath: imageArray.Array.data[3]
       value: 
       objectReference: {fileID: 2800000, guid: e1c2ebaa6f030c646a5b8fe105e3126f, type: 3}
+    - target: {fileID: 8014185298813832398, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 7c7e12eecea5f814cb4144dbc157b017, type: 3}
+    - target: {fileID: 8316259543559463836, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -321.2
+      objectReference: {fileID: 0}
     - target: {fileID: 8316259543559463836, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 31.833008
+      value: 48.564
       objectReference: {fileID: 0}
     - target: {fileID: 9202992076234117489, guid: 184ffd442acb74d4c80a6c1ff2dd7ed5, type: 3}
       propertyPath: m_AnchoredPosition.y
