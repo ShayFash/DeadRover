@@ -27,6 +27,26 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 1302eaeb8eadb6047a8fdbee10a8f886, type: 2}
+    - target: {fileID: 7273208639909141963, guid: 8ae5b0ad3be1d0240827fa5a725f4188, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.38268325
+      objectReference: {fileID: 0}
+    - target: {fileID: 7273208639909141963, guid: 8ae5b0ad3be1d0240827fa5a725f4188, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.9238796
+      objectReference: {fileID: 0}
+    - target: {fileID: 7273208639909141963, guid: 8ae5b0ad3be1d0240827fa5a725f4188, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7273208639909141963, guid: 8ae5b0ad3be1d0240827fa5a725f4188, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7273208639909141963, guid: 8ae5b0ad3be1d0240827fa5a725f4188, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 225
+      objectReference: {fileID: 0}
     - target: {fileID: 8528976637610966241, guid: 8ae5b0ad3be1d0240827fa5a725f4188, type: 3}
       propertyPath: m_RootOrder
       value: 0
