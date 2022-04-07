@@ -242,8 +242,8 @@ public class Controller : MonoBehaviour
             return;
         }
 
-        rangeText.text = "Range: " + unit.Reach.ToString();
-        attackText.text = "Attack: " + unit.Attack.ToString();
+        rangeText.text = "Range: " + unit.GetReachStat();
+        attackText.text = "Attack: " + unit.GetAttackStat();
         healthNumText.text =  unit.Health.ToString() + " / " + unit.MaxHealth.ToString();
         unitNameText.text = unit.unitName;
         if (unit.unitName == "Bear")

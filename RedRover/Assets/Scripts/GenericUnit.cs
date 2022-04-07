@@ -111,6 +111,24 @@ public abstract class GenericUnit : MonoBehaviour
         return !SwitchingSides && !IsEliminated;
     }
 
+    public string GetAttackStat()
+    {
+        if (Attack > BaseAttack)
+        {
+            return BaseAttack.ToString() + " + " + (Attack - BaseAttack).ToString();
+        }
+        return BaseAttack.ToString();
+    }
+
+    public string GetReachStat()
+    {
+        if (Reach > BaseReach)
+        {
+            return BaseReach.ToString() + " + " + (Reach - BaseReach).ToString();
+        }
+        return BaseReach.ToString();
+    }
+
     public void Buff(int attack, int movement, int reach)
     {
         if (Attack > BaseAttack || Reach > BaseReach || Movement > BaseMovement)
