@@ -34,10 +34,16 @@ public class Controller : MonoBehaviour
     private TextMeshProUGUI attackText;
     private TextMeshProUGUI healthNumText;
     private TextMeshProUGUI unitNameText;
+    private TextMeshProUGUI turnCounterText;
+    private TextMeshProUGUI turnSelectionText;
     private Button[] actionButtons;
     private Button moveButton;
+
+    private int numTurns;
+
     private Canvas winCanvas;
     private Canvas lossCanvas;
+
 
     public GameObject HelpPanel;
 
@@ -87,6 +93,14 @@ public class Controller : MonoBehaviour
         unitMenu = GameObject.FindGameObjectWithTag("UnitMenu").GetComponent<Canvas>();
         TextMeshProUGUI[] unitMenuChildren = unitMenu.GetComponentsInChildren<TextMeshProUGUI>();
 
+        turnSelectionText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) {
+            return t.gameObject.CompareTag("TurnsLeftDisplay");
+        });
+
+        turnCounterText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) {
+            return t.gameObject.CompareTag("TurnCounter");
+        });
+
         rangeText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) {
             return t.gameObject.CompareTag("RangeStatDisplay");
         });
@@ -108,6 +122,8 @@ public class Controller : MonoBehaviour
         {
             return b.CompareTag("MoveButton");
         });
+        
+        numTurns = 0;
 
         deerDeerIcon = GameObject.FindGameObjectWithTag("DeerDeerIcon").GetComponent<Image>();
         rabbitBearIcon = GameObject.FindGameObjectWithTag("RabbitBearIcon").GetComponent<Image>();
@@ -189,6 +205,7 @@ public class Controller : MonoBehaviour
                     selectedUnit.AttackUnit(unit);
                     UpdateLinks();
 
+                    
                     EndTurn();
                 }
                 break;
@@ -206,6 +223,7 @@ public class Controller : MonoBehaviour
             attackText.text = "Attack: - ";
             healthNumText.text = "-/-";
             unitNameText.text = "";
+            turnSelectionText.text = "Turns Left: - ";
 
             return;
         }
@@ -214,6 +232,7 @@ public class Controller : MonoBehaviour
         attackText.text = "Attack: " + unit.Attack.ToString();
         healthNumText.text =  unit.Health.ToString() + " / " + unit.MaxHealth.ToString();
         unitNameText.text = unit.unitName;
+        turnSelectionText.text = "Turns Left: " + unit.SelectionTimer.ToString();
     }
 
     public void ResetRangeAndAttackText()
@@ -279,6 +298,8 @@ public class Controller : MonoBehaviour
         state = State.SelectingUnit;
         RemoveColorFromTilesInRange(selectedUnit);
         ChangeTurns();
+        numTurns++;
+        turnCounterText.text = "TURN: " + numTurns.ToString();
     }
     public Vector3 FindClosestTile(Vector3 position)
     {
@@ -480,11 +501,15 @@ public class Controller : MonoBehaviour
 
             if(activePlayer == Player.Living)
             {
+
                 lossCanvas.enabled = true;
+                
             }
-            else
+            else if(activePlayer == Player.Dead)
             {
+
                 winCanvas.enabled = true;
+
             }
         }
     }
