@@ -74,6 +74,7 @@ public abstract class GenericUnit : MonoBehaviour
 
         Renderer = gameObject.GetComponent<MeshRenderer>();
         Renderer.material = CompareTag("Living") ? LivingMaterial : DeadMaterial;
+        Renderer.sortingOrder = 1;
 
         StartCoroutine(
             Move(Controller.FindClosestTile(transform.position), teleport:true)
