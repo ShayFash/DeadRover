@@ -18,6 +18,8 @@ TagManager:
   - UnitName
   - Loss
   - Win
+  - TurnCounter
+  - TurnsLeftDisplay
   - Ground
   - DeerDeerIcon
   - RabbitBearIcon
