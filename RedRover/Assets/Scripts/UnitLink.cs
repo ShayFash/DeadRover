@@ -1,14 +1,10 @@
-using System;
 using System.Collections;
 using UnityEngine;
 
 public class UnitLink : MonoBehaviour
 {
-    public int MaxTileDistance = 2;
     private LineRenderer lineRenderer;
-
-    private GenericUnit unit1;
-    private GenericUnit unit2;
+    private Coroutine activeCoroutine;
 
     void Awake()
     {
@@ -20,25 +16,28 @@ public class UnitLink : MonoBehaviour
         lineRenderer.useWorldSpace = true;
 
         Material material = new Material(Shader.Find("Shader Graphs/Link"));
-        material.SetFloat("_Tiling", 0.25f);
         material.SetFloat("_Speed", 0.5f);
+        // material.SetColor("_Color", Color.white);
 
         lineRenderer.material = material;
     }
 
-    public void SetLink(GenericUnit unit1, GenericUnit unit2) 
+    public void SetLink(Transform other) 
     {
-        this.unit1 = unit1;
-        this.unit2 = unit2;
-        if (unit1.CompareTag("Living"))
+        lineRenderer.loop = false;
+        lineRenderer.positionCount = 2;
+        lineRenderer.material.SetFloat("_Tiling", 0.25f);
+        lineRenderer.textureMode = LineTextureMode.Tile;
+
+        if (CompareTag("Living"))
         {
             lineRenderer.material.SetColor("_Color", Color.white);
-        } else if (unit1.CompareTag("Dead"))
+        } else if (CompareTag("Dead"))
         {
             lineRenderer.material.SetColor("_Color", new Color(0.21961f, 0.05490f, 0.27451f));
         }
         lineRenderer.enabled = true;
-        StartCoroutine(FollowTransform());
+        activeCoroutine = StartCoroutine(FollowTransform(other));
     }
 
     public bool AlreadyConnected()
@@ -51,42 +50,68 @@ public class UnitLink : MonoBehaviour
         lineRenderer.enabled = false;
     }
 
-    private bool LinkConditionsMet()
+    public void SwitchingSides()
     {
-        Vector3 unit1TilePosition = unit1.GetTilePosition();
-        Vector3 unit2TilePosition = unit2.GetTilePosition();
-
-        float tileDistance = 0;
-        tileDistance += Mathf.Abs(unit1TilePosition[0] - unit2TilePosition[0]);
-        tileDistance += Mathf.Abs(unit1TilePosition[2] - unit2TilePosition[2]);
-
-        bool unitsActive = unit1.IsActive() && unit2.IsActive();
-        return lineRenderer.enabled && unit1.CompareTag(unit2.tag) && unitsActive && tileDistance <= MaxTileDistance;
-    }
-
-    private IEnumerator FollowTransform()
-    {
-        unit1.linked = true;
-        unit2.linked = true;
-        if (LinkConditionsMet())
+        if (activeCoroutine != null)
         {
-            unit1.Buff(unit2.BaseAttack, unit2.BaseMovement, Math.Max(unit2.BaseReach, unit1.BaseReach));
-            unit2.Buff(unit1.BaseAttack, unit1.BaseMovement, Math.Max(unit2.BaseReach, unit1.BaseReach));
+            StopCoroutine(activeCoroutine);
+            activeCoroutine = null;
         }
 
-        while (LinkConditionsMet())
+        if (CompareTag("Dead"))
         {
-            lineRenderer.SetPosition(0, unit1.transform.position);
-            lineRenderer.SetPosition(1, unit2.transform.position);
+            lineRenderer.material.SetColor("_Color", Color.white);
+        }
+        else if (CompareTag("Living"))
+        {
+            lineRenderer.material.SetColor("_Color", new Color(0.21961f, 0.05490f, 0.27451f));
+        }
+
+        DrawPolygon(128, 0.5f, transform.position);
+        lineRenderer.material.SetFloat("_Tiling", 1f);
+        lineRenderer.textureMode = LineTextureMode.Stretch;
+
+        lineRenderer.enabled = true;
+    }
+
+    private void DrawPolygon(int vertexNumber, float radius, Vector3 centerPos)
+    {
+        lineRenderer.loop = true;
+        float angle = 2 * Mathf.PI / vertexNumber;
+        lineRenderer.positionCount = vertexNumber;
+
+        Matrix4x4 rotationMatrix = new Matrix4x4(
+                new Vector4(0, 0, 0, 0),
+                new Vector4(0, 0, 0, 0),
+                new Vector4(0, 0, 1, 0),
+                new Vector4(0, 0, 0, 1)
+            );
+
+        for (int i = 0; i < vertexNumber; i++)
+        {
+            rotationMatrix[0, 0] = Mathf.Cos(angle * i);
+            rotationMatrix[0, 1] = Mathf.Sin(angle * i);
+
+            rotationMatrix[1, 0] = -Mathf.Sin(angle * i);
+            rotationMatrix[1, 1] = Mathf.Cos(angle * i);
+
+
+            Vector3 initialRelativePosition = new Vector3(0, radius, 0);
+            Vector3 point = centerPos + rotationMatrix.MultiplyPoint(initialRelativePosition);
+            lineRenderer.SetPosition(i, point);
+
+        }
+    }
+
+    private IEnumerator FollowTransform(Transform other)
+    {
+        while (lineRenderer.enabled)
+        {
+            lineRenderer.SetPosition(0, transform.position);
+            lineRenderer.SetPosition(1, other.position);
 
             yield return new WaitForEndOfFrame();
         }
-        unit1.RemoveBuff();
-        unit2.RemoveBuff();
-        unit1.linked = false;
-        unit2.linked = false;
-
-
-        HideLink();
     }
+
 }

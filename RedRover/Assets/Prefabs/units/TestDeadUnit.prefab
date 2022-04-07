@@ -9,7 +9,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4080435231151619948, guid: c7f62097c6984df4abf11a051a4128b5, type: 3}
       propertyPath: m_Name
-      value: TestDeadUnit
+      value: DeadUnit
       objectReference: {fileID: 0}
     - target: {fileID: 4080435231151619948, guid: c7f62097c6984df4abf11a051a4128b5, type: 3}
       propertyPath: m_IsActive
@@ -83,7 +83,5 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 453951994, guid: c7f62097c6984df4abf11a051a4128b5, type: 3}
-    - {fileID: 4974917800258200542, guid: c7f62097c6984df4abf11a051a4128b5, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c7f62097c6984df4abf11a051a4128b5, type: 3}

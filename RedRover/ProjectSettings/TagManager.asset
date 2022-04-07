@@ -24,12 +24,6 @@ TagManager:
   - FoxImage
   - DeerImage
   - RabbitImage
-  - TurnCounter
-  - TurnsLeftDisplay
-  - Ground
-  - DeerDeerIcon
-  - RabbitBearIcon
-  - FoxOwlIcon
   layers:
   - Default
   - TransparentFX
@@ -66,7 +60,4 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
-    locked: 0
-  - name: Units
-    uniqueID: 4018372643
     locked: 0

@@ -27,15 +27,14 @@ public class Controller : MonoBehaviour
 
     private GenericUnit selectedUnit;
     private GenericUnit[] units;
-    public List<Tile> GroundTiles { get; private set; }
+
+    private Tilemap tilemap;
 
     private Canvas unitMenu;
     private TextMeshProUGUI rangeText;
     private TextMeshProUGUI attackText;
     private TextMeshProUGUI healthNumText;
     private TextMeshProUGUI unitNameText;
-    private TextMeshProUGUI turnCounterText;
-    private TextMeshProUGUI turnSelectionText;
     private Button[] actionButtons;
     public GameObject Bear;
     public GameObject Rabbit;
@@ -43,57 +42,22 @@ public class Controller : MonoBehaviour
     public GameObject Fox;
     public GameObject Deer;
     private Button moveButton;
+    //
+   
+       
 
-    private int numTurns;
-
-    private Canvas winCanvas;
-    private Canvas lossCanvas;
-
-
+    /// <summary>
+    public GameObject WinScreen;
+    public GameObject LossScreen;
+    ///
     public GameObject HelpPanel;
-
-    public Sprite DeerDeerIconActive;
-    public Sprite DeerDeerIconInactive;
-    public Sprite RabbitBearIconActive;
-    public Sprite RabbitBearIconInactive;
-    public Sprite FoxOwlIconActive;
-    public Sprite FoxOwlIconInactive;
-
-    private Image deerDeerIcon;
-    private Image rabbitBearIcon;
-    private Image foxOwlIcon;
-
+    ///
     private AI ai;
-
-    private UnitLink[] linkObjectPool = new UnitLink[10];
-    public GameObject linkObject;
-
-    private Dictionary<string, string> linkPairNames = new Dictionary<string, string>
-    {
-        {"Bear", "Rabbit"}, {"Owl", "Fox"}, {"Deer", "Deer"},
-        {"Rabbit", "Bear"}, {"Fox", "Owl"}
-    };
 
     private void Awake()
     {
-        GroundTiles = new List<Tile>();
-        Tilemap tilemap = GameObject.FindGameObjectWithTag("Ground").GetComponent<Tilemap>();
-        for (int i=0; i < tilemap.transform.childCount; i++)
-        {
-            Tile tile = tilemap.transform.GetChild(i).GetComponent<Tile>();
-            if (tile == null)
-            {
-                Debug.LogError("Tile in ground tile map without tile script attached");
-                continue;
-            }
-            GroundTiles.Add(tile);
-        }
-
-
+        tilemap = FindObjectOfType<Tilemap>();
         units = FindObjectsOfType<GenericUnit>();
-
-        winCanvas = GameObject.FindGameObjectWithTag("Win").GetComponent<Canvas>();
-        lossCanvas = GameObject.FindGameObjectWithTag("Loss").GetComponent<Canvas>();
 
         unitMenu = GameObject.FindGameObjectWithTag("UnitMenu").GetComponent<Canvas>();
         TextMeshProUGUI[] unitMenuChildren = unitMenu.GetComponentsInChildren<TextMeshProUGUI>();
@@ -103,14 +67,6 @@ public class Controller : MonoBehaviour
         //Rabbit = gameObject.FindWithTag("RabbitImage");
         //Deer = gameObject.FindWithTag("DeerImage");
         //Fox = gameObject.FindWithTag("FoxImage");
-
-        turnSelectionText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) {
-            return t.gameObject.CompareTag("TurnsLeftDisplay");
-        });
-
-        turnCounterText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) {
-            return t.gameObject.CompareTag("TurnCounter");
-        });
 
         rangeText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) {
             return t.gameObject.CompareTag("RangeStatDisplay");
@@ -133,20 +89,6 @@ public class Controller : MonoBehaviour
         {
             return b.CompareTag("MoveButton");
         });
-        
-        numTurns = 0;
-
-        deerDeerIcon = GameObject.FindGameObjectWithTag("DeerDeerIcon").GetComponent<Image>();
-        rabbitBearIcon = GameObject.FindGameObjectWithTag("RabbitBearIcon").GetComponent<Image>();
-        foxOwlIcon = GameObject.FindGameObjectWithTag("FoxOwlIcon").GetComponent<Image>();
-
-        UnitLink temp;
-        for (int i = 0; i < linkObjectPool.Length; i++)
-        {
-            temp = Instantiate(linkObject).GetComponent<UnitLink>();
-            temp.HideLink();
-            linkObjectPool[i] = temp;
-        }
     }
 
     private void Start()
@@ -154,6 +96,12 @@ public class Controller : MonoBehaviour
         ai = new AI(this);
 
         StartCoroutine(lateStart());
+        /////
+        WinScreen = GameObject.FindGameObjectWithTag("Win");
+        LossScreen = GameObject.FindGameObjectWithTag("Loss");
+
+
+        /////
         ShowHelpPanel();
     }
 
@@ -215,7 +163,7 @@ public class Controller : MonoBehaviour
                     selectedUnit.AttackUnit(unit);
                     UpdateLinks();
 
-                    
+
                     EndTurn();
                 }
                 break;
@@ -233,7 +181,7 @@ public class Controller : MonoBehaviour
             attackText.text = "Attack: - ";
             healthNumText.text = "-/-";
             unitNameText.text = "";
-            turnSelectionText.text = "Turns Left: - ";
+            
 
             return;
         }
@@ -281,7 +229,9 @@ public class Controller : MonoBehaviour
             Deer.gameObject.SetActive(true);
         }
 
-        turnSelectionText.text = "Turns Left: " + unit.SelectionTimer.ToString();
+
+
+
     }
 
     public void ResetRangeAndAttackText()
@@ -291,8 +241,6 @@ public class Controller : MonoBehaviour
 
     public void Attack()
     {
-        FindObjectOfType<AudioManager>().Play("Forward");
-        
         if (state == State.Attacking || selectedUnit == null)
         {
             return;
@@ -304,92 +252,91 @@ public class Controller : MonoBehaviour
 
         //Show tiles in attack range
         ShowTilesInRange(selectedUnit, true, false);
-    }
 
-    public void Move()
-    {
-        FindObjectOfType<AudioManager>().Play("Forward");
-
-        if (selectedUnit == null)
+        Player currentPlayer = activePlayer;
+        for (int i = 0; i < units.Length; i++)
         {
-            return;
-        }
-        
+            GenericUnit target = units[i];
 
-        state = State.Moving;
-        //Clear, if attack tiles are still highlighted
-        RemoveColorFromTilesInRange(selectedUnit);
-        ShowTilesInRange(selectedUnit);
-    }
-
-    public void TileClicked(Vector3 position)
-    {
-        // TODO: need something to cancel move if you don't want to move
-        if (state == State.Moving && activePlayer == Player.Living)
-        {
-            bool moved = TryMoveSelectedUnit(position);
-            if (moved)
+            bool isTargetInRange = !selectedUnit.CompareTag(target.tag) && target.CanBeAttacked() && selectedUnit.UnitInRange(target);
+            if (isTargetInRange)
             {
-                moveButton.interactable = false;
-                state = State.Waiting;
+                StartCoroutine(target.ApplyAttackShader(delegate () {
+                    return state == State.Attacking && activePlayer == currentPlayer;
+                }));
             }
         }
     }
 
+    public void Move()
+    {
+        if (selectedUnit == null)
+        {
+            return;
+        }
+        state = State.Moving;
+        //Clear, if attack tiles are still highlighted
+        RemoveColorFromTilesInRange(selectedUnit);
+        ShowTilesInRange(selectedUnit);
+        StartCoroutine(WaitForMoveInput());
+    }
+
     public void EndTurn()
     {
-        FindObjectOfType<AudioManager>().Play("Confirm");
-
-        if(selectedUnit == null)
+        if (selectedUnit == null)
         {
             return;
         }
         state = State.SelectingUnit;
         RemoveColorFromTilesInRange(selectedUnit);
         ChangeTurns();
-        numTurns++;
-        turnCounterText.text = "TURN: " + numTurns.ToString();
+      
     }
-    public Vector3 FindClosestTile(Vector3 position)
-    {
-        Vector3 closestTile = Vector3.positiveInfinity;
-        float smallestDistance = Mathf.Infinity;
-        for (int i = 0; i < GroundTiles.Count; i++)
-        {
-            Vector3 tilePosition = GroundTiles[i].transform.position;
-            float distance = 0;
-            distance += Mathf.Abs(position[0] - tilePosition[0]);
-            distance += Mathf.Abs(position[2] - tilePosition[2]);
 
-            if (distance < smallestDistance)
+    public Vector3Int FindClosestTile(Vector3 position)
+    {
+        int maxZ = tilemap.cellBounds.zMax;
+        position.z = maxZ + 1;
+        Vector3 positionCopy = position;
+
+        Vector3 closestTile = Vector3.positiveInfinity;
+        for (int z = 0; z < maxZ; z++)
+        {
+            positionCopy.z = z;
+            Vector3Int cellPosition = tilemap.layoutGrid.WorldToCell(positionCopy);
+
+            if (tilemap.HasTile(cellPosition))
             {
-                smallestDistance = distance;
-                closestTile = tilePosition;
+                Vector3 cellMid = tilemap.layoutGrid.GetCellCenterWorld(cellPosition);
+                if (Vector3.Distance(position, cellMid) < Vector3.Distance(position, closestTile))
+                {
+                    closestTile = cellMid;
+                }
             }
         }
-        return closestTile;
+        return tilemap.layoutGrid.WorldToCell(closestTile);
     }
 
-    public bool TryMoveSelectedUnit(Vector3 cellPosition)
+    public bool TryMoveSelectedUnit(Vector3Int cellPosition)
     {
         if (selectedUnit.TileInRange(cellPosition) && !TileOccupied(cellPosition))
         {
             state = State.Waiting;
             RemoveColorFromTilesInRange(selectedUnit);
             selectedUnit.Move(cellPosition);
-            UpdateLinks();
             return true;
         }
         return false;
     }
 
-    public bool TileOccupied(Vector3 cellPosition)
+    public bool TileOccupied(Vector3Int cellPosition)
     {
-        foreach(GenericUnit u in units)
+        foreach (GenericUnit u in units)
         {
-            Vector3 unitPosition = u.GetTilePosition();
+            Vector3Int tilePos = cellPosition;
+            Vector3Int unitPosition = u.GetTilePosition();
 
-            if(Mathf.Approximately(unitPosition.x, cellPosition.x) && Mathf.Approximately(unitPosition.z, cellPosition.z))
+            if (unitPosition.x == tilePos.x && unitPosition.y == tilePos.y)
             {
                 return true;
             }
@@ -398,17 +345,9 @@ public class Controller : MonoBehaviour
         return false;
     }
 
-    public bool HasTileAtPosition(Vector3 position)
+    public bool HasTileAtPosition(Vector3Int position)
     {
-        for (int i=0; i < GroundTiles.Count; i++)
-        {
-            Vector3 tilePosition = GroundTiles[i].transform.position;
-            if (Mathf.Approximately(position.x, tilePosition.x) && Mathf.Approximately(position.z, tilePosition.z))
-            {
-                return true;
-            }
-        }
-        return false;
+        return tilemap.HasTile(position);
     }
 
     private void ChangeStateToSelecting()
@@ -430,40 +369,51 @@ public class Controller : MonoBehaviour
         }
     }
 
-    public void ShowTilesInRange(GenericUnit unit, bool showAttack=false, bool showMovement = true)
+    private Vector3Int GetClickedGridPosition()
     {
-        Color attackColor = new Color(0.964f, 0.368f, 0.352f);
-        Color moveColor = new Color(0.580f, 0.654f, 1f);
+        Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
+        return FindClosestTile(mouseWorldPos);
+    }
+
+    public void ShowTilesInRange(GenericUnit unit, bool showAttack = false, bool showMovement = true)
+    {
         if (showAttack)
         {
-            foreach (Tile tile in unit.TilesInAttackRange(showMovement))
+            foreach (Vector3Int tilePos in unit.TilesInAttackRange(showMovement))
             {
-                tile.SetColor(attackColor);
+                tilemap.SetTileFlags(tilePos, TileFlags.None);
+                tilemap.SetColor(tilePos, Color.red);
             }
         }
 
         if (showMovement)
         {
-            foreach (Tile tile in unit.TilesInRange())
+            foreach (Vector3Int tilePos in unit.TilesInRange())
             {
-                tile.SetColor(moveColor);
+                tilemap.SetTileFlags(tilePos, TileFlags.None);
+                tilemap.SetColor(tilePos, Color.blue);
             }
         }
+
+        tilemap.SetTileFlags(new Vector3Int(0, 0, 1), TileFlags.None);
+        tilemap.SetColor(new Vector3Int(0, 0, 0), Color.yellow);
     }
 
     public void RemoveColorFromTilesInRange(GenericUnit unit)
     {
-        // Remove movement color
-        foreach (Tile tile in unit.TilesInRange())
+        //Remove movement color
+        foreach (Vector3Int tileInRange in unit.TilesInRange())
         {
-            tile.SetColor(Color.white);
+            tilemap.SetColor(tileInRange, new Color(1.0f, 1.0f, 1.0f, 1.0f));
+            tilemap.SetTileFlags(tileInRange, TileFlags.LockColor);
         }
 
         //Remove attack color
-        foreach (Tile tile in unit.TilesInAttackRange())
+        foreach (Vector3Int tileInRange in unit.TilesInAttackRange())
         {
-            tile.SetColor(Color.white);
+            tilemap.SetColor(tileInRange, new Color(1.0f, 1.0f, 1.0f, 1.0f));
+            tilemap.SetTileFlags(tileInRange, TileFlags.LockColor);
         }
 
         //Recolor what gets deleted by other units
@@ -548,19 +498,16 @@ public class Controller : MonoBehaviour
         if (!unitsLeft)
         {
             Debug.Log(activePlayer.ToString() + " lose");
-
-            if(activePlayer == Player.Living)
+            ////
+            if (activePlayer == Player.Living)
             {
-
-                lossCanvas.enabled = true;
-                
+                ShowLoseScreen();
             }
-            else if(activePlayer == Player.Dead)
+            else if (activePlayer == Player.Dead)
             {
-
-                winCanvas.enabled = true;
-
+                ShowWinScreen();
             }
+            ////
         }
     }
 
@@ -578,78 +525,89 @@ public class Controller : MonoBehaviour
 
     private void UpdateLinks()
     {
-        void updateForTeam(string team)
+        GenericUnit previousLivingUnit = null;
+        GenericUnit previousDeadUnit = null;
+        for (int i = 0; i < units.Length; i++)
         {
-            GenericUnit[] activeTeamUnits = Array.FindAll(units, delegate (GenericUnit u)
+            GenericUnit unit = units[i];
+            if (!unit.IsActiveUnit())
             {
-                return u.CompareTag(team) && u.IsActive();
-            });
-
-            for (int i = 0; i < activeTeamUnits.Length; i++)
-            {
-                GenericUnit unit = activeTeamUnits[i];
-
-                for (int j = i-1; j >= 0; j--)
+                if (unit.IsEliminated)
                 {
-                    GenericUnit otherUnit = activeTeamUnits[j];
-
-                    if (linkPairNames[unit.unitName] == otherUnit.unitName && !(unit.linked && otherUnit.linked))
-                    {
-                        for (int l = 0; l < linkObjectPool.Length; l++)
-                        {
-                            if (!linkObjectPool[l].AlreadyConnected())
-                            {
-                                linkObjectPool[l].SetLink(unit, otherUnit);
-                                UpdateLinkUI(unit);
-                                break;
-                            }
-                        }
-                    }
+                    unit.HideLink();
                 }
-                
+                continue;
+            }
+
+            if (unit.CompareTag("Living"))
+            {
+                if (previousLivingUnit != null && !previousLivingUnit.LinkAlreadyCoonected())
+                {
+                    previousLivingUnit.SetLink(unit.transform);
+                }
+                else if (previousLivingUnit == null)
+                {
+                    unit.HideLink();
+                }
+                previousLivingUnit = unit;
+            }
+            else if (unit.CompareTag("Dead"))
+            {
+                if (previousDeadUnit != null && !previousDeadUnit.LinkAlreadyCoonected())
+                {
+                    previousDeadUnit.SetLink(unit.transform);
+                }
+                else if (previousDeadUnit == null)
+                {
+                    unit.HideLink();
+                }
+                previousDeadUnit = unit;
             }
         }
-
-        updateForTeam(Player.Living.ToString());
-        updateForTeam(Player.Dead.ToString());
     }
 
-    private void UpdateLinkUI(GenericUnit unit)
+    private IEnumerator WaitForMoveInput()
     {
-        if (unit.CompareTag("Dead")){
-            return;
-        }
+        while (state == State.Moving && activePlayer == Player.Living)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-        if(unit.unitName == "Deer")
-        {
-            deerDeerIcon.sprite = unit.linked ? DeerDeerIconActive : DeerDeerIconInactive;
-        }
-        if(unit.unitName == "Fox" || unit.unitName == "Owl")
-        {
-            foxOwlIcon.sprite = unit.linked ? FoxOwlIconActive : FoxOwlIconInactive;
-        }
-        if (unit.unitName == "Rabbit" || unit.unitName == "Bear")
-        {
-            rabbitBearIcon.sprite = unit.linked ? RabbitBearIconActive : RabbitBearIconInactive;
+                Vector3Int mousePosOnGrid = FindClosestTile(mouseWorldPos);
+
+                bool moved = TryMoveSelectedUnit(mousePosOnGrid);
+                if (moved)
+                {
+                    moveButton.interactable = false;
+                    state = State.Waiting;
+                }
+            }
+            yield return null;
         }
     }
 
     public void ShowHelpPanel()
     {
-        FindObjectOfType<AudioManager>().Play("Forward");
         HelpPanel.gameObject.SetActive(true);
         Time.timeScale = 0f;
     }
 
     public void HideHelpPanel()
     {
-        FindObjectOfType<AudioManager>().Play("Confirm");
         HelpPanel.gameObject.SetActive(false);
         Time.timeScale = 1f;
     }
 
-    public void MuteToggle(bool muted)
+    public void ShowWinScreen()
     {
-            FindObjectOfType<AudioManager>().MuteToggle("Theme");
+        WinScreen.gameObject.SetActive(true);
+        Time.timeScale = 1f;
+    }
+
+    public void ShowLoseScreen()
+    {
+        LossScreen.gameObject.SetActive(true);
+        Time.timeScale = 1f;
     }
 }
