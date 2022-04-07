@@ -13,31 +13,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2767381669746537371, guid: 407c4d12ded4af449b6ccfe9399c9019, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 13.249389
       objectReference: {fileID: 0}
     - target: {fileID: 2767381669746537371, guid: 407c4d12ded4af449b6ccfe9399c9019, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.00018495321
       objectReference: {fileID: 0}
     - target: {fileID: 2767381669746537371, guid: 407c4d12ded4af449b6ccfe9399c9019, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 5.9921646
       objectReference: {fileID: 0}
     - target: {fileID: 2767381669746537371, guid: 407c4d12ded4af449b6ccfe9399c9019, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.008951671
       objectReference: {fileID: 0}
     - target: {fileID: 2767381669746537371, guid: 407c4d12ded4af449b6ccfe9399c9019, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0.000000054927096
       objectReference: {fileID: 0}
     - target: {fileID: 2767381669746537371, guid: 407c4d12ded4af449b6ccfe9399c9019, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: 0.99996
       objectReference: {fileID: 0}
     - target: {fileID: 2767381669746537371, guid: 407c4d12ded4af449b6ccfe9399c9019, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: 0.000000037765844
       objectReference: {fileID: 0}
     - target: {fileID: 2767381669746537371, guid: 407c4d12ded4af449b6ccfe9399c9019, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -45,24 +45,20 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2767381669746537371, guid: 407c4d12ded4af449b6ccfe9399c9019, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 178.974
       objectReference: {fileID: 0}
     - target: {fileID: 2767381669746537371, guid: 407c4d12ded4af449b6ccfe9399c9019, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3757993257932622030, guid: 407c4d12ded4af449b6ccfe9399c9019, type: 3}
-      propertyPath: DeadMaterial
-      value: 
-      objectReference: {fileID: 2100000, guid: b41bba43154344a489c821bc298292cb, type: 2}
-    - target: {fileID: 3757993257932622030, guid: 407c4d12ded4af449b6ccfe9399c9019, type: 3}
-      propertyPath: LivingMaterial
-      value: 
-      objectReference: {fileID: 2100000, guid: eab2b4cb542552049accd402da6a6bcb, type: 2}
+    - target: {fileID: 5756540831103489605, guid: 407c4d12ded4af449b6ccfe9399c9019, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6139071852749347780, guid: 407c4d12ded4af449b6ccfe9399c9019, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: b41bba43154344a489c821bc298292cb, type: 2}
+      objectReference: {fileID: 2100000, guid: 1302eaeb8eadb6047a8fdbee10a8f886, type: 2}
     - target: {fileID: 6496102124229938565, guid: 407c4d12ded4af449b6ccfe9399c9019, type: 3}
       propertyPath: m_Name
       value: DeadGlassCannon Variant
