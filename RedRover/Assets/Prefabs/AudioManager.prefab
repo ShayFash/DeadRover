@@ -47,25 +47,25 @@ MonoBehaviour:
   sounds:
   - name: Theme
     clip: {fileID: 8300000, guid: d9943d55584ca9a41ab153670a1e047f, type: 3}
-    volume: 0.3
+    volume: 0.114
     pitch: 1
     loop: 1
     source: {fileID: 0}
   - name: Confirm
     clip: {fileID: 8300000, guid: 99f0067f21d85ea43bb449a67695d94e, type: 3}
-    volume: 0.2
+    volume: 0.244
     pitch: 1
     loop: 0
     source: {fileID: 0}
   - name: Back
     clip: {fileID: 8300000, guid: 1b227005b89a346469bdc5326b789b9c, type: 3}
-    volume: 0.2
+    volume: 0.244
     pitch: 1
     loop: 0
     source: {fileID: 0}
   - name: Forward
     clip: {fileID: 8300000, guid: dda3a905f5a244d4399275b448b5de9b, type: 3}
-    volume: 0.2
+    volume: 0.244
     pitch: 1
     loop: 0
     source: {fileID: 0}
