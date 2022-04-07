@@ -46,6 +46,8 @@ public abstract class GenericUnit : MonoBehaviour
 
     protected Controller Controller;
 
+    protected NotificationManager NManager;
+
     // protected TextMeshProUGUI TurnCountdownDisplay;
     protected MeshRenderer Renderer;
 
@@ -68,10 +70,14 @@ public abstract class GenericUnit : MonoBehaviour
 
         Controller = GameObject.FindGameObjectWithTag("GameController").GetComponent<Controller>();
 
+        NManager = GetComponentInChildren<NotificationManager>();
+
         Renderer = gameObject.GetComponent<MeshRenderer>();
         Renderer.material = CompareTag("Living") ? LivingMaterial : DeadMaterial;
 
-        Move(Controller.FindClosestTile(transform.position));
+        StartCoroutine(
+            Move(Controller.FindClosestTile(transform.position), teleport:true)
+        );
     }
 
     public bool CanBeAttacked()
@@ -133,16 +139,48 @@ public abstract class GenericUnit : MonoBehaviour
         unit.TakeDamage(Attack);
     }
 
-    public void Move(Vector3 cellPosition)
+    IEnumerator SmoothTranslation(Vector3 target, float speed)
+    {
+        float amount = 0;
+        Vector3 oldPosition = transform.position;
+        while (Vector3.Distance(transform.position, target) > 0.02) {
+            amount += Time.fixedDeltaTime * speed;
+            transform.position = Vector3.Lerp(oldPosition, target, amount);
+            yield return new WaitForFixedUpdate();
+        }
+    }
+
+    private void FaceDirectionOfMoving(Vector3 target)
+    {
+        transform.right = target - transform.position;
+    }
+
+    public IEnumerator Move(Vector3 cellPosition, Action callback=null, bool teleport=false)
     {
         cellPosition.y = transform.position.y;
+        FaceDirectionOfMoving(cellPosition);
+
+        SendAlertForMessaging("Moved", "0");
+        if (!teleport)
+        {
+            yield return StartCoroutine(SmoothTranslation(cellPosition, 2));
+        }
         transform.position = cellPosition;
+
+        transform.rotation = CompareTag("Living") ? Quaternion.Euler(0, 0, 0) : Quaternion.Euler(0, 180, 0);
+
+        if (callback != null)
+        {
+            callback();
+        }
     }
 
     public void TakeDamage(int value)
     {
         Debug.Log("I'm hurt");
         Health = Mathf.Max(0, Health - value);
+
+        SendAlertForMessaging("WasAttacked", value.ToString());
 
         if (Health == 0)
         {
@@ -172,6 +210,8 @@ public abstract class GenericUnit : MonoBehaviour
             SwitchSidesCountdown = Math.Max(0, SwitchSidesCountdown - 1);
         }
 
+        SendAlertForMessaging("ChangingSides", SwitchSidesCountdown.ToString());
+
         if (SwitchingSides && SwitchSidesCountdown <= 0)
         {
             SwitchingSides = false;
@@ -181,6 +221,8 @@ public abstract class GenericUnit : MonoBehaviour
 
             MaxHealth = Mathf.RoundToInt(InitialMaxHealth * (1 - (NumTimesSwitched / (MaxAllowedSwitches + 1f))));
             Health = MaxHealth;
+
+            SendAlertForMessaging("ChangedSides", Health.ToString());
         }
     }
 
@@ -350,4 +392,41 @@ public abstract class GenericUnit : MonoBehaviour
         Controller.UnitClicked(this);
         
     }
+
+    //----------Send alerts to inform the turn state manager of changes----------
+    private void SendAlertForMessaging(string uState, string uValue) 
+    {
+        if (uState.Equals("Moved")) 
+        {
+            Controller.GetAlert(gameObject.tag.ToString(), unitName, uState);
+        }
+        else if (uState.Equals("WasAttacked"))
+        {
+            NManager.ShowNotification("-", uValue);
+            if (Health == 0)
+            {
+                if (NumTimesSwitched == MaxAllowedSwitches)
+                {
+                    Controller.GetAlert(gameObject.tag.ToString(), unitName, "WasKilled");
+                }
+                else 
+                {
+                    Controller.GetAlert(gameObject.tag.ToString(), unitName, "ChangingSides");
+                    NManager.ShowNotification("n", uValue); 
+                }
+            }
+            else Controller.GetAlert(gameObject.tag.ToString(), unitName, uState);
+        }
+        else if (uState.Equals("ChangingSides"))
+        {
+            if (uValue.Equals("0")) return;
+            NManager.ShowNotification("n", uValue);
+        
+        }
+        else if (uState.Equals("ChangedSides"))
+        {
+            NManager.ShowNotification("+", uValue);
+        }
+    }
+    //---------------------------------------------------------------------------
 }

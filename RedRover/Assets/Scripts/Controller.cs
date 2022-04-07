@@ -34,12 +34,20 @@ public class Controller : MonoBehaviour
     private TextMeshProUGUI attackText;
     private TextMeshProUGUI healthNumText;
     private TextMeshProUGUI unitNameText;
+    private TextMeshProUGUI turnCounterText;
+    private TextMeshProUGUI turnSelectionText;
     private Button[] actionButtons;
     private Button moveButton;
+
+    private int numTurns;
+
     private Canvas winCanvas;
     private Canvas lossCanvas;
 
+
     public GameObject HelpPanel;
+
+    private TurnStateManager TSManager;
 
     public Sprite DeerDeerIconActive;
     public Sprite DeerDeerIconInactive;
@@ -47,6 +55,11 @@ public class Controller : MonoBehaviour
     public Sprite RabbitBearIconInactive;
     public Sprite FoxOwlIconActive;
     public Sprite FoxOwlIconInactive;
+    public GameObject Bear;
+    public GameObject Rabbit;
+    public GameObject Owl;
+    public GameObject Fox;
+    public GameObject Deer;
 
     private Image deerDeerIcon;
     private Image rabbitBearIcon;
@@ -87,6 +100,16 @@ public class Controller : MonoBehaviour
         unitMenu = GameObject.FindGameObjectWithTag("UnitMenu").GetComponent<Canvas>();
         TextMeshProUGUI[] unitMenuChildren = unitMenu.GetComponentsInChildren<TextMeshProUGUI>();
 
+        TSManager = GetComponentInChildren<TurnStateManager>();
+
+        turnSelectionText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) {
+            return t.gameObject.CompareTag("TurnsLeftDisplay");
+        });
+
+        turnCounterText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) {
+            return t.gameObject.CompareTag("TurnCounter");
+        });
+
         rangeText = Array.Find(unitMenuChildren, delegate (TextMeshProUGUI t) {
             return t.gameObject.CompareTag("RangeStatDisplay");
         });
@@ -108,6 +131,8 @@ public class Controller : MonoBehaviour
         {
             return b.CompareTag("MoveButton");
         });
+        
+        numTurns = 0;
 
         deerDeerIcon = GameObject.FindGameObjectWithTag("DeerDeerIcon").GetComponent<Image>();
         rabbitBearIcon = GameObject.FindGameObjectWithTag("RabbitBearIcon").GetComponent<Image>();
@@ -129,6 +154,11 @@ public class Controller : MonoBehaviour
         StartCoroutine(lateStart());
 
         ShowHelpPanel();
+    }
+
+    private void Update() 
+    {
+        UpdateTurnStateBar();
     }
 
     private IEnumerator lateStart()
@@ -189,6 +219,7 @@ public class Controller : MonoBehaviour
                     selectedUnit.AttackUnit(unit);
                     UpdateLinks();
 
+                    
                     EndTurn();
                 }
                 break;
@@ -206,6 +237,7 @@ public class Controller : MonoBehaviour
             attackText.text = "Attack: - ";
             healthNumText.text = "-/-";
             unitNameText.text = "";
+            turnSelectionText.text = "Turns Left: - ";
 
             return;
         }
@@ -214,6 +246,49 @@ public class Controller : MonoBehaviour
         attackText.text = "Attack: " + unit.Attack.ToString();
         healthNumText.text =  unit.Health.ToString() + " / " + unit.MaxHealth.ToString();
         unitNameText.text = unit.unitName;
+        if (unit.unitName == "Bear")
+        {
+            Fox.gameObject.SetActive(false);
+            Rabbit.gameObject.SetActive(false);
+            Owl.gameObject.SetActive(false);
+            Deer.gameObject.SetActive(false);
+            Bear.gameObject.SetActive(true);
+        }
+        if (unit.unitName == "Fox")
+        {
+            Rabbit.gameObject.SetActive(false);
+            Owl.gameObject.SetActive(false);
+            Bear.gameObject.SetActive(false);
+            Deer.gameObject.SetActive(false);
+            Fox.gameObject.SetActive(true);
+        }
+        if (unit.unitName == "Rabbit")
+        {
+            Fox.gameObject.SetActive(false);
+            Owl.gameObject.SetActive(false);
+            Bear.gameObject.SetActive(false);
+            Deer.gameObject.SetActive(false);
+            Rabbit.gameObject.SetActive(true);
+        }
+        if (unit.unitName == "Owl")
+        {
+            Fox.gameObject.SetActive(false);
+            Rabbit.gameObject.SetActive(false);
+            Bear.gameObject.SetActive(false);
+            Deer.gameObject.SetActive(false);
+            Owl.gameObject.SetActive(true);
+        }
+        if (unit.unitName == "Deer")
+        {
+            Fox.gameObject.SetActive(false);
+            Rabbit.gameObject.SetActive(false);
+            Owl.gameObject.SetActive(false);
+            Bear.gameObject.SetActive(false);
+            Deer.gameObject.SetActive(true);
+        }
+
+
+        turnSelectionText.text = "Turns Left: " + unit.SelectionTimer.ToString();
     }
 
     public void ResetRangeAndAttackText()
@@ -263,7 +338,6 @@ public class Controller : MonoBehaviour
             if (moved)
             {
                 moveButton.interactable = false;
-                state = State.Waiting;
             }
         }
     }
@@ -279,6 +353,8 @@ public class Controller : MonoBehaviour
         state = State.SelectingUnit;
         RemoveColorFromTilesInRange(selectedUnit);
         ChangeTurns();
+        numTurns++;
+        turnCounterText.text = "TURN: " + numTurns.ToString();
     }
     public Vector3 FindClosestTile(Vector3 position)
     {
@@ -306,8 +382,17 @@ public class Controller : MonoBehaviour
         {
             state = State.Waiting;
             RemoveColorFromTilesInRange(selectedUnit);
-            selectedUnit.Move(cellPosition);
-            UpdateLinks();
+            StartCoroutine(selectedUnit.Move(
+                cellPosition,
+                callback:delegate()
+                {
+                    UpdateLinks();
+                    if (state == State.Moving)
+                    {
+                        state = State.Waiting;
+                    }
+                }
+            ));
             return true;
         }
         return false;
@@ -480,11 +565,15 @@ public class Controller : MonoBehaviour
 
             if(activePlayer == Player.Living)
             {
+
                 lossCanvas.enabled = true;
+                
             }
-            else
+            else if(activePlayer == Player.Dead)
             {
+
                 winCanvas.enabled = true;
+
             }
         }
     }
@@ -577,4 +666,16 @@ public class Controller : MonoBehaviour
     {
             FindObjectOfType<AudioManager>().MuteToggle("Theme");
     }
+
+    //----------Methods for the Turn State and Notification Managers-------------
+    public void UpdateTurnStateBar() 
+    {
+        TSManager.UpdateTurnStates(activePlayer.ToString(), state.ToString(), selectedUnit);
+    }
+
+    public void GetAlert(string aTag , string aName, string aState) 
+    {
+        TSManager.ShowAlert(aTag, aName, aState);
+    }
+    //---------------------------------------------------------------------------
 }
