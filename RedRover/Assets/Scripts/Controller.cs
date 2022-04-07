@@ -338,7 +338,6 @@ public class Controller : MonoBehaviour
             if (moved)
             {
                 moveButton.interactable = false;
-                state = State.Waiting;
             }
         }
     }
@@ -383,8 +382,17 @@ public class Controller : MonoBehaviour
         {
             state = State.Waiting;
             RemoveColorFromTilesInRange(selectedUnit);
-            selectedUnit.Move(cellPosition);
-            UpdateLinks();
+            StartCoroutine(selectedUnit.Move(
+                cellPosition,
+                callback:delegate()
+                {
+                    UpdateLinks();
+                    if (state == State.Moving)
+                    {
+                        state = State.Waiting;
+                    }
+                }
+            ));
             return true;
         }
         return false;
