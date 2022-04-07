@@ -14,14 +14,14 @@ public class UnitLink : MonoBehaviour
     {
         lineRenderer = GetComponent<LineRenderer>();
 
-        lineRenderer.startWidth = 0.1f;
-        lineRenderer.endWidth = 0.1f;
+        lineRenderer.startWidth = 0.5f;
+        lineRenderer.endWidth = 0.5f;
         lineRenderer.positionCount = 2;
         lineRenderer.useWorldSpace = true;
 
-        Material material = new Material(Shader.Find("Shader Graphs/Link"));
+        Material material = new Material(Shader.Find("Shader Graphs/NewLink"));
         material.SetFloat("_Tiling", 0.25f);
-        material.SetFloat("_Speed", 0.5f);
+        material.SetFloat("_Speed", 0f);
 
         lineRenderer.material = material;
     }
@@ -32,7 +32,7 @@ public class UnitLink : MonoBehaviour
         this.unit2 = unit2;
         if (unit1.CompareTag("Living"))
         {
-            lineRenderer.material.SetColor("_Color", Color.white);
+            lineRenderer.material.SetColor("_Color", Color.yellow);
         } else if (unit1.CompareTag("Dead"))
         {
             lineRenderer.material.SetColor("_Color", new Color(0.21961f, 0.05490f, 0.27451f));
@@ -78,6 +78,7 @@ public class UnitLink : MonoBehaviour
         {
             lineRenderer.SetPosition(0, unit1.transform.position);
             lineRenderer.SetPosition(1, unit2.transform.position);
+
 
             yield return new WaitForEndOfFrame();
         }
