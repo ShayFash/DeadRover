@@ -53,6 +53,11 @@ public class Controller : MonoBehaviour
     public Sprite RabbitBearIconInactive;
     public Sprite FoxOwlIconActive;
     public Sprite FoxOwlIconInactive;
+    public GameObject Bear;
+    public GameObject Rabbit;
+    public GameObject Owl;
+    public GameObject Fox;
+    public GameObject Deer;
 
     private Image deerDeerIcon;
     private Image rabbitBearIcon;
@@ -232,6 +237,48 @@ public class Controller : MonoBehaviour
         attackText.text = "Attack: " + unit.Attack.ToString();
         healthNumText.text =  unit.Health.ToString() + " / " + unit.MaxHealth.ToString();
         unitNameText.text = unit.unitName;
+        if (unit.unitName == "Bear")
+        {
+            Fox.gameObject.SetActive(false);
+            Rabbit.gameObject.SetActive(false);
+            Owl.gameObject.SetActive(false);
+            Deer.gameObject.SetActive(false);
+            Bear.gameObject.SetActive(true);
+        }
+        if (unit.unitName == "Fox")
+        {
+            Rabbit.gameObject.SetActive(false);
+            Owl.gameObject.SetActive(false);
+            Bear.gameObject.SetActive(false);
+            Deer.gameObject.SetActive(false);
+            Fox.gameObject.SetActive(true);
+        }
+        if (unit.unitName == "Rabbit")
+        {
+            Fox.gameObject.SetActive(false);
+            Owl.gameObject.SetActive(false);
+            Bear.gameObject.SetActive(false);
+            Deer.gameObject.SetActive(false);
+            Rabbit.gameObject.SetActive(true);
+        }
+        if (unit.unitName == "Owl")
+        {
+            Fox.gameObject.SetActive(false);
+            Rabbit.gameObject.SetActive(false);
+            Bear.gameObject.SetActive(false);
+            Deer.gameObject.SetActive(false);
+            Owl.gameObject.SetActive(true);
+        }
+        if (unit.unitName == "Deer")
+        {
+            Fox.gameObject.SetActive(false);
+            Rabbit.gameObject.SetActive(false);
+            Owl.gameObject.SetActive(false);
+            Bear.gameObject.SetActive(false);
+            Deer.gameObject.SetActive(true);
+        }
+
+
         turnSelectionText.text = "Turns Left: " + unit.SelectionTimer.ToString();
     }
 
