@@ -67,6 +67,8 @@ public class AI
 
             yield return new WaitForSeconds(Delay);
             controller.TryMoveSelectedUnit(tilePosition);
+
+            yield return new WaitForSeconds(Delay);
         }
     }
 
