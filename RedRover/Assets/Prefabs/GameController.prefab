@@ -4250,7 +4250,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HelpPanel: {fileID: 1047394197}
   DeerDeerIconActive: {fileID: 21300000, guid: 44a0e791c44e4a546bfe89e02c7f48b2, type: 3}
-  DeerDeerIconInactive: {fileID: 21300000, guid: 0f8fa39a933ddad4ea2f316f6610a80e, type: 3}
+  DeerDeerIconInactive: {fileID: 21300000, guid: e5c3c806d3f87d040aee31b070e28276, type: 3}
   RabbitBearIconActive: {fileID: 21300000, guid: b7821be82b587ef4ab1cccab53c73bea, type: 3}
   RabbitBearIconInactive: {fileID: 21300000, guid: bd337b1f58d3ddf46ab9b8605265c404, type: 3}
   FoxOwlIconActive: {fileID: 21300000, guid: c2ed41e21ebfca2468ed2a53bd72e0d1, type: 3}
