@@ -10,20 +10,54 @@ public class UnitLink : MonoBehaviour
     private GenericUnit unit1;
     private GenericUnit unit2;
 
+    private Gradient LivingGradient;
+    private Gradient DeadGradient;
+
     void Awake()
     {
         lineRenderer = GetComponent<LineRenderer>();
+        for (int  i = 0; i < lineRenderer.colorGradient.colorKeys.Length; i++)
+        {
+            GradientColorKey key = lineRenderer.colorGradient.colorKeys[i];
+            Debug.Log(i.ToString() + "th colour key, colour: " + key.color.ToString() + ", time: " + key.time);
+        }
 
-        lineRenderer.startWidth = 0.5f;
-        lineRenderer.endWidth = 0.5f;
+        for (int i = 0; i < lineRenderer.colorGradient.alphaKeys.Length; i++)
+        {
+            GradientAlphaKey key = lineRenderer.colorGradient.alphaKeys[i];
+            Debug.Log(i.ToString() + "th colour key, alpha: " + key.alpha.ToString() + ", time: " + key.time);
+        }
+
+        DeadGradient = new Gradient();
+        GradientColorKey[] colourKeys = new GradientColorKey[2];
+        colourKeys[0].color = new Color(0.453f, 0.043f, 1, 1);
+        colourKeys[0].time = 0;
+
+        colourKeys[1].color = new Color(0.945f, 0.302f, 1, 1);
+        colourKeys[1].time = 1;
+
+        GradientAlphaKey[] alphaKeys = new GradientAlphaKey[2];
+        alphaKeys[0].alpha = 1;
+        alphaKeys[0].time = 0;
+
+        alphaKeys[1].alpha = 1;
+        alphaKeys[1].time = 1;
+
+        DeadGradient.SetKeys(colourKeys, alphaKeys);
+
+
+        LivingGradient = new Gradient();
+        colourKeys = new GradientColorKey[2];
+        colourKeys[0].color = new Color(1, 0.710f, 0.125f, 1);
+        colourKeys[0].time = 0;
+
+        colourKeys[1].color = new Color(1, 0.960f, 0.302f, 1);
+        colourKeys[1].time = 1;
+
+        LivingGradient.SetKeys(colourKeys, alphaKeys);
+
         lineRenderer.positionCount = 2;
         lineRenderer.useWorldSpace = true;
-
-        Material material = new Material(Shader.Find("Shader Graphs/NewLink"));
-        material.SetFloat("_Tiling", 0.25f);
-        material.SetFloat("_Speed", 0f);
-
-        lineRenderer.material = material;
     }
 
     public void SetLink(GenericUnit unit1, GenericUnit unit2) 
@@ -32,10 +66,10 @@ public class UnitLink : MonoBehaviour
         this.unit2 = unit2;
         if (unit1.CompareTag("Living"))
         {
-            lineRenderer.material.SetColor("_Color", Color.yellow);
+            lineRenderer.colorGradient = LivingGradient;
         } else if (unit1.CompareTag("Dead"))
         {
-            lineRenderer.material.SetColor("_Color", new Color(0.21961f, 0.05490f, 0.27451f));
+            lineRenderer.colorGradient = DeadGradient;
         }
         lineRenderer.enabled = true;
         StartCoroutine(FollowTransform());
