@@ -14,4 +14,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/3D Maps/H.unity
     guid: 7fe1c25d83b6e284a8c8a9cff5e7a38f
+  - enabled: 1
+    path: Assets/Scenes/3D Maps/O.unity
+    guid: d800e081e23da564e8fb0b78ff80b4d6
+  - enabled: 1
+    path: Assets/Scenes/3D Maps/Plain (TINY).unity
+    guid: 8b1de80ffc4404a42bd46dcba80d1c52
+  - enabled: 1
+    path: Assets/Scenes/3D Maps/Plain.unity
+    guid: 413ce397d84761c4691c9fff745c0218
   m_configObjects: {}
