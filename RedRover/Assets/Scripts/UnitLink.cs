@@ -16,17 +16,6 @@ public class UnitLink : MonoBehaviour
     void Awake()
     {
         lineRenderer = GetComponent<LineRenderer>();
-        for (int  i = 0; i < lineRenderer.colorGradient.colorKeys.Length; i++)
-        {
-            GradientColorKey key = lineRenderer.colorGradient.colorKeys[i];
-            Debug.Log(i.ToString() + "th colour key, colour: " + key.color.ToString() + ", time: " + key.time);
-        }
-
-        for (int i = 0; i < lineRenderer.colorGradient.alphaKeys.Length; i++)
-        {
-            GradientAlphaKey key = lineRenderer.colorGradient.alphaKeys[i];
-            Debug.Log(i.ToString() + "th colour key, alpha: " + key.alpha.ToString() + ", time: " + key.time);
-        }
 
         DeadGradient = new Gradient();
         GradientColorKey[] colourKeys = new GradientColorKey[2];
