@@ -99,8 +99,13 @@ public class UnitLink : MonoBehaviour
 
         while (LinkConditionsMet())
         {
-            lineRenderer.SetPosition(0, unit1.transform.position);
-            lineRenderer.SetPosition(1, unit2.transform.position);
+            Vector3 position = unit1.transform.position;
+            position.y = Mathf.Max(position.y, 0.3f);
+            lineRenderer.SetPosition(0, position);
+
+            position = unit2.transform.position;
+            position.y = Mathf.Max(position.y, 0.3f);
+            lineRenderer.SetPosition(1, position);
 
 
             yield return new WaitForEndOfFrame();
