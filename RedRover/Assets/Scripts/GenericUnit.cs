@@ -329,6 +329,7 @@ public abstract class GenericUnit : MonoBehaviour
 
         material.shader = oldShader;
         material.SetColor("_Color", Color.white);
+        material.renderQueue = 3001;
 
         ShaderActive = false;
     }
@@ -355,6 +356,7 @@ public abstract class GenericUnit : MonoBehaviour
 
         material.shader = oldShader;
         material.SetColor("_Color", Color.white);
+        material.renderQueue = 3001;
 
         ShaderActive = false;
     }

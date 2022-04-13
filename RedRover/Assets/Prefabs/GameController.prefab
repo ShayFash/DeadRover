@@ -4260,7 +4260,7 @@ MonoBehaviour:
   Owl: {fileID: 4266202872988244551}
   Fox: {fileID: 5247524878247849018}
   Deer: {fileID: 8020167719193659137}
-  linkObject: {fileID: 4494204007080024721, guid: af921a7794120a442a55ecdec865caff, type: 3}
+  linkObject: {fileID: 8379837831699325439, guid: 0b9241df1ec98ce49a590f1253e69b09, type: 3}
 --- !u!1 &2622652472638274546
 GameObject:
   m_ObjectHideFlags: 0

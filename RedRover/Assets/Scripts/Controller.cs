@@ -141,7 +141,7 @@ public class Controller : MonoBehaviour
         UnitLink temp;
         for (int i = 0; i < linkObjectPool.Length; i++)
         {
-            temp = Instantiate(linkObject).GetComponent<UnitLink>();
+            temp = Instantiate(linkObject).GetComponentInChildren<UnitLink>();
             temp.HideLink();
             linkObjectPool[i] = temp;
         }
