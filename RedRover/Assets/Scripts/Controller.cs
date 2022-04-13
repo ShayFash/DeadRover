@@ -237,13 +237,24 @@ public class Controller : MonoBehaviour
             attackText.text = "Attack: - ";
             healthNumText.text = "-/-";
             unitNameText.text = "";
-            turnSelectionText.text = "Turns Left: - ";
+            turnSelectionText.text = "-";
 
             return;
         }
 
         rangeText.text = "Range: " + unit.GetReachStat();
         attackText.text = "Attack: " + unit.GetAttackStat();
+        if (!unit.SwitchingSides && unit.SelectionTimer > 0)
+        {
+            turnSelectionText.text = "Can Be Picked Again In: " + unit.SelectionTimer.ToString() + " Turns";
+        } else if (unit.SwitchingSides && unit.SwitchSidesCountdown > 0)
+        {
+            turnSelectionText.text = "Changing Teams In: " + unit.SwitchSidesCountdown.ToString() + " Turns";
+        } else
+        {
+            turnSelectionText.text = "-";
+        }
+
         healthNumText.text =  unit.Health.ToString() + " / " + unit.MaxHealth.ToString();
         unitNameText.text = unit.unitName;
         if (unit.unitName == "Bear")
@@ -286,9 +297,6 @@ public class Controller : MonoBehaviour
             Bear.gameObject.SetActive(false);
             Deer.gameObject.SetActive(true);
         }
-
-
-        turnSelectionText.text = "Turns Left: " + unit.SelectionTimer.ToString();
     }
 
     public void ResetRangeAndAttackText()
